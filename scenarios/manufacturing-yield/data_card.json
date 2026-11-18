@@ -1,0 +1,39 @@
+{
+  "dataset": "scenarios/manufacturing-yield/data.csv",
+  "description": "分析产线良品率（yield_pct）与温度、压力、线速、湿度的关系，定位影响良品率的关键工艺窗口。",
+  "generator": "scripts/generate_scenarios.py",
+  "seed": 0,
+  "license": "CC BY 4.0（合成数据，可自由使用与再分发）",
+  "sha256": "564a495ab68fde850d6174899d93a0b4218bb0801769b7ee1b58c7279b70219b",
+  "rows": 3000,
+  "columns": [
+    "date",
+    "region",
+    "temp",
+    "pressure",
+    "line_speed",
+    "humidity",
+    "yield_pct"
+  ],
+  "target": "yield_pct",
+  "features": [
+    "temp",
+    "pressure",
+    "line_speed",
+    "humidity"
+  ],
+  "quality": {
+    "missing_cells": 0,
+    "missing_rate": 0.0,
+    "duplicate_rows": 0,
+    "outlier_rows_4sigma": 0,
+    "outlier_rate": 0.0
+  },
+  "limitations": [
+    "数据为按已知结构函数生成的合成数据，不代表真实业务分布",
+    "不含时间趋势、政策冲击与测量误差，外推到真实世界需重新标定",
+    "目标与因子的函数形式假定为线性可加，非线性与交互项未建模",
+    "隐藏真值仅用于验证器比对，分析 Agent 不应读取"
+  ],
+  "reproduce": "py -3.14 scripts/generate_scenarios.py"
+}

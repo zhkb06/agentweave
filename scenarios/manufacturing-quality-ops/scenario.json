@@ -1,0 +1,89 @@
+{
+  "id": "manufacturing-quality-ops",
+  "short": "mfg-ops",
+  "kind": "multi-target",
+  "name": "制造质量-能耗联合分析",
+  "title": "产线良品率与单位能耗的多目标联合归因",
+  "description": "同一批产线样本同时观测良品率（yield_pct）与单位能耗（energy_kwh），联合估计工艺参数对两个目标的影响，识别「提质量」与「降能耗」的共同抓手与冲突项。",
+  "dataset": "scenarios/manufacturing-quality-ops/data.csv",
+  "targets": [
+    "yield_pct",
+    "energy_kwh"
+  ],
+  "target": "yield_pct",
+  "target_count": 2,
+  "features": [
+    "temp",
+    "pressure",
+    "line_speed",
+    "humidity",
+    "output"
+  ],
+  "workflow_id": "wf-manufacturing-quality-ops",
+  "first_bias": {
+    "temp": 0.3,
+    "pressure": 0.32,
+    "line_speed": 0.29,
+    "humidity": 0.33,
+    "output": 0.31
+  },
+  "second_bias": {
+    "temp": 0.03,
+    "pressure": 0.038,
+    "line_speed": 0.029,
+    "humidity": 0.04,
+    "output": 0.032
+  },
+  "tolerance": 0.15,
+  "statistical_thresholds": {
+    "n_min": 1000,
+    "r2_min": 0.55
+  },
+  "task": "对产线样本同时分析良品率（yield_pct）与单位能耗（energy_kwh）两个目标，分别估计温度（temp）、压力（pressure）、线速（line_speed）、湿度（humidity）、产量（output）对两个目标的影响，并做联合对比：哪些因子是共同抓手，哪些存在目标冲突。",
+  "story": "工艺部门要同时守住良品率与能耗指标，但直觉上「提压力、降线速」对质量有利，却可能推高能耗。需要联合分析来识别真正的双赢参数与冲突参数。",
+  "domain_checks": [
+    "核对两个目标的量纲与采集口径",
+    "检查工艺参数共线性",
+    "区分短期调参与长期漂移"
+  ],
+  "recovery": {
+    "targets": {
+      "yield_pct": {
+        "intercept": 97.6624,
+        "coefficients": {
+          "temp": -0.4448,
+          "pressure": 2.2624,
+          "line_speed": -1.1159,
+          "humidity": -0.1002,
+          "output": 0.0222
+        },
+        "r2": 0.7218
+      },
+      "energy_kwh": {
+        "intercept": 61.375,
+        "coefficients": {
+          "temp": 1.5727,
+          "pressure": 3.2909,
+          "line_speed": 2.2987,
+          "humidity": 0.3987,
+          "output": 0.8854
+        },
+        "r2": 0.6933
+      }
+    },
+    "coefficients": {
+      "yield_pct.temp": -0.4448,
+      "yield_pct.pressure": 2.2624,
+      "yield_pct.line_speed": -1.1159,
+      "yield_pct.humidity": -0.1002,
+      "yield_pct.output": 0.0222,
+      "energy_kwh.temp": 1.5727,
+      "energy_kwh.pressure": 3.2909,
+      "energy_kwh.line_speed": 2.2987,
+      "energy_kwh.humidity": 0.3987,
+      "energy_kwh.output": 0.8854
+    },
+    "r2": 0.6933,
+    "n": 3000
+  }
+}

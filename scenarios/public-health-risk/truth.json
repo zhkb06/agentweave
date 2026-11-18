@@ -1,0 +1,29 @@
+{
+  "intercept": 45.0,
+  "coefficients": {
+    "temp": -0.6,
+    "humidity": 0.35,
+    "vaccination_rate": -15.0,
+    "pm25": 0.2
+  },
+  "noise_sd": 3.1,
+  "tolerance": 0.15,
+  "statistical_thresholds": {
+    "n_min": 1000,
+    "r2_min": 0.55
+  },
+  "seed": 20261102,
+  "n": 2000,
+  "target": "incidence",
+  "ols_recovery": {
+    "intercept": 44.3586,
+    "coefficients": {
+      "temp": -0.605,
+      "humidity": 0.3574,
+      "vaccination_rate": -14.818,
+      "pm25": 0.2022
+    },
+    "r2": 0.8702
+  },
+  "notes": "隐藏真值：仅供验证器与平台注入，分析 Agent 不应读取。"
+}

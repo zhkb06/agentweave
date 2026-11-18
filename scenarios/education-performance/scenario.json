@@ -1,0 +1,50 @@
+{
+  "id": "education-performance",
+  "short": "edu-score",
+  "name": "教学成效归因",
+  "title": "学生成绩与学习行为因子归因",
+  "description": "分析期末成绩（final_score）与出勤率、作业完成度、自习时长、班级规模的关系，为教学干预提供证据。",
+  "dataset": "scenarios/education-performance/data.csv",
+  "target": "final_score",
+  "features": [
+    "attendance",
+    "homework",
+    "study_hours",
+    "class_size"
+  ],
+  "workflow_id": "wf-education-performance",
+  "first_bias": {
+    "attendance": 0.28,
+    "homework": 0.31,
+    "study_hours": 0.33,
+    "class_size": 0.3
+  },
+  "second_bias": {
+    "attendance": 0.026,
+    "homework": 0.031,
+    "study_hours": 0.04,
+    "class_size": 0.029
+  },
+  "tolerance": 0.15,
+  "statistical_thresholds": {
+    "n_min": 1000,
+    "r2_min": 0.55
+  },
+  "task": "分析学生期末成绩（final_score）与出勤率（attendance）、作业完成度（homework）、自习时长（study_hours）、班级规模（class_size）的关系，估计各因子效应并给出教学干预建议。",
+  "story": "学校要设计下学期干预方案：抓出勤、抓作业还是增加自习？需要可解释、可复算的效应量，而不是经验判断。",
+  "domain_checks": [
+    "检查样本代表性",
+    "区分班级与个体效应",
+    "避免把相关当因果"
+  ],
+  "recovery": {
+    "intercept": 39.1762,
+    "coefficients": {
+      "attendance": 0.4563,
+      "homework": 0.3086,
+      "study_hours": 1.5782,
+      "class_size": -0.1239
+    },
+    "r2": 0.6443
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "dataset": "scenarios/logistics-delivery/data.csv",
+  "description": "分析订单履约时长（delivery_min）与配送距离、订单量、恶劣天气、仓内负载的关系，支撑时效承诺与资源调度。",
+  "generator": "scripts/generate_scenarios.py",
+  "seed": 0,
+  "license": "CC BY 4.0（合成数据，可自由使用与再分发）",
+  "sha256": "c1e488a1d18af8cc153f165725b16e14cf24d0ab9c1bddaf3dd98356852c398a",
+  "rows": 3000,
+  "columns": [
+    "date",
+    "region",
+    "distance_km",
+    "order_volume",
+    "bad_weather",
+    "warehouse_load",
+    "delivery_min"
+  ],
+  "target": "delivery_min",
+  "features": [
+    "distance_km",
+    "order_volume",
+    "bad_weather",
+    "warehouse_load"
+  ],
+  "quality": {
+    "missing_cells": 0,
+    "missing_rate": 0.0,
+    "duplicate_rows": 0,
+    "outlier_rows_4sigma": 0,
+    "outlier_rate": 0.0
+  },
+  "limitations": [
+    "数据为按已知结构函数生成的合成数据，不代表真实业务分布",
+    "不含时间趋势、政策冲击与测量误差，外推到真实世界需重新标定",
+    "目标与因子的函数形式假定为线性可加，非线性与交互项未建模",
+    "隐藏真值仅用于验证器比对，分析 Agent 不应读取"
+  ],
+  "reproduce": "py -3.14 scripts/generate_scenarios.py"
+}

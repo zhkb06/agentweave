@@ -1,0 +1,29 @@
+{
+  "intercept": 40.0,
+  "coefficients": {
+    "attendance": 0.45,
+    "homework": 0.3,
+    "study_hours": 1.6,
+    "class_size": -0.12
+  },
+  "noise_sd": 5.0,
+  "tolerance": 0.15,
+  "statistical_thresholds": {
+    "n_min": 1000,
+    "r2_min": 0.55
+  },
+  "seed": 20261107,
+  "n": 3000,
+  "target": "final_score",
+  "ols_recovery": {
+    "intercept": 39.1762,
+    "coefficients": {
+      "attendance": 0.4563,
+      "homework": 0.3086,
+      "study_hours": 1.5782,
+      "class_size": -0.1239
+    },
+    "r2": 0.6443
+  },
+  "notes": "隐藏真值：仅供验证器与平台注入，分析 Agent 不应读取。"
+}

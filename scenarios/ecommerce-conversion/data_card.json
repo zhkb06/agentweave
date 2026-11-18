@@ -1,0 +1,37 @@
+{
+  "dataset": "scenarios/ecommerce-conversion/data.csv",
+  "description": "分析页面转化率（conversion）与页面加载速度、个性化推荐强度、购物车步骤数的关系，量化体验改版收益。",
+  "generator": "scripts/generate_scenarios.py",
+  "seed": 0,
+  "license": "CC BY 4.0（合成数据，可自由使用与再分发）",
+  "sha256": "214d9e52922c0dd693a3eb01375b6ef8589fc91b2da483cbbdf78b5910fe4798",
+  "rows": 2000,
+  "columns": [
+    "date",
+    "region",
+    "page_speed",
+    "personalization",
+    "cart_steps",
+    "conversion"
+  ],
+  "target": "conversion",
+  "features": [
+    "page_speed",
+    "personalization",
+    "cart_steps"
+  ],
+  "quality": {
+    "missing_cells": 0,
+    "missing_rate": 0.0,
+    "duplicate_rows": 0,
+    "outlier_rows_4sigma": 0,
+    "outlier_rate": 0.0
+  },
+  "limitations": [
+    "数据为按已知结构函数生成的合成数据，不代表真实业务分布",
+    "不含时间趋势、政策冲击与测量误差，外推到真实世界需重新标定",
+    "目标与因子的函数形式假定为线性可加，非线性与交互项未建模",
+    "隐藏真值仅用于验证器比对，分析 Agent 不应读取"
+  ],
+  "reproduce": "py -3.14 scripts/generate_scenarios.py"
+}

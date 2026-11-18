@@ -1,0 +1,50 @@
+{
+  "id": "energy-consumption",
+  "short": "energy-kwh",
+  "name": "工业能耗优化",
+  "title": "车间能耗与产量、环境因子归因",
+  "description": "分析车间单位能耗（energy_kwh）与产量、气温、夜班比例、设备役龄的关系，识别节能改造优先级。",
+  "dataset": "scenarios/energy-consumption/data.csv",
+  "target": "energy_kwh",
+  "features": [
+    "output",
+    "temp",
+    "night_shift",
+    "equipment_age"
+  ],
+  "workflow_id": "wf-energy-consumption",
+  "first_bias": {
+    "output": 0.31,
+    "temp": 0.29,
+    "night_shift": 0.33,
+    "equipment_age": 0.3
+  },
+  "second_bias": {
+    "output": 0.033,
+    "temp": 0.03,
+    "night_shift": 0.04,
+    "equipment_age": 0.027
+  },
+  "tolerance": 0.15,
+  "statistical_thresholds": {
+    "n_min": 1000,
+    "r2_min": 0.55
+  },
+  "task": "分析车间单位能耗（energy_kwh）与产量（output）、气温（temp）、夜班比例（night_shift）、设备役龄（equipment_age）的关系，估计各因子对能耗的边际影响，并排出节能改造优先级。",
+  "story": "工厂要在年度预算里选择改造项目：换设备、调班次还是做保温？需要先量化每个因子的能耗贡献，避免拍脑袋。",
+  "domain_checks": [
+    "统一能耗口径",
+    "分离产量效应与环境效应",
+    "检查异常工况"
+  ],
+  "recovery": {
+    "intercept": 119.3589,
+    "coefficients": {
+      "output": 1.8224,
+      "temp": 1.1167,
+      "night_shift": 18.5287,
+      "equipment_age": 2.0446
+    },
+    "r2": 0.8673
+  }
+}

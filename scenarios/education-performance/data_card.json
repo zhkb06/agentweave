@@ -1,0 +1,39 @@
+{
+  "dataset": "scenarios/education-performance/data.csv",
+  "description": "分析期末成绩（final_score）与出勤率、作业完成度、自习时长、班级规模的关系，为教学干预提供证据。",
+  "generator": "scripts/generate_scenarios.py",
+  "seed": 0,
+  "license": "CC BY 4.0（合成数据，可自由使用与再分发）",
+  "sha256": "3212f6e6999e55cd24a4bf944888d938c3ff14349d532bcc77a0375d92deb57d",
+  "rows": 3000,
+  "columns": [
+    "date",
+    "region",
+    "attendance",
+    "homework",
+    "study_hours",
+    "class_size",
+    "final_score"
+  ],
+  "target": "final_score",
+  "features": [
+    "attendance",
+    "homework",
+    "study_hours",
+    "class_size"
+  ],
+  "quality": {
+    "missing_cells": 0,
+    "missing_rate": 0.0,
+    "duplicate_rows": 0,
+    "outlier_rows_4sigma": 0,
+    "outlier_rate": 0.0
+  },
+  "limitations": [
+    "数据为按已知结构函数生成的合成数据，不代表真实业务分布",
+    "不含时间趋势、政策冲击与测量误差，外推到真实世界需重新标定",
+    "目标与因子的函数形式假定为线性可加，非线性与交互项未建模",
+    "隐藏真值仅用于验证器比对，分析 Agent 不应读取"
+  ],
+  "reproduce": "py -3.14 scripts/generate_scenarios.py"
+}

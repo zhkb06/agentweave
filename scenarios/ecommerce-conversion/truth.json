@@ -1,0 +1,27 @@
+{
+  "intercept": 1.8,
+  "coefficients": {
+    "page_speed": 0.06,
+    "personalization": 0.9,
+    "cart_steps": -0.4
+  },
+  "noise_sd": 0.55,
+  "tolerance": 0.15,
+  "statistical_thresholds": {
+    "n_min": 1000,
+    "r2_min": 0.55
+  },
+  "seed": 20261103,
+  "n": 2000,
+  "target": "conversion",
+  "ols_recovery": {
+    "intercept": 1.8522,
+    "coefficients": {
+      "page_speed": 0.0603,
+      "personalization": 0.9545,
+      "cart_steps": -0.4247
+    },
+    "r2": 0.7008
+  },
+  "notes": "隐藏真值：仅供验证器与平台注入，分析 Agent 不应读取。"
+}

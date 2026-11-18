@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>织流 AgentWeave · 项目白皮书</title>
+<style>
+@page { size: A4; margin: 17mm 16mm 18mm 16mm; }
+* { box-sizing: border-box; }
+body {
+  font-family: "Microsoft YaHei", "PingFang SC", "Noto Sans CJK SC", sans-serif;
+  font-size: 10.6pt; line-height: 1.72; color: #1f2937; margin: 0;
+}
+.cover { page-break-after: always; text-align: center; padding-top: 34mm; }
+.cover .badge { display: inline-block; padding: 3px 14px; border-radius: 999px;
+  background: #ecfdf5; color: #047857; font-size: 10pt; letter-spacing: 1px; }
+.cover h1 { font-size: 25pt; line-height: 1.45; margin: 20mm 8mm 8mm; color: #0f172a; border: 0; }
+.cover .sub { color: #475569; font-size: 12pt; margin-bottom: 14mm; }
+.cover table { margin: 0 auto; width: 78%; border-collapse: collapse; font-size: 10.5pt; }
+.cover table td { border: 0; border-bottom: 1px solid #e2e8f0; padding: 7px 10px; text-align: left; }
+.cover table td:first-child { color: #64748b; width: 92px; text-align: right; }
+.cover .foot { margin-top: 22mm; color: #94a3b8; font-size: 9.5pt; }
+.toc { page-break-after: always; }
+.toc h2 { border: 0; text-align: center; letter-spacing: 6px; page-break-before: avoid; }
+.toc ol { list-style: none; padding-left: 0; }
+.toc ol ol { padding-left: 18px; }
+.toc li { margin: 3px 0; font-size: 10.5pt; }
+.toc a { color: #1f2937; text-decoration: none; display: block; }
+.toc .lvl2 > a { font-weight: 700; }
+h1, h2, h3, h4 { color: #0f172a; line-height: 1.4; }
+h1 { font-size: 21pt; }
+h2 { font-size: 16pt; border-left: 5px solid #0ea5e9; padding-left: 10px;
+     margin: 22px 0 12px; page-break-before: always; }
+h3 { font-size: 13pt; margin: 18px 0 8px; color: #0c4a6e; }
+h4 { font-size: 11.5pt; margin: 14px 0 6px; }
+p { margin: 7px 0; text-align: justify; }
+strong { color: #075985; }
+a { color: #0369a1; }
+table { border-collapse: collapse; width: 100%; margin: 10px 0 14px; font-size: 9.6pt;
+  page-break-inside: avoid; }
+th, td { border: 1px solid #cbd5e1; padding: 5px 7px; vertical-align: top; }
+th { background: #f1f5f9; color: #0f172a; }
+tr:nth-child(even) td { background: #f8fafc; }
+code { font-family: "Cascadia Mono", Consolas, monospace; font-size: 9pt;
+  background: #f1f5f9; padding: 1px 4px; border-radius: 3px; }
+pre { background: #0f172a; color: #e2e8f0; padding: 10px 12px; border-radius: 6px;
+  white-space: pre-wrap; word-break: break-word; font-size: 8.8pt; line-height: 1.55;
+  page-break-inside: avoid; }
+pre code { background: transparent; color: inherit; padding: 0; }
+blockquote { border-left: 4px solid #38bdf8; background: #f0f9ff; margin: 10px 0;
+  padding: 8px 12px; color: #334155; }
+img { max-width: 100%; border: 1px solid #e2e8f0; border-radius: 6px; margin: 6px 0; }
+hr { border: 0; border-top: 1px solid #e2e8f0; margin: 18px 0; }
+.footnote { color: #94a3b8; font-size: 9pt; }
+</style>
+</head>
+<body>
+<div class="cover"><div class="badge">2026 第五届「未来杯」创新大赛 · 赛题一 · 项目白皮书</div><h1>织流 AgentWeave：项目白皮书</h1><div class="sub"><strong>2026 第五届“未来杯”创新大赛 · 赛题一（Agent 编排创新应用）· 项目白皮书</strong></div><table>
+<thead>
+<tr>
+<th>项目</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>作品名称</td>
+<td>织流 AgentWeave 多智能体编排调度与可信验证平台</td>
+</tr>
+<tr>
+<td>参赛赛题</td>
+<td>赛题一：Agent 编排创新应用</td>
+</tr>
+<tr>
+<td>队伍名称</td>
+<td>织流 AgentWeave</td>
+</tr>
+<tr>
+<td>学校 / 单位</td>
+<td>石家庄信息工程职业学院</td>
+</tr>
+<tr>
+<td>队伍成员</td>
+<td>张康博（队长，独立完成作品）</td>
+</tr>
+<tr>
+<td>指导教师</td>
+<td>徐宇丰</td>
+</tr>
+<tr>
+<td>提交日期</td>
+<td>2026-11-17</td>
+</tr>
+<tr>
+<td>代码仓库</td>
+<td>本白皮书随附完整可运行仓库（纯 Python 标准库，零第三方运行时依赖）</td>
+</tr>
+</tbody>
+</table><div class="foot">项目白皮书 · 生成于 2026-11-17 · 配套代码见仓库根目录</div></div>
+<hr />
+<div class="toc"><h2>目 录</h2><ol><li class="lvl2"><a href="#_1">一、项目概述</a><ol><li class="lvl3"><a href="#11">1.1 一句话定位</a></li><li class="lvl3"><a href="#12-agent-demo">1.2 背景：Agent 的“Demo 天花板”来自四类工程缺口</a></li><li class="lvl3"><a href="#13">1.3 我们做了什么</a></li><li class="lvl3"><a href="#14">1.4 当前版本的边界（如实说明）</a></li></ol></li><li class="lvl2"><a href="#_2">二、解决方案</a><ol><li class="lvl3"><a href="#21-agent">2.1 总体思路：把 Agent 系统当生产系统建设</a></li><li class="lvl3"><a href="#22">2.2 六层架构</a></li><li class="lvl3"><a href="#23-agent">2.3 七个 Agent 的岗位化定义</a></li><li class="lvl3"><a href="#24-dsl">2.4 编排：声明式工作流 DSL</a></li><li class="lvl3"><a href="#25">2.5 调度：可被追问的决策</a></li><li class="lvl3"><a href="#26">2.6 验证：换一种独立方式还能算出同一个结果</a></li><li class="lvl3"><a href="#27-pdca">2.7 自循环：带预算的 PDCA</a></li><li class="lvl3"><a href="#28">2.8 可观测性与运行形态</a></li><li class="lvl3"><a href="#29">2.9 差异化定位</a></li></ol></li><li class="lvl2"><a href="#_3">三、应用成效</a><ol><li class="lvl3"><a href="#31">3.1 基准实测：三模式对照</a></li><li class="lvl3"><a href="#32">3.2 场景覆盖</a></li><li class="lvl3"><a href="#33">3.3 工程交付成效</a></li><li class="lvl3"><a href="#34">3.4 成本与效率（测算，非实测商用数据）</a></li><li class="lvl3"><a href="#35">3.5 用户价值的三层结构</a></li><li class="lvl3"><a href="#36">3.6 尚未验证的部分（必须说清楚）</a></li></ol></li><li class="lvl2"><a href="#_4">四、商业模式</a><ol><li class="lvl3"><a href="#41">4.1 客户与付费方</a></li><li class="lvl3"><a href="#42">4.2 价值主张</a></li><li class="lvl3"><a href="#43">4.3 收入模式</a></li><li class="lvl3"><a href="#44">4.4 定价假设（明确标注为假设，尚未市场验证）</a></li><li class="lvl3"><a href="#45">4.5 成本结构</a></li><li class="lvl3"><a href="#46">4.6 单位经济测算（示例，含全部假设）</a></li><li class="lvl3"><a href="#47">4.7 获客渠道</a></li><li class="lvl3"><a href="#48">4.8 竞争壁垒</a></li><li class="lvl3"><a href="#49">4.9 里程碑（假设时间表）</a></li><li class="lvl3"><a href="#410">4.10 风险与对策</a></li></ol></li><li class="lvl2"><a href="#_5">五、团队介绍</a><ol><li class="lvl3"><a href="#51">5.1 团队构成</a></li><li class="lvl3"><a href="#52">5.2 分工与能力覆盖</a></li><li class="lvl3"><a href="#53">5.3 工程规范与协作方式</a></li><li class="lvl3"><a href="#54">5.4 外部支持</a></li><li class="lvl3"><a href="#55">5.5 单人团队的风险与缓解</a></li></ol></li><li class="lvl2"><a href="#_6">六、附录：数据来源与口径说明</a><ol><li class="lvl3"><a href="#61">6.1 公开调研数据来源</a></li><li class="lvl3"><a href="#62">6.2 本项目的实测数据来源</a></li><li class="lvl3"><a href="#63">6.3 商业测算口径</a></li></ol></li></ol></div><h2 id="_1">一、项目概述</h2>
+<h3 id="11">1.1 一句话定位</h3>
+<p><strong>织流 AgentWeave 是一个“以验证为中心”的多智能体编排、调度与可信验证平台：它不只让 Agent 跑起来，还要让每一次运行都可解释、可复现、可审计。</strong></p>
+<p>它不是又一个通用 Agent 应用市场，也不是聊天式工作流的包装；它解决的是 Agent 从演示走向交付时最容易被跳过的那一段工程问题——谁来决定任务派给谁、结果凭什么可信、失败之后系统如何自我修复。</p>
+<h3 id="12-agent-demo">1.2 背景：Agent 的“Demo 天花板”来自四类工程缺口</h3>
+<p>2025 年以来，大模型 Agent 的演示能力快速提升，但“演示能跑”与“业务敢用”之间仍有一道明显鸿沟。公开调研反复指向同一组事实：企业级 Agent 项目的失败率显著高于传统软件项目，多数生成式 AI 试点无法在财务口径上证明价值，原因往往不是模型不够强，而是工程约束缺位（相关公开数据见 6.1 来源说明）。我们把这类缺口收敛为四类：</p>
+<table>
+<thead>
+<tr>
+<th>缺口</th>
+<th>典型表现</th>
+<th>后果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>编排缺口</strong></td>
+<td>流程写死在代码或提示词里，改一个步骤要改代码</td>
+<td>流程不可版本化、不可审阅、无法由业务人员调整</td>
+</tr>
+<tr>
+<td><strong>调度缺口</strong></td>
+<td>任务分派靠串行、轮询或人工指定，缺能力画像与负载视角</td>
+<td>慢任务拖垮整条链路，关键任务被饿死，决策无法解释</td>
+</tr>
+<tr>
+<td><strong>验证缺口</strong></td>
+<td>结果由模型自评“我做对了”，或仅做字符串/格式检查</td>
+<td>错误结论带着“看起来专业”的格式进入交付物，错误被放大</td>
+</tr>
+<tr>
+<td><strong>自愈缺口</strong></td>
+<td>失败即终止，或无限重试烧预算</td>
+<td>系统无法收敛，成本失控，失败原因无法沉淀</td>
+</tr>
+</tbody>
+</table>
+<h3 id="13">1.3 我们做了什么</h3>
+<p>围绕上述四类缺口，织流 AgentWeave 给出四件对应的工程能力，并全部做成可运行代码而非概念：</p>
+<ol>
+<li><strong>可编排</strong>：把工作流从代码里抽出来，变成声明式 JSON DSL（DAG + 节点类型 + 边条件），支持条件表达式、子工作流、人工闸门，流程本身可版本化、可审阅、可被引擎解释执行。</li>
+<li><strong>可调度</strong>：把“任务派给哪个 Agent”做成可解释的一等对象，内置五种调度策略（FIFO / 优先级 / 轮询 / 能力匹配 / 负载感知 / 自适应），每次决策输出分数、理由与负载快照，可按运行指定策略且策略之间互不污染。</li>
+<li><strong>可验证</strong>：把验证提升为与执行同级的流水线，内置 13 个检查器（结构、空值、数值真值、代码复算、交叉验证、统计检验、LLM 评审、产物存在性、数据质量、留出稳定性、多重共线性、显著性、不确定性），按威胁模型分四层漏斗执行，输出带权重与证据的置信度。</li>
+<li><strong>能自愈</strong>：把“检查—修复—再检查”做成 PDCA 自循环，带轮次预算与收敛判据；验证不通过时生成结构化反馈，驱动修复节点重跑，而非简单重试。</li>
+</ol>
+<p>此外，平台提供事件总线（SSE 实时推送）、运行产物归档、可复现基准脚本与离线演示回放，使一次运行从“黑箱输出”变成“可回放的证据链”。</p>
+<h3 id="14">1.4 当前版本的边界（如实说明）</h3>
+<ul>
+<li>默认使用 <strong>Mock 确定性模型</strong>，可离线复现，保证评审在断网环境下也能看到完整链路；接真实模型是可选配置项（OpenAI 兼容接口），<strong>尚未用真实 Key 完成端到端生产验证</strong>。</li>
+<li>演示数据为<strong>按公开公式与固定种子生成的合成数据</strong>（含隐藏真值文件，用于计算误差），不代表任何真实业务数据集。</li>
+<li>部署形态为<strong>单机单进程</strong>（Python 标准库 HTTP 服务 + JSON 文件持久化），面向演示与小规模试点，<strong>尚未做多租户、计量计费与高可用</strong>。</li>
+</ul>
+<p>我们把这些边界写进方案书第十一章与本文 3.6 节，是因为“知道自己的边界在哪”本身就是可交付性的一部分。</p>
+<hr />
+<h2 id="_2">二、解决方案</h2>
+<h3 id="21-agent">2.1 总体思路：把 Agent 系统当生产系统建设</h3>
+<p>项目的核心判断是：<strong>多智能体系统的主要矛盾已从“模型能不能完成任务”转移到“工程上能不能管住任务”。</strong> 因此我们把控制面（编排、调度、验证、循环、可观测）与执行面（模型调用、工具调用）分离，控制面用纯 Python 标准库实现且可单独测试，执行面通过统一 LLM 接口与工具注册表接入，二者以事件总线解耦。</p>
+<h3 id="22">2.2 六层架构</h3>
+<table>
+<thead>
+<tr>
+<th>层次</th>
+<th>职责</th>
+<th>关键模块</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>接入层</td>
+<td>HTTP API、SSE 事件流、静态前端</td>
+<td><code>agentweave/api/</code></td>
+</tr>
+<tr>
+<td>编排层</td>
+<td>工作流 DSL 解析、DAG 校验、节点执行、条件求值</td>
+<td><code>agentweave/workflow/</code></td>
+</tr>
+<tr>
+<td>调度层</td>
+<td>能力画像、负载均衡、优先级、策略决策与解释</td>
+<td><code>agentweave/scheduler/</code></td>
+</tr>
+<tr>
+<td>执行层</td>
+<td>Agent 角色、工具注册表、LLM 适配（Mock / OpenAI 兼容）</td>
+<td><code>agentweave/agents/</code>、<code>agentweave/tools/</code>、<code>agentweave/llm/</code></td>
+</tr>
+<tr>
+<td>验证层</td>
+<td>检查器库、五层漏斗、置信度合成、反馈生成</td>
+<td><code>agentweave/verify/</code></td>
+</tr>
+<tr>
+<td>支撑层</td>
+<td>运行状态、事件总线、持久化、配置与安全</td>
+<td><code>agentweave/runtime/</code>、<code>agentweave/core/</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="23-agent">2.3 七个 Agent 的岗位化定义</h3>
+<p>七个角色不是“人格扮演”，而是按“输入契约—输出契约—工具权限—成功判据”定义的岗位，每个岗位都有明确的权限边界：</p>
+<table>
+<thead>
+<tr>
+<th>角色</th>
+<th>职责</th>
+<th>典型工具权限</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>规划者 Planner</td>
+<td>拆解任务、生成执行计划</td>
+<td>只读：数据概览</td>
+</tr>
+<tr>
+<td>数据工程师 DataEngineer</td>
+<td>数据清洗、质量检查</td>
+<td>读写：工作区数据</td>
+</tr>
+<tr>
+<td>统计师 Statistician</td>
+<td>统计建模与显著性判断</td>
+<td>执行：受控代码沙箱</td>
+</tr>
+<tr>
+<td>制图师 Visualizer</td>
+<td>生成图表产物</td>
+<td>写：artifacts</td>
+</tr>
+<tr>
+<td>评审者 Critic</td>
+<td>交叉验证、挑错</td>
+<td>只读全部产物</td>
+</tr>
+<tr>
+<td>校验者 Verifier</td>
+<td>执行检查器、合成置信度</td>
+<td>只读全部产物</td>
+</tr>
+<tr>
+<td>写作 Agent Writer</td>
+<td>汇总证据、生成报告</td>
+<td>写：report.md</td>
+</tr>
+</tbody>
+</table>
+<h3 id="24-dsl">2.4 编排：声明式工作流 DSL</h3>
+<p>工作流是一份 JSON：<code>nodes</code> 定义任务节点（类型、Agent、输入映射、超时、重试），<code>edges</code> 定义依赖与条件，<code>policies</code> 定义预算与闸门。引擎负责拓扑校验、环检测、就绪节点推进、条件求值与失败传播。条件表达式不直接 <code>eval</code>，而是解析为受限 AST 后按白名单求值，杜绝表达式注入。人工闸门节点让关键步骤可以暂停等待人工确认，把“人在环路”做成流程的一部分而不是补丁。</p>
+<h3 id="25">2.5 调度：可被追问的决策</h3>
+<p>调度器对每个就绪节点计算综合得分：能力匹配度、当前负载、优先级、历史成功率（自适应权重）。决策不仅产出“派给谁”，还产出“为什么”：各分项得分、权重、候选快照与理由字符串，随运行事件与报告一起落盘。五种策略可按运行指定；为避免并发运行互相串改策略，每次运行 fork 一个独立调度器——<strong>策略隔离、统计共享</strong>，这样自适应学习的历史成功率能跨运行累积，而不会被单次运行私有化。</p>
+<h3 id="26">2.6 验证：换一种独立方式还能算出同一个结果</h3>
+<p>我们的验证哲学是：<strong>可信不是“模型说它对”，而是“换一种独立方式还能算出同一个结果”。</strong> 13 个检查器按五层执行：</p>
+<ol>
+<li><strong>L1 结构与数据层</strong>：schema 契约校验、关键文本非空、产物存在性、数据集质量（行数/缺失/重复/离群）；</li>
+<li><strong>L2 真值层</strong>：输出指标与数据集生成时已知的真值逐项比对，相对误差不超过容差（默认 15%）；</li>
+<li><strong>L3 复算层</strong>：在子进程沙箱里独立重跑分析代码，比对重算指标与申报指标；</li>
+<li><strong>L4 交叉层</strong>：由另一 Agent 不看申报结论、独立复算后比对，作为硬性通过条件；</li>
+<li><strong>L5 统计与稳健层</strong>：显著性、置信区间、留出稳定性、多重共线性、统计阈值，以及可选的 LLM 结构化评审。</li>
+</ol>
+<p>每个检查器返回通过/失败/证据，聚合为置信度；失败项生成结构化反馈（缺什么、差多少、建议怎么改），直接驱动自循环的修复节点。</p>
+<h3 id="27-pdca">2.7 自循环：带预算的 PDCA</h3>
+<p>自循环以“验证不通过”为触发条件，以轮次预算与收敛判据为边界：每轮执行修复节点、重跑验证、比较置信度增益，达到阈值或耗尽预算即停。这样系统既不会“一轮就放弃”，也不会“无限烧预算”，且每一轮的决策与证据都留在事件流里。</p>
+<h3 id="28">2.8 可观测性与运行形态</h3>
+<p>一次运行产生完整证据链：事件流（含每个节点的开始/结束/重试/失败、调度决策、验证结果、循环轮次）、产物目录（分析代码、图表、报告）、指标文件。前端提供编排台、运行看板、验证报告、系统配置等页面，运行过程通过 SSE 实时推送；同一运行可导出离线回放 HTML，便于评审在无环境时查看。</p>
+<h3 id="29">2.9 差异化定位</h3>
+<table>
+<thead>
+<tr>
+<th>对比对象</th>
+<th>它们的强项</th>
+<th>我们的差异</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>LobeHub / Dify / Coze 等通用平台</td>
+<td>生态、插件市场、低门槛搭建</td>
+<td>我们不争通用编排生态，专注“执行后的可信与可审计”，验证层与调度解释是核心而非附件</td>
+</tr>
+<tr>
+<td>DeepSeek Harness 等 Agent 运行时</td>
+<td>工具调用与运行时能力</td>
+<td>我们补的是编排之上的调度决策与多检查器验证漏斗，且强调零依赖可复现</td>
+</tr>
+<tr>
+<td>自研脚本 + 提示词</td>
+<td>灵活、成本低</td>
+<td>流程不可版本化、无调度、无验证、无自愈，无法回答“为什么可信”</td>
+</tr>
+</tbody>
+</table>
+<p>一句话：<strong>别人做“让 Agent 能干更多事”，我们做“让 Agent 干的事可被验收”。</strong></p>
+<hr />
+<h2 id="_3">三、应用成效</h2>
+<h3 id="31">3.1 基准实测：三模式对照</h3>
+<p>项目内置基准脚本，对同一任务用三种模式各跑 5 次，指标原始数据在 <code>data/benchmark.json</code>，可一键复现（<code>py -3.14 scripts/benchmark.py</code>）。在一次 12 节点的 AI4S 空气质量分析任务上：</p>
+<table>
+<thead>
+<tr>
+<th>模式</th>
+<th>平均耗时</th>
+<th>Token 消耗</th>
+<th>置信度</th>
+<th>关键系数误差</th>
+<th>验证通过率</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A 单 Agent，无验证</td>
+<td>0.157 s</td>
+<td>5,845</td>
+<td>0.873</td>
+<td>34.38%</td>
+<td>0%</td>
+</tr>
+<tr>
+<td>B 多 Agent 并行，无验证</td>
+<td>0.386 s</td>
+<td>21,309</td>
+<td>0.890</td>
+<td>34.38%</td>
+<td>0%</td>
+</tr>
+<tr>
+<td>C 多 Agent + 验证自循环</td>
+<td>1.031 s</td>
+<td>27,190</td>
+<td>0.930</td>
+<td>7.14%</td>
+<td>100%</td>
+</tr>
+</tbody>
+</table>
+<p><strong>读数方式</strong>：模式 A/B 的“置信度 0.873/0.890”是模型自评口径——看起来很高，但关键系数误差 34.38%，说明<strong>自评置信度与真实正确性严重脱节</strong>；模式 C 通过独立复算与交叉验证把误差压到 7.14%，验证通过率从 0 提升到 100%。这正是本项目要证明的事：加验证不是加开销，而是把“看起来对”变成“算出来对”。</p>
+<blockquote>
+<p>口径说明：以上为 Mock 确定性模型下的实测值，用于验证机制流程与相对差异；真实模型下的绝对值会不同，且受非确定性影响，需在真实环境中重新测量（见 3.6）。</p>
+</blockquote>
+<h3 id="32">3.2 场景覆盖</h3>
+<p>仓库内置 10 个行业场景工作流（8 个单目标 15 节点 + 2 个多目标 16 节点），覆盖 AI4S 科研分析、公共健康风险、制造质量根因、金融风控指标、能源负荷、教育评估、供应链、环境监测、医疗指标、市场调研等方向。批量回归命令 <code>py -3.14 scripts/run_scenario.py --all --json</code> 全部通过；其中公共健康场景首轮有两项检查失败、自循环第二轮通过，是<strong>验证机制按设计生效</strong>的直接证据，而非缺陷。</p>
+<h3 id="33">3.3 工程交付成效</h3>
+<table>
+<thead>
+<tr>
+<th>维度</th>
+<th>结果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>自动化测试</td>
+<td>206 个用例全部通过（12 个测试文件，含真实平台、HTTP 层、并发突发、SSE、验证器单测）</td>
+</tr>
+<tr>
+<td>可复现性</td>
+<td>零第三方运行时依赖，断网可跑；<code>run_demo.py</code> 约 1 秒完成完整链路（含自循环）</td>
+</tr>
+<tr>
+<td>可评审性</td>
+<td>契约文档（CONTRACTS.md）、方案书、基准数据、运行产物、离线回放齐全</td>
+</tr>
+<tr>
+<td>接口健壮性</td>
+<td>路径穿越、坏 JSON、非法策略、未知工作流、并发超限等边界均有明确状态码与回归用例</td>
+</tr>
+<tr>
+<td>可观测性</td>
+<td>事件流 + 产物 + 报告三层证据；SSE 实时推送与回放均可关闭、不泄漏线程</td>
+</tr>
+</tbody>
+</table>
+<h3 id="34">3.4 成本与效率（测算，非实测商用数据）</h3>
+<p>以“一份需要统计建模与结论复核的分析报告”为单位做粗算（假设参数见 4.6，均为估算而非实测账单）：</p>
+<ul>
+<li>人工方式：具备统计背景的分析人员 2–6 小时，按综合人力成本折算约 ¥320–¥1,200/份；</li>
+<li>本平台方式：一次运行约 2.7 万 Token（Mock 口径），接入真实模型后按主流 API 价格估算约 ¥13–¥25/份，另加人工审阅 10–20 分钟；</li>
+<li>关键差异不在单份成本，而在<strong>可复核性</strong>：人工报告的错误往往无人复算，而平台把复算、交叉验证、统计检验做成必过项，把“事后返工”成本前移。</li>
+</ul>
+<h3 id="35">3.5 用户价值的三层结构</h3>
+<ol>
+<li><strong>工程复用层</strong>：把编排、调度、验证、自循环做成可复用的平台能力，新场景只需写工作流 JSON 与检查项配置，不必重写框架。</li>
+<li><strong>结果可信层</strong>：用独立复算与交叉验证把“模型自评”替换为“多源一致”，直接降低错误结论外流风险（基准中系数误差 34.38%→7.14%）。</li>
+<li><strong>合规审计层</strong>：事件流、调度理由、验证证据、产物归档构成可追溯证据链，可支撑内部评审与外部审计对“结论怎么来的”的追问。</li>
+</ol>
+<h3 id="36">3.6 尚未验证的部分（必须说清楚）</h3>
+<ul>
+<li><strong>真实大模型链路</strong>：OpenAI 兼容适配器已实现并有单元测试，但未用真实 Key 完成端到端生产运行；真实模型下的非确定性、超时、限流、成本波动尚未测量。</li>
+<li><strong>真实业务数据</strong>：全部演示数据为合成数据；对真实数据的质量分布、异常模式、口径差异尚未验证。</li>
+<li><strong>规模与长稳</strong>：仅验证了单机 8 路并发突发的准入正确性，未做长时间负载、内存增长、数百次运行的持久化压力测试。</li>
+<li><strong>产品化能力</strong>：无多租户隔离、计量计费、SLA、告警与备份策略，当前形态适合试点与演示，不适合直接对外提供 SaaS。</li>
+</ul>
+<hr />
+<h2 id="_4">四、商业模式</h2>
+<h3 id="41">4.1 客户与付费方</h3>
+<p>我们不与通用 Agent 平台争夺“人人都能搭 Agent”的市场，而是选择<strong>“必须为分析结论负责”的客户</strong>作为切入点：</p>
+<table>
+<thead>
+<tr>
+<th>客户群</th>
+<th>典型场景</th>
+<th>付费方</th>
+<th>切入理由</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>高校 / 科研院所课题组（首选）</td>
+<td>数据清洗、统计建模、结论复核、论文/报告数据一致性检查</td>
+<td>课题组经费、学院信息化预算</td>
+<td>对“可复现、可审计”有刚性要求；预算小额、决策链短；与团队所在院校有天然接触面</td>
+</tr>
+<tr>
+<td>制造企业研发 / 质量部门</td>
+<td>质量根因分析、工艺参数与缺陷关联、检测报告生成</td>
+<td>质量或研发部门预算</td>
+<td>报告需要可追溯证据链；重复性高，适合模板化场景包</td>
+</tr>
+<tr>
+<td>第三方检测 / 咨询机构</td>
+<td>多源数据汇总、指标核算、报告批量生成与自检</td>
+<td>机构运营预算</td>
+<td>报告量大、格式固定、错误代价高（返工与信誉损失）</td>
+</tr>
+</tbody>
+</table>
+<h3 id="42">4.2 价值主张</h3>
+<p>对客户的一句话：<strong>“同样的分析，我们能给出结论，也能给出结论的证据链。”</strong></p>
+<p>可量化收益（以报告类工作计，均为测算口径）：</p>
+<ul>
+<li>单份报告的机器成本约 ¥13–¥25（真实模型价，按 2.7 万 Token 估算），相对人工 2–6 小时的 ¥320–¥1,200 显著下降；</li>
+<li>复核环节从“人工抽查”变为“机器必检 + 人工终审”，把主要返工点前移，减少返工工时；</li>
+<li>结论留痕：调度理由、验证证据、产物版本可追溯，降低审计与复盘成本。</li>
+</ul>
+<h3 id="43">4.3 收入模式</h3>
+<p>采用“软件授权 + 场景包 + 服务”的组合，避免单一项目制：</p>
+<table>
+<thead>
+<tr>
+<th>收入类型</th>
+<th>形态</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>私有化部署授权</td>
+<td>按年授权（单机 / 部门级）</td>
+<td>客户数据不出内网，符合科研与制造客户的安全诉求；含平台核心与基础检查器库</td>
+</tr>
+<tr>
+<td>场景包订阅</td>
+<td>按场景 / 按年</td>
+<td>面向具体业务的场景模板：工作流 JSON + 检查项配置 + 数据契约 + 报告模板</td>
+</tr>
+<tr>
+<td>实施与定制服务</td>
+<td>项目制</td>
+<td>真实数据接入、口径对齐、检查器定制、部署与培训</td>
+</tr>
+<tr>
+<td>托管 SaaS（远期）</td>
+<td>订阅制</td>
+<td>在多租户、计量、SLA 能力具备后提供，不作为近期收入来源</td>
+</tr>
+</tbody>
+</table>
+<h3 id="44">4.4 定价假设（明确标注为假设，尚未市场验证）</h3>
+<table>
+<thead>
+<tr>
+<th>项目</th>
+<th>假设价格</th>
+<th>依据与说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>单机私有化授权</td>
+<td>¥2–5 万 / 年</td>
+<td>对标国内同类数据分析/低代码工具的部门级授权区间，属估算</td>
+</tr>
+<tr>
+<td>场景包</td>
+<td>¥1–3 万 / 场景 / 年</td>
+<td>含模板、检查项与一次口径对齐服务</td>
+</tr>
+<tr>
+<td>实施服务</td>
+<td>¥1,000–1,500 / 人天</td>
+<td>按本地软件实施服务常见区间估算</td>
+</tr>
+<tr>
+<td>托管版（远期）</td>
+<td>¥300–800 / 席位 / 月</td>
+<td>待产品化能力具备后再验证</td>
+</tr>
+</tbody>
+</table>
+<p><strong>定价原则</strong>：先卖“可审计的报告能力”（价值可被算清），再卖“平台”（复用价值更高但决策链更长）；首单以场景包 + 实施切入，验证价值后再扩授权。</p>
+<h3 id="45">4.5 成本结构</h3>
+<ul>
+<li><strong>研发成本为主</strong>：平台与检查器库的持续研发是主要投入；当前为单人团队，边际人力成本低但不具备规模化交付能力。</li>
+<li><strong>交付成本低</strong>：零第三方运行时依赖、单机部署，客户侧硬件要求低（普通办公电脑/服务器即可）。</li>
+<li><strong>模型调用成本随用量线性增长</strong>：真实模型下的 Token 成本是主要变动成本；可通过小模型路由、结果缓存、按需验证深度控制。</li>
+<li><strong>服务成本</strong>：实施与口径对齐需要领域人力，是早期毛利率的主要拖累项。</li>
+</ul>
+<h3 id="46">4.6 单位经济测算（示例，含全部假设）</h3>
+<p>以“客户一年 200 份分析报告”的小型部门为例：</p>
+<table>
+<thead>
+<tr>
+<th>项目</th>
+<th>测算</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>人工基线</td>
+<td>200 份 × ¥600（中位估算）= ¥12 万 / 年</td>
+</tr>
+<tr>
+<td>平台授权</td>
+<td>¥3 万 / 年（假设）</td>
+</tr>
+<tr>
+<td>模型调用</td>
+<td>200 份 × ¥20 = ¥4,000 / 年</td>
+</tr>
+<tr>
+<td>人工终审</td>
+<td>200 份 × 0.3 小时 × ¥200 = ¥1.2 万 / 年</td>
+</tr>
+<tr>
+<td>客户侧总成本</td>
+<td>约 ¥4.6 万 / 年，相对基线节省约 ¥7.4 万 / 年（约 62%）</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>以上为客户侧视角的粗略测算，参数均为假设值，不构成收益承诺；真实节省取决于报告复杂度、模型价格与人工审阅强度。</p>
+</blockquote>
+<h3 id="47">4.7 获客渠道</h3>
+<ol>
+<li><strong>校企合作（近期主渠道）</strong>：以院校课题组为第一批试点，用真实（脱敏）数据验证检查器与场景包，形成可公开的案例与评测记录。</li>
+<li><strong>行业集成商 / 咨询机构（中期）</strong>：把平台作为其报告生产线的质量层，按项目分成或授权转售，借助其客户关系降低获客成本。</li>
+<li><strong>开源引流（长期）</strong>：仓库以可复现、可评审形态开放（代码与文档齐全），以“可验证的 Agent 工程实践”建立技术信任，再将企业版能力（场景包、检查器定制、部署支持）商业化。</li>
+<li><strong>竞赛与学术曝光</strong>：通过本赛事、院校交流与论文/技术分享触达目标客户群。</li>
+</ol>
+<h3 id="48">4.8 竞争壁垒</h3>
+<ul>
+<li><strong>机制壁垒</strong>：13 个检查器 + 五层验证漏斗 + 结构化反馈驱动的自循环，是一套被测试与基准固化的工程组合，而非提示词技巧；</li>
+<li><strong>契约壁垒</strong>：Agent 岗位定义、工作流 DSL、事件契约、产物规范均已文档化（CONTRACTS.md），可被客户与集成商按其口径扩展，迁移成本随使用加深；</li>
+<li><strong>评测壁垒</strong>：可复现的 A/B/C 基准与 10 场景回归，使“验证是否真的有效”可被第三方复算，而不是自说自话；</li>
+<li><strong>审计壁垒</strong>：调度理由与验证证据全量留痕，契合科研与制造客户对“结论怎么来的”的合规诉求。</li>
+</ul>
+<h3 id="49">4.9 里程碑（假设时间表）</h3>
+<table>
+<thead>
+<tr>
+<th>阶段</th>
+<th>目标</th>
+<th>关键验证指标</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0–3 个月</td>
+<td>接入真实模型完成端到端验证；完成 1–2 个校企试点场景</td>
+<td>真实模型下验证通过率、单份报告成本、试点方是否愿意续用</td>
+</tr>
+<tr>
+<td>3–6 个月</td>
+<td>沉淀 3–5 个场景包；发布可复现评测报告</td>
+<td>场景包复用率、试点转付费比例</td>
+</tr>
+<tr>
+<td>6–12 个月</td>
+<td>具备多租户与计量能力；与 1–2 家集成商合作</td>
+<td>付费客户数、ARR、交付人天占比</td>
+</tr>
+</tbody>
+</table>
+<h3 id="410">4.10 风险与对策</h3>
+<table>
+<thead>
+<tr>
+<th>风险</th>
+<th>影响</th>
+<th>对策</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>真实模型非确定性与成本波动</td>
+<td>验证结果不稳定、成本不可控</td>
+<td>结果缓存、小模型路由、验证深度分级、失败回退 Mock 并标注口径</td>
+</tr>
+<tr>
+<td>客户获取慢、预算小</td>
+<td>现金流与验证样本不足</td>
+<td>先做校企试点换取真实数据与案例，再向企业复制；以服务收入养产品</td>
+</tr>
+<tr>
+<td>单人团队交付能力有限</td>
+<td>无法同时支撑多客户实施</td>
+<td>场景包标准化、文档化交付、与集成商分工（我方做产品，集成商做现场）</td>
+</tr>
+<tr>
+<td>数据合规与保密</td>
+<td>客户不愿提供真实数据</td>
+<td>私有化部署、数据不出内网、脱敏与最小化采集、审计日志</td>
+</tr>
+<tr>
+<td>通用平台向下兼容验证能力</td>
+<td>差异化被稀释</td>
+<td>深化“可审计证据链”与行业检查器库，绑定客户口径而非通用功能</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="_5">五、团队介绍</h2>
+<h3 id="51">5.1 团队构成</h3>
+<p>本作品由<strong>张康博</strong>独立完成，<strong>徐宇丰</strong>老师担任指导教师。</p>
+<table>
+<thead>
+<tr>
+<th>姓名</th>
+<th>角色</th>
+<th>主要职责</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>张康博</td>
+<td>队长 / 项目负责人</td>
+<td>需求与选题、总体架构设计、核心模块开发（编排引擎、调度器、验证器、自循环、HTTP 服务与前端）、测试与基准、文档与演示材料、答辩</td>
+</tr>
+<tr>
+<td>徐宇丰</td>
+<td>指导教师</td>
+<td>选题方向与技术路线把关、工程规范与文档评审、演示与答辩指导、院校资源协调</td>
+</tr>
+</tbody>
+</table>
+<h3 id="52">5.2 分工与能力覆盖</h3>
+<p>单人团队的特点是：<strong>决策链极短、上下文完整，但必须用工程手段替代人力冗余。</strong> 我们的做法是把“多人协作需要的接口与约束”显式写进仓库：</p>
+<table>
+<thead>
+<tr>
+<th>能力域</th>
+<th>承担方式</th>
+<th>落地产物</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>架构与设计</td>
+<td>张康博</td>
+<td>方案书第 3–7 章、CONTRACTS.md</td>
+</tr>
+<tr>
+<td>核心开发</td>
+<td>张康博</td>
+<td><code>agentweave/</code> 15,000+ 行标准库代码，六层架构</td>
+</tr>
+<tr>
+<td>质量保障</td>
+<td>张康博 + 自动化</td>
+<td>206 个测试用例、10 场景回归、基准脚本、接口探针</td>
+</tr>
+<tr>
+<td>前端与演示</td>
+<td>张康博</td>
+<td>五页 Web 控制台、离线回放 HTML、演示手册与视频脚本</td>
+</tr>
+<tr>
+<td>方向把关</td>
+<td>徐宇丰</td>
+<td>选题与路线评审、文档与答辩指导</td>
+</tr>
+</tbody>
+</table>
+<h3 id="53">5.3 工程规范与协作方式</h3>
+<ul>
+<li><strong>契约先行</strong>：模块之间以类型、函数签名、事件 payload 契约连接，改动契约需同步 CONTRACTS.md 与测试；</li>
+<li><strong>测试即验收</strong>：任何修复/新增能力都必须带回归用例，全量 206 用例通过才算完成；</li>
+<li><strong>文档与实现同源</strong>：方案书中的行数、测试数、基准值均来自脚本实测，过期数字会被同步校正；</li>
+<li><strong>AI 使用如实披露</strong>：AI 编程助手用于样板代码、测试用例提示与文档初稿，架构决策、契约定义与最终验收由人完成（详见方案书第十三章）。</li>
+</ul>
+<h3 id="54">5.4 外部支持</h3>
+<ul>
+<li>石家庄信息工程职业学院提供选题环境与基础设备支持；</li>
+<li>指导教师负责方向把关与评审沟通；</li>
+<li>后续将引入行业侧顾问（科研/制造数据分析方向）参与场景口径对齐。</li>
+</ul>
+<h3 id="55">5.5 单人团队的风险与缓解</h3>
+<table>
+<thead>
+<tr>
+<th>风险</th>
+<th>缓解措施</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>单点依赖（人员不可用即项目停摆）</td>
+<td>代码、契约、部署与演示文档全部入库，可交接；零依赖设计降低接手门槛</td>
+</tr>
+<tr>
+<td>视野单一（缺少交叉评审）</td>
+<td>用自动化测试、基准与外部公开数据做“机器评审”；主动请指导教师评审</td>
+</tr>
+<tr>
+<td>交付产能有限</td>
+<td>场景包标准化，与集成商分工；先小步试点再扩张</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="_6">六、附录：数据来源与口径说明</h2>
+<h3 id="61">6.1 公开调研数据来源</h3>
+<p>本文 1.2 节引用的行业趋势判断来自 2025 年公开调研报道（Gartner 关于企业应用内嵌任务型 Agent 比例的预测、S&amp;P Global 关于企业放弃 AI 项目比例的调查、MIT NANDA 关于生成式 AI 试点财务影响的报告等），用于说明问题背景，不代表本项目对市场的定量承诺；具体数值以原始报告为准。</p>
+<h3 id="62">6.2 本项目的实测数据来源</h3>
+<table>
+<thead>
+<tr>
+<th>数据</th>
+<th>来源</th>
+<th>复现命令</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>三模式基准（耗时/Token/置信度/系数误差/通过率）</td>
+<td><code>data/benchmark.json</code></td>
+<td><code>py -3.14 scripts/benchmark.py</code></td>
+</tr>
+<tr>
+<td>206 个测试用例</td>
+<td><code>tests/</code></td>
+<td><code>py -3.14 -m unittest discover -s tests -t .</code></td>
+</tr>
+<tr>
+<td>10 场景回归</td>
+<td><code>scenarios/</code></td>
+<td><code>py -3.14 scripts/run_scenario.py --all --json</code></td>
+</tr>
+<tr>
+<td>端到端链路与耗时</td>
+<td><code>data/runs/&lt;run_id&gt;/</code></td>
+<td><code>py -3.14 scripts/run_demo.py --json</code></td>
+</tr>
+<tr>
+<td>代码规模与测试统计</td>
+<td>方案书 8.2 / 9.2 表</td>
+<td>脚本统计，见方案书说明</td>
+</tr>
+</tbody>
+</table>
+<h3 id="63">6.3 商业测算口径</h3>
+<p>第四章的定价、成本、单位经济均为<strong>基于公开区间与合理假设的测算</strong>，未经过真实客户报价与成交验证；正式对外时需以试点数据重新校准。我们选择把这些假设写明，而不是包装成“已验证的商业成果”。</p>
+</body>
+</html>

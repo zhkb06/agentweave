@@ -1,0 +1,53 @@
+{
+  "server": {
+    "host": "127.0.0.1",
+    "port": 8765,
+    "auto_open_browser": false,
+    "auth_token": ""
+  },
+  "llm": {
+    "provider": "mock",
+    "base_url": "https://open.bigmodel.cn/api/paas/v4",
+    "model": "glm-4-flash",
+    "api_key_env": "AGENTWEAVE_API_KEY",
+    "timeout_s": 120,
+    "max_retries": 2,
+    "router": {
+      "planner": "smart",
+      "statistician": "smart",
+      "verifier": "smart",
+      "critic": "fast",
+      "default": "fast"
+    }
+  },
+  "router": {
+    "planner": "smart",
+    "statistician": "smart",
+    "verifier": "smart"
+  },
+  "scheduler": {
+    "policy": "adaptive",
+    "max_concurrent_nodes": 4,
+    "agent_max_concurrency": 2
+  },
+  "runtime": {
+    "auto_approve": true,
+    "max_steps": 500,
+    "max_runs": 200,
+    "event_history_limit": 4000,
+    "max_concurrent_runs": 4,
+    "run_history_keep": 50
+  },
+  "mcp_servers": [],
+  "version": 1,
+  "limits": {
+    "run_per_minute": 10,
+    "post_per_minute": 60
+  },
+  "logging": {
+    "level": "INFO",
+    "file": "data/logs/agentweave.log",
+    "max_bytes": 5000000,
+    "backup_count": 3
+  }
+}

@@ -1,0 +1,302 @@
+{
+  "generated_at": "2026-11-10 17:32:05",
+  "policy": "adaptive",
+  "runs": 5,
+  "llm": "mock-deterministic (offline)",
+  "node_count": 12,
+  "summary": {
+    "success_rate": 1.0,
+    "wall_avg_s": 0.716,
+    "wall_p50_s": 0.61,
+    "wall_p95_s": 1.014,
+    "wall_min_s": 0.607,
+    "wall_max_s": 1.014,
+    "events_avg": 83.6,
+    "events_per_s_avg": 121.48,
+    "tokens_avg": 27190.2,
+    "self_loop_avg": 2
+  },
+  "runs_detail": [
+    {
+      "run_id": "run-e23ff317b8",
+      "ok": true,
+      "status": "succeeded",
+      "wall_s": 0.607,
+      "engine_s": 0.604,
+      "nodes": 12,
+      "events": 84,
+      "events_per_s": 138.28,
+      "tokens": 27191,
+      "self_loop_iterations": 2,
+      "verifications": 2,
+      "avg_confidence": 0.93,
+      "success_rate": 1.0
+    },
+    {
+      "run_id": "run-f4aeb2d28a",
+      "ok": true,
+      "status": "succeeded",
+      "wall_s": 0.61,
+      "engine_s": 0.597,
+      "nodes": 12,
+      "events": 84,
+      "events_per_s": 137.79,
+      "tokens": 27191,
+      "self_loop_iterations": 2,
+      "verifications": 2,
+      "avg_confidence": 0.93,
+      "success_rate": 1.0
+    },
+    {
+      "run_id": "run-fdee882d38",
+      "ok": true,
+      "status": "succeeded",
+      "wall_s": 0.61,
+      "engine_s": 0.605,
+      "nodes": 12,
+      "events": 82,
+      "events_per_s": 134.48,
+      "tokens": 27191,
+      "self_loop_iterations": 2,
+      "verifications": 2,
+      "avg_confidence": 0.93,
+      "success_rate": 1.0
+    },
+    {
+      "run_id": "run-372469f811",
+      "ok": true,
+      "status": "succeeded",
+      "wall_s": 0.737,
+      "engine_s": 0.723,
+      "nodes": 12,
+      "events": 84,
+      "events_per_s": 114.0,
+      "tokens": 27189,
+      "self_loop_iterations": 2,
+      "verifications": 2,
+      "avg_confidence": 0.93,
+      "success_rate": 1.0
+    },
+    {
+      "run_id": "run-8c62951037",
+      "ok": true,
+      "status": "succeeded",
+      "wall_s": 1.014,
+      "engine_s": 0.997,
+      "nodes": 12,
+      "events": 84,
+      "events_per_s": 82.86,
+      "tokens": 27189,
+      "self_loop_iterations": 2,
+      "verifications": 2,
+      "avg_confidence": 0.93,
+      "success_rate": 1.0
+    }
+  ],
+  "modes": [
+    {
+      "mode": "A",
+      "runs": 5,
+      "wall_median_s": 0.157,
+      "wall_p50_s": 0.157,
+      "wall_p95_s": 0.163,
+      "tokens_avg": 5845,
+      "confidence_avg": 0.8733,
+      "coef_error_avg": 0.3438,
+      "verified_rate": 0.0,
+      "detail": [
+        {
+          "mode": "A",
+          "run_id": "run-4e187ede76",
+          "status": "succeeded",
+          "wall_s": 0.161,
+          "tokens": 5845,
+          "confidence": 0.8733,
+          "coef_error": 0.3438,
+          "verified": false,
+          "verifications": 0
+        },
+        {
+          "mode": "A",
+          "run_id": "run-b1faadb2c3",
+          "status": "succeeded",
+          "wall_s": 0.163,
+          "tokens": 5845,
+          "confidence": 0.8733,
+          "coef_error": 0.3438,
+          "verified": false,
+          "verifications": 0
+        },
+        {
+          "mode": "A",
+          "run_id": "run-ccc3ffde34",
+          "status": "succeeded",
+          "wall_s": 0.157,
+          "tokens": 5845,
+          "confidence": 0.8733,
+          "coef_error": 0.3438,
+          "verified": false,
+          "verifications": 0
+        },
+        {
+          "mode": "A",
+          "run_id": "run-7f974e09d8",
+          "status": "succeeded",
+          "wall_s": 0.119,
+          "tokens": 5845,
+          "confidence": 0.8733,
+          "coef_error": 0.3438,
+          "verified": false,
+          "verifications": 0
+        },
+        {
+          "mode": "A",
+          "run_id": "run-b3249dfcb4",
+          "status": "succeeded",
+          "wall_s": 0.157,
+          "tokens": 5845,
+          "confidence": 0.8733,
+          "coef_error": 0.3438,
+          "verified": false,
+          "verifications": 0
+        }
+      ]
+    },
+    {
+      "mode": "B",
+      "runs": 5,
+      "wall_median_s": 0.386,
+      "wall_p50_s": 0.386,
+      "wall_p95_s": 0.463,
+      "tokens_avg": 21309,
+      "confidence_avg": 0.89,
+      "coef_error_avg": 0.3438,
+      "verified_rate": 0.0,
+      "detail": [
+        {
+          "mode": "B",
+          "run_id": "run-b8733c25f6",
+          "status": "succeeded",
+          "wall_s": 0.402,
+          "tokens": 21309,
+          "confidence": 0.89,
+          "coef_error": 0.3438,
+          "verified": false,
+          "verifications": 0
+        },
+        {
+          "mode": "B",
+          "run_id": "run-f233a90430",
+          "status": "succeeded",
+          "wall_s": 0.463,
+          "tokens": 21309,
+          "confidence": 0.89,
+          "coef_error": 0.3438,
+          "verified": false,
+          "verifications": 0
+        },
+        {
+          "mode": "B",
+          "run_id": "run-8be0d5e860",
+          "status": "succeeded",
+          "wall_s": 0.26,
+          "tokens": 21309,
+          "confidence": 0.89,
+          "coef_error": 0.3438,
+          "verified": false,
+          "verifications": 0
+        },
+        {
+          "mode": "B",
+          "run_id": "run-a5e7dcf736",
+          "status": "succeeded",
+          "wall_s": 0.337,
+          "tokens": 21309,
+          "confidence": 0.89,
+          "coef_error": 0.3438,
+          "verified": false,
+          "verifications": 0
+        },
+        {
+          "mode": "B",
+          "run_id": "run-1b84ce11ac",
+          "status": "succeeded",
+          "wall_s": 0.386,
+          "tokens": 21309,
+          "confidence": 0.89,
+          "coef_error": 0.3438,
+          "verified": false,
+          "verifications": 0
+        }
+      ]
+    },
+    {
+      "mode": "C",
+      "runs": 5,
+      "wall_median_s": 1.031,
+      "wall_p50_s": 1.031,
+      "wall_p95_s": 1.104,
+      "tokens_avg": 27190.6,
+      "confidence_avg": 0.93,
+      "coef_error_avg": 0.0714,
+      "verified_rate": 1.0,
+      "detail": [
+        {
+          "mode": "C",
+          "run_id": "run-8984cf8f6c",
+          "status": "succeeded",
+          "wall_s": 1.102,
+          "tokens": 27189,
+          "confidence": 0.93,
+          "coef_error": 0.0714,
+          "verified": true,
+          "verifications": 2
+        },
+        {
+          "mode": "C",
+          "run_id": "run-d6054aaf96",
+          "status": "succeeded",
+          "wall_s": 0.995,
+          "tokens": 27191,
+          "confidence": 0.93,
+          "coef_error": 0.0714,
+          "verified": true,
+          "verifications": 2
+        },
+        {
+          "mode": "C",
+          "run_id": "run-34fc16a987",
+          "status": "succeeded",
+          "wall_s": 1.104,
+          "tokens": 27191,
+          "confidence": 0.93,
+          "coef_error": 0.0714,
+          "verified": true,
+          "verifications": 2
+        },
+        {
+          "mode": "C",
+          "run_id": "run-afa1a0808f",
+          "status": "succeeded",
+          "wall_s": 1.031,
+          "tokens": 27191,
+          "confidence": 0.93,
+          "coef_error": 0.0714,
+          "verified": true,
+          "verifications": 2
+        },
+        {
+          "mode": "C",
+          "run_id": "run-28fc263eec",
+          "status": "succeeded",
+          "wall_s": 0.913,
+          "tokens": 27191,
+          "confidence": 0.93,
+          "coef_error": 0.0714,
+          "verified": true,
+          "verifications": 2
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,391 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="织流 AgentWeave —— 多 Agent 可信协作平台，让每个结论都可复算、可追溯。">
+  <title>织流 AgentWeave · 多 Agent 可信协作平台</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230b1020'/%3E%3Cpath d='M8 10h16M8 16h16M8 22h16' stroke='%2338bdf8' stroke-width='2.4' stroke-linecap='round'/%3E%3Cpath d='M12 7v18M20 7v18' stroke='%23a78bfa' stroke-width='2.4' stroke-linecap='round' opacity='.8'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="theme.css">
+</head>
+<body>
+  <div class="app">
+    <!-- 左侧竖排导航 -->
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 32 32"><rect x="2" y="2" width="28" height="28" rx="8" fill="#151a21" stroke="#3a424d"></rect><path d="M10 11h12M10 16h12M10 21h12" stroke="#4f8f88" stroke-width="2" stroke-linecap="round"></path><circle cx="13" cy="11" r="1.8" fill="#e6eaf0"></circle><circle cx="19" cy="16" r="1.8" fill="#e6eaf0"></circle><circle cx="13" cy="21" r="1.8" fill="#e6eaf0"></circle></svg>
+        </div>
+        <div class="brand-text">
+          <strong>织流</strong>
+          <span>AgentWeave</span>
+        </div>
+      </div>
+
+      <nav class="nav" id="nav" aria-label="主导航">
+        <button class="nav-item is-active" data-page="dashboard" type="button">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="4" width="7" height="7" rx="1.6"></rect><rect x="13.5" y="4" width="7" height="7" rx="1.6"></rect><rect x="3.5" y="13" width="7" height="7" rx="1.6"></rect><rect x="13.5" y="13" width="7" height="7" rx="1.6"></rect></svg>
+          <span>总览仪表盘</span>
+        </button>
+        <button class="nav-item" data-page="flow" type="button">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="6" cy="6" r="2.4"></circle><circle cx="18" cy="12" r="2.4"></circle><circle cx="6" cy="18" r="2.4"></circle><path d="M8.4 6.9l7.2 4.2M8.4 17.1l7.2-4.2"></path></svg>
+          <span>流程编排中心</span>
+        </button>
+        <button class="nav-item" data-page="runtime" type="button">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12h4l2.4-6 4.2 12L16 9l1.8 3H21"></path></svg>
+          <span>运行与验证</span>
+        </button>
+        <button class="nav-item" data-page="resources" type="button">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3.2"></circle><path d="M3.4 19c0-3.1 2.5-5.2 5.6-5.2s5.6 2.1 5.6 5.2"></path><circle cx="17.4" cy="9.4" r="2.4"></circle><path d="M16.8 14.6c2.3.4 4 2.1 4 4.4"></path></svg>
+          <span>资源管理中心</span>
+        </button>
+        <button class="nav-item nav-extra" data-page="settings" type="button">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"></path><circle cx="9" cy="7" r="2.2"></circle><circle cx="15" cy="12" r="2.2"></circle><circle cx="8" cy="17" r="2.2"></circle></svg>
+          <span>系统配置</span>
+        </button>
+      </nav>
+
+      <div class="sidebar-foot">
+        <span class="pulse-dot"></span>
+        <span>本地离线演示</span>
+        <span class="version">v1.0.0</span>
+      </div>
+    </aside>
+
+    <div class="main">
+      <!-- 顶部状态条 -->
+      <header class="topbar">
+        <div class="topbar-left">
+          <h2 class="crumb" id="crumb">概览</h2>
+          <span class="race-tag">可编排 · 可验证</span>
+        </div>
+        <div class="topbar-right">
+          <div class="status-chip" id="status-llm" title="当前生效的 LLM Provider">
+            <span class="chip-dot" id="llm-dot"></span>
+            <span class="chip-label">Provider</span>
+            <b id="stat-provider">加载中…</b>
+          </div>
+          <div class="status-chip" title="当前运行中的 run 数">
+            <span class="chip-label">运行中</span>
+            <b id="stat-running">0</b>
+          </div>
+          <div class="status-chip" title="事件总线累计事件数">
+            <span class="chip-label">事件总数</span>
+            <b id="stat-events">0</b>
+          </div>
+          <div class="conn is-ok" id="conn-status">
+            <span class="chip-dot"></span>
+            <span id="conn-text">系统正常</span>
+          </div>
+        </div>
+      </header>
+
+      <main class="content" id="content">
+        <section class="page is-active" id="page-dashboard" data-page="dashboard">
+          <div class="page-head"><div><h1 class="page-title">总览仪表盘</h1><p class="page-sub">系统状态、最近运行与分析场景入口</p></div>
+            <div class="toolbar"><button class="btn btn-primary btn-sm" id="btn-demo" type="button">运行演示场景</button><span class="muted" id="demo-hint"></span></div></div>
+          <div class="metrics" id="overview-metrics">
+            <article class="metric-card">
+              <div class="metric-top"><span>Agent 数</span><span class="metric-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"></circle><path d="M4 21c0-4 3.6-7 8-7s8 3 8 7"></path></svg></span></div>
+              <div class="metric-value" id="metric-agents">–</div>
+              <div class="metric-sub">已注册的协作角色</div>
+            </article>
+            <article class="metric-card">
+              <div class="metric-top"><span>工作流数</span><span class="metric-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6" r="2.5"></circle><circle cx="18" cy="18" r="2.5"></circle><path d="M8 7.5 16 16.5M18 6v4M16 6h4"></path></svg></span></div>
+              <div class="metric-value" id="metric-workflows">–</div>
+              <div class="metric-sub">可编排的 DAG 拓扑</div>
+            </article>
+            <article class="metric-card">
+              <div class="metric-top"><span>运行数</span><span class="metric-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M10 8.5 16 12l-6 3.5z"></path></svg></span></div>
+              <div class="metric-value" id="metric-runs">–</div>
+              <div class="metric-sub" id="metric-runs-sub">累计执行次数</div>
+            </article>
+            <article class="metric-card">
+              <div class="metric-top"><span>平均置信度</span><span class="metric-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><circle cx="12" cy="12" r="4"></circle><circle cx="12" cy="12" r="1"></circle></svg></span></div>
+              <div class="metric-value accent" id="metric-confidence">–</div>
+              <div class="metric-sub" id="metric-confidence-sub">五层验证加权结果</div>
+            </article>
+          </div>
+          <div class="grid-2">
+            <section class="card">
+              <header class="card-head">
+                <h3>最近运行</h3>
+                <a class="link" href="#/monitor">运行监控 →</a>
+              </header>
+              <div class="run-list" id="recent-runs"></div>
+            </section>
+            <section class="card">
+              <header class="card-head">
+                <h3>系统状态</h3>
+                <span class="muted" id="overview-uptime">–</span>
+              </header>
+              <div class="kv-list" id="overview-status"></div>
+              <div class="mini-events" id="overview-events"></div>
+            </section>
+          </div>
+          <div class="wb-panel">
+            <div class="wb-panel-head"><h2>分析场景</h2><div class="wb-chips" id="wb-filters"></div></div>
+            <div class="wb-grid" id="wb-grid"></div>
+            <div class="wb-panel-head"><h2>最近任务</h2><span class="wb-more">点击查看结论</span></div>
+            <div class="wb-list" id="wb-recent"></div>
+          </div>
+        </section>
+
+        <section class="page" id="page-flow" data-page="flow">
+          <div class="page-head"><div><h1 class="page-title">流程编排中心</h1><p class="page-sub">组件库 · DAG 画布 · 节点配置</p></div><div class="toolbar">
+              <label class="select-wrap">
+                <span>工作流</span>
+                <select id="wf-select"></select>
+              </label>
+              <button class="btn btn-ghost btn-sm" id="dag-zoom-out" type="button" title="缩小">−</button>
+              <button class="btn btn-ghost btn-sm" id="dag-zoom-in" type="button" title="放大">＋</button>
+              <button class="btn btn-ghost btn-sm" id="dag-fit" type="button" title="适应画布">适应画布</button>
+            </div></div>
+          <div class="flow-layout">
+                    <aside class="palette">
+          <div class="palette-head"><h3>节点组件库</h3><span class="muted">拖入画布</span></div>
+          <div class="palette-group"><h4>智能体</h4>
+            <div class="palette-item" draggable="true"><span class="pi-dot agent"></span><div><b>任务规划</b><em>planner</em></div></div>
+            <div class="palette-item" draggable="true"><span class="pi-dot agent"></span><div><b>方法调研</b><em>researcher</em></div></div>
+            <div class="palette-item" draggable="true"><span class="pi-dot agent"></span><div><b>统计建模</b><em>statistician</em></div></div>
+            <div class="palette-item" draggable="true"><span class="pi-dot agent"></span><div><b>报告撰写</b><em>writer</em></div></div>
+          </div>
+          <div class="palette-group"><h4>工具</h4>
+            <div class="palette-item" draggable="true"><span class="pi-dot tool"></span><div><b>数据扫描</b><em>dataset_stats</em></div></div>
+            <div class="palette-item" draggable="true"><span class="pi-dot tool"></span><div><b>代码执行</b><em>python_exec</em></div></div>
+          </div>
+          <div class="palette-group"><h4>验证</h4>
+            <div class="palette-item" draggable="true"><span class="pi-dot verify"></span><div><b>五层验证</b><em>verify</em></div></div>
+            <div class="palette-item" draggable="true"><span class="pi-dot loop"></span><div><b>PDCA 自循环</b><em>repair</em></div></div>
+          </div>
+          <div class="palette-group"><h4>门禁</h4>
+            <div class="palette-item" draggable="true"><span class="pi-dot gate"></span><div><b>人工闸门</b><em>human_gate</em></div></div>
+          </div>
+        </aside>
+            <div class="orchestrator-layout">
+            <div class="dag-stage">
+              <svg id="dag-svg" role="img" aria-label="工作流 DAG 图">
+                <g id="dag-viewport"></g>
+              </svg>
+              <div class="dag-legend" id="dag-legend"></div>
+              <div class="dag-empty" id="dag-empty" hidden>
+                <p>暂无可展示的工作流</p>
+                <span>请检查 workflows/ 目录或平台门面是否已加载工作流定义。</span>
+              </div>
+              <div class="dag-zoom-badge" id="dag-zoom">100%</div>
+            </div>
+            <aside class="drawer" id="dag-drawer" aria-live="polite">
+              <button class="drawer-close" id="drawer-close" type="button" title="关闭节点详情" aria-label="关闭节点详情">×</button>
+              <div class="drawer-empty" id="drawer-empty">
+                <div class="drawer-icon">⌘</div>
+                <h4>节点详情</h4>
+                <p>点击左侧任意节点，查看该节点的角色、工具、验证器配置与最近一次输出摘要。</p>
+              </div>
+              <div class="drawer-body" id="drawer-body" hidden>
+                <header class="drawer-head">
+                  <span class="node-type-badge" id="drawer-type">agent</span>
+                  <h3 id="drawer-title">节点</h3>
+                  <p id="drawer-desc" class="muted"></p>
+                </header>
+                <div class="drawer-section">
+                  <h4>基础配置</h4>
+                  <div class="kv-list" id="drawer-config"></div>
+                </div>
+                <div class="drawer-section">
+                  <h4>最近输出</h4>
+                  <pre class="code-block" id="drawer-output">暂无输出记录</pre>
+                </div>
+                <div class="drawer-section">
+                  <h4>原始定义</h4>
+                  <pre class="code-block" id="drawer-raw"></pre>
+                </div>
+              </div>
+            </aside>
+          </div>
+          </div>
+        </section>
+
+        <section class="page" id="page-runtime" data-page="runtime">
+          <div class="page-head"><div><h1 class="page-title">运行与验证中心</h1><p class="page-sub">实时执行状态与五层可信验证</p></div></div>
+          <div class="runtime-split">
+            <div class="rt-col rt-left"><div class="rt-toolbar"><div class="toolbar">
+              <label class="select-wrap">
+                <span>运行</span>
+                <select id="monitor-run-select"></select>
+              </label>
+              <span class="pill" id="monitor-status">未选择</span>
+              <button class="btn btn-danger-ghost btn-sm" id="btn-cancel-run" type="button" disabled>取消运行</button>
+            </div></div><div class="monitor-top">
+            <div class="monitor-summary" id="monitor-summary"></div>
+            <div class="monitor-loops" id="monitor-loops"></div>
+          </div>
+
+          <div class="monitor-layout">
+            <section class="card monitor-nodes-card">
+              <header class="card-head">
+                <h3>节点状态</h3>
+                <span class="muted" id="monitor-node-count">–</span>
+              </header>
+              <div class="node-grid" id="monitor-nodes"></div>
+              <div class="monitor-schedule">
+                <h4>调度决策</h4>
+                <div class="decision-list" id="monitor-schedule">
+                  <div class="empty small">等待 node.scheduled 事件…</div>
+                </div>
+              </div>
+            </section>
+            <section class="card monitor-events-card">
+              <header class="card-head">
+                <h3>实时事件流</h3>
+                <div class="live-indicator" id="live-indicator"><span class="pulse-dot"></span><span id="live-text">未连接</span></div>
+              </header>
+              <div class="event-stream" id="monitor-events">
+                <div class="empty small">选择一次运行后开始接收事件。</div>
+              </div>
+            </section>
+          </div></div>
+            <div class="rt-col rt-right"><div class="rt-toolbar"><div class="toolbar">
+              <label class="select-wrap">
+                <span>运行</span>
+                <select id="verify-run-select"></select>
+              </label>
+              <button class="btn btn-ghost btn-sm" id="btn-verify-refresh" type="button">刷新</button>
+            </div></div><div class="verify-top">
+            <section class="card verify-score-card">
+              <div class="ring-wrap">
+                <svg class="ring" viewBox="0 0 140 140">
+                  <circle class="ring-track" cx="70" cy="70" r="58"></circle>
+                  <circle class="ring-value" id="verify-ring" cx="70" cy="70" r="58"></circle>
+                </svg>
+                <div class="ring-label">
+                  <b id="verify-confidence">–</b>
+                  <span>总置信度</span>
+                </div>
+              </div>
+              <div class="verify-score-meta">
+                <span class="pill" id="verify-status">等待运行</span>
+                <p class="muted" id="verify-hint">选择一次运行查看五层验证结果。</p>
+                <div class="progress"><div class="progress-bar" id="verify-progress"></div></div>
+              </div>
+            </section>
+            <section class="card verify-loop-card">
+              <header class="card-head"><h3>自循环历史</h3><span class="muted" id="verify-loop-count">0 轮</span></header>
+              <div class="loop-history" id="verify-loop">
+                <div class="empty small">暂无自循环记录。</div>
+              </div>
+            </section>
+          </div>
+
+          <section class="card">
+            <header class="card-head">
+              <h3>五层检查明细</h3>
+              <div class="layer-legend" id="verify-layer-legend"></div>
+            </header>
+            <div class="table-wrap">
+              <table class="table" id="verify-table">
+                <thead>
+                  <tr><th>层级</th><th>检查器</th><th>状态</th><th>说明</th><th>耗时</th></tr>
+                </thead>
+                <tbody id="verify-tbody">
+                  <tr><td colspan="5"><div class="empty small">暂无检查数据。</div></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </section></div>
+          </div>
+        </section>
+
+        <section class="page" id="page-resources" data-page="resources">
+          <div class="page-head"><div><h1 class="page-title">资源管理中心</h1><p class="page-sub">Agent 团队、内置工具与 MCP 服务器</p></div></div>
+          <div class="res-block"><div class="agent-grid" id="agents-grid"></div></div>
+          <div class="res-block"><div class="grid-2 tools-grid">
+            <section class="card">
+              <header class="card-head"><h3>可用工具</h3><span class="muted" id="tools-count">–</span></header>
+              <div class="tool-list" id="tools-list"></div>
+            </section>
+            <section class="card">
+              <header class="card-head"><h3>MCP 服务器</h3><span class="muted" id="mcp-count">–</span></header>
+              <div class="mcp-list" id="mcp-list"></div>
+            </section>
+          </div></div>
+        </section>
+
+        <section class="page" id="page-settings" data-page="settings">
+          <div class="page-head">
+            <div>
+              <h1 class="page-title">系统配置</h1>
+              <p class="page-sub">LLM 服务商、模型参数与密钥管理</p>
+            </div>
+            <button class="btn btn-ghost btn-sm" id="btn-llm-refresh" type="button">刷新</button>
+          </div>
+          <div class="grid-2 settings-grid">
+            <section class="card">
+              <header class="card-head"><h3>LLM 配置</h3><span class="badge" id="llm-latency">延迟 –</span></header>
+              <form id="llm-form" class="form" autocomplete="off">
+                <label class="field">
+                  <span>Provider</span>
+                  <select id="llm-provider" name="provider">
+                    <option value="mock">mock · 离线模拟</option>
+                    <option value="openai_compat">openai_compat · OpenAI 兼容</option>
+                  </select>
+                </label>
+                <label class="field">
+                  <span>服务商预设</span>
+                  <select id="llm-preset" name="preset">
+                    <option value="zhipu">智谱 AI（GLM）</option>
+                    <option value="deepseek">DeepSeek</option>
+                    <option value="dashscope">阿里云百炼（通义千问）</option>
+                    <option value="siliconflow">硅基流动</option>
+                    <option value="moonshot">月之暗面（Kimi）</option>
+                    <option value="openai">OpenAI</option>
+                    <option value="custom">自定义（手动填写）</option>
+                  </select>
+                  <small class="muted">选中后自动填入 Base URL 与推荐模型，仍可手动修改。</small>
+                </label>
+                <label class="field">
+                  <span>Base URL</span>
+                  <input id="llm-base-url" name="base_url" type="text" placeholder="https://open.bigmodel.cn/api/paas/v4">
+                </label>
+                <label class="field">
+                  <span>Model</span>
+                  <input id="llm-model" name="model" type="text" placeholder="gpt-4o-mini">
+                </label>
+                <label class="field">
+                  <span>API Key</span>
+                  <input id="llm-api-key" name="api_key" type="password" placeholder="粘贴 Key（仅本次会话有效，不落盘）" autocomplete="new-password">
+                  <small class="muted">Key 只保存在服务进程内存里：重启服务或刷新页面后需重新输入，绝不写入配置文件、日志或仓库。</small>
+                </label>
+                <div class="form-actions">
+                  <button class="btn btn-primary" id="btn-llm-save" type="submit">保存配置</button>
+                  <span class="muted" id="llm-save-hint">修改后立即生效，无需重启。</span>
+                </div>
+              </form>
+            </section>
+            <section class="card">
+              <header class="card-head"><h3>当前生效配置</h3><span class="muted">只读</span></header>
+              <div class="kv-list" id="llm-current"></div>
+              <div class="callout" id="llm-note">
+                离线演示默认使用 <b>mock</b> Provider；选择服务商预设并填写 Key 即可切到在线模型。Key 不落盘、不回显，服务重启后自动失效。
+              </div>
+            </section>
+          </div>
+        </section>
+      </main>    </div>
+  </div>
+
+  <div class="wb-modal" id="wb-modal" hidden>
+            <div class="wb-modal-card">
+              <button class="wb-close" id="wb-modal-close" type="button" aria-label="关闭">×</button>
+              <div id="wb-modal-body"></div>
+            </div>
+          </div>
+
+  <div class="toasts" id="toasts" aria-live="polite"></div>
+
+  <link rel="stylesheet" href="workbench.css">
+  <script src="dag.js"></script>
+  <script src="workbench.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

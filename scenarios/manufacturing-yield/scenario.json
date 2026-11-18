@@ -1,0 +1,50 @@
+{
+  "id": "manufacturing-yield",
+  "short": "mfg-yield",
+  "name": "制造良品率归因",
+  "title": "产线良品率与工艺参数归因",
+  "description": "分析产线良品率（yield_pct）与温度、压力、线速、湿度的关系，定位影响良品率的关键工艺窗口。",
+  "dataset": "scenarios/manufacturing-yield/data.csv",
+  "target": "yield_pct",
+  "features": [
+    "temp",
+    "pressure",
+    "line_speed",
+    "humidity"
+  ],
+  "workflow_id": "wf-manufacturing-yield",
+  "first_bias": {
+    "temp": 0.3,
+    "pressure": 0.32,
+    "line_speed": 0.28,
+    "humidity": 0.33
+  },
+  "second_bias": {
+    "temp": 0.028,
+    "pressure": 0.035,
+    "line_speed": 0.031,
+    "humidity": 0.042
+  },
+  "tolerance": 0.15,
+  "statistical_thresholds": {
+    "n_min": 1000,
+    "r2_min": 0.55
+  },
+  "task": "分析产线良品率（yield_pct）与温度（temp）、压力（pressure）、线速（line_speed）、湿度（humidity）的定量关系，估计各工艺参数的效应系数，并给出可执行的工艺窗口建议。",
+  "story": "质量部门连续三周看到良品率波动，但工艺参数每天都在小幅调整，无法判断是哪个参数在起作用，需要可验证的效应排序。",
+  "domain_checks": [
+    "核对传感器校准",
+    "区分班次与设备差异",
+    "检查参数共线性"
+  ],
+  "recovery": {
+    "intercept": 98.0401,
+    "coefficients": {
+      "temp": -0.5027,
+      "pressure": 2.546,
+      "line_speed": -1.1923,
+      "humidity": -0.1242
+    },
+    "r2": 0.7557
+  }
+}

@@ -1,0 +1,106 @@
+{
+  "id": "marketing-growth",
+  "short": "mkt-growth",
+  "kind": "multi-target",
+  "name": "营销增长三目标联合分析",
+  "title": "用户流失、生命周期价值与获客成本的多目标归因",
+  "description": "同一批用户样本同时观测流失率（churn_pct）、生命周期价值（ltv）与获客成本（cac），联合估计满意度、投诉、在网时长、价格指数、广告投入对三个目标的影响，支持预算联合优化。",
+  "dataset": "scenarios/marketing-growth/data.csv",
+  "targets": [
+    "churn_pct",
+    "ltv",
+    "cac"
+  ],
+  "target": "churn_pct",
+  "target_count": 3,
+  "features": [
+    "satisfaction",
+    "complaints",
+    "tenure",
+    "price_index",
+    "ad_spend"
+  ],
+  "workflow_id": "wf-marketing-growth",
+  "first_bias": {
+    "satisfaction": 0.31,
+    "complaints": 0.29,
+    "tenure": 0.33,
+    "price_index": 0.3,
+    "ad_spend": 0.32
+  },
+  "second_bias": {
+    "satisfaction": 0.034,
+    "complaints": 0.027,
+    "tenure": 0.04,
+    "price_index": 0.03,
+    "ad_spend": 0.037
+  },
+  "tolerance": 0.15,
+  "statistical_thresholds": {
+    "n_min": 1000,
+    "r2_min": 0.55
+  },
+  "task": "对用户样本同时分析流失率（churn_pct）、生命周期价值（ltv）、获客成本（cac）三个目标，分别估计满意度（satisfaction）、投诉量（complaints）、在网时长（tenure）、价格指数（price_index）、广告投入（ad_spend）的影响，并做联合对比：哪些投入同时改善多个目标，哪些存在此消彼长。",
+  "story": "增长团队只有一笔预算：降价、投广告、补客服还是做满意度项目？三个目标（留存、LTV、CAC）往往互相牵制，需要联合分析而不是逐个拍脑袋。",
+  "domain_checks": [
+    "确认三个目标的统计口径与时间窗",
+    "检查广告投入的内生性",
+    "区分新老用户结构"
+  ],
+  "recovery": {
+    "targets": {
+      "churn_pct": {
+        "intercept": 33.9616,
+        "coefficients": {
+          "satisfaction": -0.2204,
+          "complaints": 0.0696,
+          "tenure": -0.1361,
+          "price_index": 0.099,
+          "ad_spend": 0.0245
+        },
+        "r2": 0.6832
+      },
+      "ltv": {
+        "intercept": 121.2452,
+        "coefficients": {
+          "satisfaction": 0.8076,
+          "complaints": -0.2938,
+          "tenure": 2.193,
+          "price_index": -0.1128,
+          "ad_spend": 0.1333
+        },
+        "r2": 0.8983
+      },
+      "cac": {
+        "intercept": 50.3962,
+        "coefficients": {
+          "satisfaction": -0.3991,
+          "complaints": 0.051,
+          "tenure": -0.4981,
+          "price_index": 0.205,
+          "ad_spend": 0.8605
+        },
+        "r2": 0.7556
+      }
+    },
+    "coefficients": {
+      "churn_pct.satisfaction": -0.2204,
+      "churn_pct.complaints": 0.0696,
+      "churn_pct.tenure": -0.1361,
+      "churn_pct.price_index": 0.099,
+      "churn_pct.ad_spend": 0.0245,
+      "ltv.satisfaction": 0.8076,
+      "ltv.complaints": -0.2938,
+      "ltv.tenure": 2.193,
+      "ltv.price_index": -0.1128,
+      "ltv.ad_spend": 0.1333,
+      "cac.satisfaction": -0.3991,
+      "cac.complaints": 0.051,
+      "cac.tenure": -0.4981,
+      "cac.price_index": 0.205,
+      "cac.ad_spend": 0.8605
+    },
+    "r2": 0.6832,
+    "n": 3000
+  }
+}

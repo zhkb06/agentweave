@@ -1,0 +1,27 @@
+{
+  "intercept": 120.0,
+  "coefficients": {
+    "ad_spend": 2.4,
+    "discount": 0.8,
+    "season": 9.0
+  },
+  "noise_sd": 6.0,
+  "tolerance": 0.15,
+  "statistical_thresholds": {
+    "n_min": 1000,
+    "r2_min": 0.55
+  },
+  "seed": 20261101,
+  "n": 2000,
+  "target": "revenue",
+  "ols_recovery": {
+    "intercept": 119.8082,
+    "coefficients": {
+      "ad_spend": 2.4048,
+      "discount": 0.7944,
+      "season": 9.7035
+    },
+    "r2": 0.8606
+  },
+  "notes": "隐藏真值：仅供验证器与平台注入，分析 Agent 不应读取。"
+}

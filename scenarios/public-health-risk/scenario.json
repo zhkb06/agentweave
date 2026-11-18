@@ -1,0 +1,50 @@
+{
+  "id": "public-health-risk",
+  "short": "pub-health",
+  "name": "公共卫生风险归因",
+  "title": "呼吸道发病率与环境、免疫因子归因",
+  "description": "分析地区呼吸道发病率（incidence）与气温、湿度、疫苗接种率、PM2.5 的关系，识别可干预因子并验证结论。",
+  "dataset": "scenarios/public-health-risk/data.csv",
+  "target": "incidence",
+  "features": [
+    "temp",
+    "humidity",
+    "vaccination_rate",
+    "pm25"
+  ],
+  "workflow_id": "wf-public-health-risk",
+  "first_bias": {
+    "temp": 0.29,
+    "humidity": 0.33,
+    "vaccination_rate": 0.31,
+    "pm25": 0.28
+  },
+  "second_bias": {
+    "temp": 0.03,
+    "humidity": 0.041,
+    "vaccination_rate": 0.022,
+    "pm25": 0.035
+  },
+  "tolerance": 0.15,
+  "statistical_thresholds": {
+    "n_min": 1000,
+    "r2_min": 0.55
+  },
+  "task": "分析地区呼吸道发病率（incidence）与气温（temp）、湿度（humidity）、疫苗接种率（vaccination_rate）、PM2.5（pm25）的关系，估计各因子效应方向与强度，并判断哪些因子可干预。",
+  "story": "疾控部门需要在季节性高发前判断：发病率上升主要是环境驱动还是免疫屏障不足，从而决定资源投向。",
+  "domain_checks": [
+    "区分相关与因果",
+    "检查共线性",
+    "关注可干预因子的效应量"
+  ],
+  "recovery": {
+    "intercept": 44.3586,
+    "coefficients": {
+      "temp": -0.605,
+      "humidity": 0.3574,
+      "vaccination_rate": -14.818,
+      "pm25": 0.2022
+    },
+    "r2": 0.8702
+  }
+}

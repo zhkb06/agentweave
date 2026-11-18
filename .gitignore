@@ -1,0 +1,34 @@
+# 运行时数据（不要提交）
+data/runs/
+data/logs/
+artifacts/
+artifacts_test/
+*.log
+.env
+.agents/
+.agentweave_tmp/
+.venv/
+__pycache__/
+*.pyc
+.DS_Store
+Thumbs.db
+docs/*.pdf.tmp
+screenshots/tmp/
+
+# IDE
+.idea/
+.vscode/
+
+# 视频渲染中间产物
+.final_video/
+.scene_build/
+media_chk/
+
+# 提交打包产物
+提交包/
+
+# 本地自动化日志与一次性探针脚本
+@AutomationLog.txt
+scripts/jy_build_v2.py
+scripts/jy_build_v3.py
+scripts/jy_probe.py

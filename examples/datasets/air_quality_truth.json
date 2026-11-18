@@ -1,0 +1,34 @@
+{
+  "dataset": "air_quality.csv",
+  "n": 2000,
+  "seed": 42,
+  "formula": "pm25 = 78 - 0.85*temp + 0.42*humidity - 1.6*wind + 0.28*so2 + ε, ε~N(0,5)",
+  "intercept": 78.0,
+  "coefficients": {
+    "temp": -0.85,
+    "humidity": 0.42,
+    "wind": -1.6,
+    "so2": 0.28
+  },
+  "noise_sd": 5.0,
+  "tolerance": 0.15,
+  "statistical_thresholds": {
+    "n_min": 1000,
+    "r2_min": 0.55
+  },
+  "ols_recovery": {
+    "intercept": 77.3715,
+    "temp": -0.8439,
+    "humidity": 0.4375,
+    "wind": -1.6728,
+    "so2": 0.2577,
+    "r2": 0.7138
+  },
+  "recovery_rel_error": {
+    "temp": 0.0072,
+    "humidity": 0.0417,
+    "wind": 0.0455,
+    "so2": 0.0796
+  },
+  "notes": "该文件是验证器使用的隐藏真值；分析 Agent 不应读取。数据为合成数据，关系已知，用于演示'验证失败→反馈→修复→通过'闭环。"
+}

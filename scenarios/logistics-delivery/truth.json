@@ -1,0 +1,29 @@
+{
+  "intercept": 15.0,
+  "coefficients": {
+    "distance_km": 1.5,
+    "order_volume": 0.08,
+    "bad_weather": 9.0,
+    "warehouse_load": 0.09
+  },
+  "noise_sd": 4.0,
+  "tolerance": 0.15,
+  "statistical_thresholds": {
+    "n_min": 1000,
+    "r2_min": 0.55
+  },
+  "seed": 20261106,
+  "n": 3000,
+  "target": "delivery_min",
+  "ols_recovery": {
+    "intercept": 15.4272,
+    "coefficients": {
+      "distance_km": 1.5127,
+      "order_volume": 0.0788,
+      "bad_weather": 9.1105,
+      "warehouse_load": 0.0834
+    },
+    "r2": 0.709
+  },
+  "notes": "隐藏真值：仅供验证器与平台注入，分析 Agent 不应读取。"
+}

@@ -1,0 +1,12 @@
+.git
+.gitignore
+__pycache__
+*.pyc
+.venv
+data/runs
+data/logs
+docs/ppt
+screenshots/ppt
+screenshots/_*
+*.log
+.env

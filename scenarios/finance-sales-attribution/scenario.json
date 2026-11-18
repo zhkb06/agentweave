@@ -1,0 +1,46 @@
+{
+  "id": "finance-sales-attribution",
+  "short": "fin-sales",
+  "name": "零售销售归因",
+  "title": "月度销售额与营销因子归因",
+  "description": "分析月度销售额（revenue）与广告投放、折扣力度、季节性指数之间的关系，估计因子效应并验证结论。",
+  "dataset": "scenarios/finance-sales-attribution/data.csv",
+  "target": "revenue",
+  "features": [
+    "ad_spend",
+    "discount",
+    "season"
+  ],
+  "workflow_id": "wf-finance-sales-attribution",
+  "first_bias": {
+    "ad_spend": 0.31,
+    "discount": 0.29,
+    "season": 0.34
+  },
+  "second_bias": {
+    "ad_spend": 0.032,
+    "discount": 0.024,
+    "season": 0.041
+  },
+  "tolerance": 0.15,
+  "statistical_thresholds": {
+    "n_min": 1000,
+    "r2_min": 0.55
+  },
+  "task": "分析月度销售额（revenue）与广告投放（ad_spend）、折扣力度（discount）、季节性指数（season）之间的关系，估计各因子效应系数，并与业务经验对照验证可靠性。",
+  "story": "运营团队认为「加大广告投放一定带来同比例销售增长」，需要用数据验证真实弹性，并避免把季节性误判为广告效果。",
+  "domain_checks": [
+    "检查量纲与异常值",
+    "控制季节性混杂",
+    "与历史活动做对照"
+  ],
+  "recovery": {
+    "intercept": 119.8082,
+    "coefficients": {
+      "ad_spend": 2.4048,
+      "discount": 0.7944,
+      "season": 9.7035
+    },
+    "r2": 0.8606
+  }
+}

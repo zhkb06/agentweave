@@ -1,0 +1,29 @@
+{
+  "intercept": 35.0,
+  "coefficients": {
+    "satisfaction": -0.25,
+    "complaints": 0.08,
+    "tenure": -0.15,
+    "price_index": 0.12
+  },
+  "noise_sd": 2.2,
+  "tolerance": 0.15,
+  "statistical_thresholds": {
+    "n_min": 1000,
+    "r2_min": 0.55
+  },
+  "seed": 20261108,
+  "n": 3000,
+  "target": "churn_pct",
+  "ols_recovery": {
+    "intercept": 34.9241,
+    "coefficients": {
+      "satisfaction": -0.2551,
+      "complaints": 0.0777,
+      "tenure": -0.1504,
+      "price_index": 0.125
+    },
+    "r2": 0.7561
+  },
+  "notes": "隐藏真值：仅供验证器与平台注入，分析 Agent 不应读取。"
+}

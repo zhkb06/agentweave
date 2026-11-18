@@ -1,0 +1,40 @@
+{
+  "dataset": "examples/datasets/air_quality.csv",
+  "description": "AI4S 空气质量：PM2.5 与气象/污染物因子的合成观测数据",
+  "generator": "scripts/generate_dataset.py",
+  "seed": 42,
+  "license": "CC BY 4.0（合成数据，可自由使用与再分发）",
+  "sha256": "c5fb73a0868fbebc608d7075c6727ce88a77fa15fb277d256f8fb98ca5345d02",
+  "rows": 2000,
+  "columns": [
+    "date",
+    "city",
+    "pm25",
+    "temp",
+    "humidity",
+    "wind",
+    "so2",
+    "no2"
+  ],
+  "target": "pm25",
+  "features": [
+    "temp",
+    "humidity",
+    "wind",
+    "so2"
+  ],
+  "quality": {
+    "missing_cells": 0,
+    "missing_rate": 0.0,
+    "duplicate_rows": 0,
+    "outlier_rows_4sigma": 0,
+    "outlier_rate": 0.0
+  },
+  "limitations": [
+    "数据为按已知结构函数生成的合成数据，不代表真实业务分布",
+    "不含时间趋势、政策冲击与测量误差，外推到真实世界需重新标定",
+    "目标与因子的函数形式假定为线性可加，非线性与交互项未建模",
+    "隐藏真值仅用于验证器比对，分析 Agent 不应读取"
+  ],
+  "reproduce": "py -3.14 scripts/generate_dataset.py"
+}

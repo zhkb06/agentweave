@@ -1,0 +1,109 @@
+{
+  "kind": "multi-target",
+  "targets": {
+    "yield_pct": {
+      "intercept": 98.0,
+      "coefficients": {
+        "temp": -0.45,
+        "pressure": 2.2,
+        "line_speed": -1.1,
+        "humidity": -0.1,
+        "output": 0.02
+      },
+      "noise_sd": 1.8,
+      "recovery": {
+        "intercept": 97.6624,
+        "coefficients": {
+          "temp": -0.4448,
+          "pressure": 2.2624,
+          "line_speed": -1.1159,
+          "humidity": -0.1002,
+          "output": 0.0222
+        },
+        "r2": 0.7218
+      }
+    },
+    "energy_kwh": {
+      "intercept": 60.0,
+      "coefficients": {
+        "temp": 1.6,
+        "pressure": 3.5,
+        "line_speed": 2.2,
+        "humidity": 0.4,
+        "output": 0.9
+      },
+      "noise_sd": 10.0,
+      "recovery": {
+        "intercept": 61.375,
+        "coefficients": {
+          "temp": 1.5727,
+          "pressure": 3.2909,
+          "line_speed": 2.2987,
+          "humidity": 0.3987,
+          "output": 0.8854
+        },
+        "r2": 0.6933
+      }
+    }
+  },
+  "coefficients": {
+    "yield_pct.temp": -0.4448,
+    "yield_pct.pressure": 2.2624,
+    "yield_pct.line_speed": -1.1159,
+    "yield_pct.humidity": -0.1002,
+    "yield_pct.output": 0.0222,
+    "energy_kwh.temp": 1.5727,
+    "energy_kwh.pressure": 3.2909,
+    "energy_kwh.line_speed": 2.2987,
+    "energy_kwh.humidity": 0.3987,
+    "energy_kwh.output": 0.8854
+  },
+  "tolerance": 0.15,
+  "statistical_thresholds": {
+    "n_min": 1000,
+    "r2_min": 0.55
+  },
+  "n": 3000,
+  "seed": 20261111,
+  "ols_recovery": {
+    "targets": {
+      "yield_pct": {
+        "intercept": 97.6624,
+        "coefficients": {
+          "temp": -0.4448,
+          "pressure": 2.2624,
+          "line_speed": -1.1159,
+          "humidity": -0.1002,
+          "output": 0.0222
+        },
+        "r2": 0.7218
+      },
+      "energy_kwh": {
+        "intercept": 61.375,
+        "coefficients": {
+          "temp": 1.5727,
+          "pressure": 3.2909,
+          "line_speed": 2.2987,
+          "humidity": 0.3987,
+          "output": 0.8854
+        },
+        "r2": 0.6933
+      }
+    },
+    "coefficients": {
+      "yield_pct.temp": -0.4448,
+      "yield_pct.pressure": 2.2624,
+      "yield_pct.line_speed": -1.1159,
+      "yield_pct.humidity": -0.1002,
+      "yield_pct.output": 0.0222,
+      "energy_kwh.temp": 1.5727,
+      "energy_kwh.pressure": 3.2909,
+      "energy_kwh.line_speed": 2.2987,
+      "energy_kwh.humidity": 0.3987,
+      "energy_kwh.output": 0.8854
+    },
+    "r2": 0.6933,
+    "n": 3000
+  },
+  "notes": "隐藏真值：扁平键 <目标>.<因子>，仅供验证器与平台注入，分析 Agent 不应读取。"
+}

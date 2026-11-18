@@ -1,0 +1,48 @@
+{
+  "dataset": "scenarios/marketing-growth/data.csv",
+  "description": "同一批用户样本同时观测流失率（churn_pct）、生命周期价值（ltv）与获客成本（cac），联合估计满意度、投诉、在网时长、价格指数、广告投入对三个目标的影响，支持预算联合优化。",
+  "generator": "scripts/generate_multi_target.py",
+  "seed": 0,
+  "license": "CC BY 4.0（合成数据，可自由使用与再分发）",
+  "sha256": "cb5d92a5ca1b8f4df5445f7063469c666c4ef52a79d9adc6fe55dd5e56e20965",
+  "rows": 3000,
+  "columns": [
+    "date",
+    "region",
+    "satisfaction",
+    "complaints",
+    "tenure",
+    "price_index",
+    "ad_spend",
+    "churn_pct",
+    "ltv",
+    "cac"
+  ],
+  "target": "churn_pct",
+  "features": [
+    "satisfaction",
+    "complaints",
+    "tenure",
+    "price_index",
+    "ad_spend"
+  ],
+  "quality": {
+    "missing_cells": 0,
+    "missing_rate": 0.0,
+    "duplicate_rows": 0,
+    "outlier_rows_4sigma": 1,
+    "outlier_rate": 0.0003
+  },
+  "limitations": [
+    "数据为按已知结构函数生成的合成数据，不代表真实业务分布",
+    "不含时间趋势、政策冲击与测量误差，外推到真实世界需重新标定",
+    "目标与因子的函数形式假定为线性可加，非线性与交互项未建模",
+    "隐藏真值仅用于验证器比对，分析 Agent 不应读取"
+  ],
+  "reproduce": "py -3.14 scripts/generate_multi_target.py",
+  "targets": [
+    "churn_pct",
+    "ltv",
+    "cac"
+  ]
+}

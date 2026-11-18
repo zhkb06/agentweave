@@ -1,0 +1,50 @@
+{
+  "id": "marketing-churn",
+  "short": "mkt-churn",
+  "name": "用户流失归因",
+  "title": "订阅用户流失与满意度、投诉因子归因",
+  "description": "分析月度流失率（churn_pct）与满意度、投诉量、在网时长、价格指数的关系，识别留存干预的抓手。",
+  "dataset": "scenarios/marketing-churn/data.csv",
+  "target": "churn_pct",
+  "features": [
+    "satisfaction",
+    "complaints",
+    "tenure",
+    "price_index"
+  ],
+  "workflow_id": "wf-marketing-churn",
+  "first_bias": {
+    "satisfaction": 0.33,
+    "complaints": 0.29,
+    "tenure": 0.31,
+    "price_index": 0.28
+  },
+  "second_bias": {
+    "satisfaction": 0.04,
+    "complaints": 0.027,
+    "tenure": 0.032,
+    "price_index": 0.03
+  },
+  "tolerance": 0.15,
+  "statistical_thresholds": {
+    "n_min": 1000,
+    "r2_min": 0.55
+  },
+  "task": "分析订阅用户月度流失率（churn_pct）与满意度（satisfaction）、投诉量（complaints）、在网时长（tenure）、价格指数（price_index）的关系，量化各因子影响并给出留存优先级。",
+  "story": "留存团队面对预算约束：降价、补贴客服还是做满意度项目？需要先确认哪个因子对流失的边际贡献最大。",
+  "domain_checks": [
+    "核对流失口径",
+    "排除一次性促销",
+    "控制用户结构差异"
+  ],
+  "recovery": {
+    "intercept": 34.9241,
+    "coefficients": {
+      "satisfaction": -0.2551,
+      "complaints": 0.0777,
+      "tenure": -0.1504,
+      "price_index": 0.125
+    },
+    "r2": 0.7561
+  }
+}

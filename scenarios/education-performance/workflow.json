@@ -1,0 +1,374 @@
+{
+  "id": "wf-education-performance",
+  "name": "学生成绩与学习行为因子归因",
+  "version": "1.0.0",
+  "description": "分析期末成绩（final_score）与出勤率、作业完成度、自习时长、班级规模的关系，为教学干预提供证据。",
+  "owner": "AgentWeave Demo",
+  "tags": [
+    "demo",
+    "scenario",
+    "edu-score",
+    "causal-attribution"
+  ],
+  "variables": {
+    "input": {
+      "task": "分析学生期末成绩（final_score）与出勤率（attendance）、作业完成度（homework）、自习时长（study_hours）、班级规模（class_size）的关系，估计各因子效应并给出教学干预建议。",
+      "dataset": "scenarios/education-performance/data.csv"
+    },
+    "dataset_path": "scenarios/education-performance/data.csv",
+    "feedback": "",
+    "scenario_id": "education-performance",
+    "scenario_marker": "SCENARIO:edu-score",
+    "scenario_name": "教学成效归因"
+  },
+  "nodes": [
+    {
+      "id": "start",
+      "type": "start",
+      "label": "开始",
+      "position": {
+        "x": 40,
+        "y": 320
+      },
+      "outputs": [
+        "input"
+      ]
+    },
+    {
+      "id": "plan",
+      "type": "agent",
+      "label": "任务规划",
+      "description": "把科研分析目标拆解为可执行、可验证的子任务",
+      "agent": "planner",
+      "prompt": "SCENARIO:edu-score 场景：教学成效归因。\n研究目标：{{input}}\n场景：教学成效归因（education-performance）\n背景：学校要设计下学期干预方案：抓出勤、抓作业还是增加自习？需要可解释、可复算的效应量，而不是经验判断。\n请把目标拆成 3-6 个可执行任务，并为每个任务指定执行者（data_engineer/statistician/researcher/writer/verifier），给出可验证的成功判据。只输出 JSON。",
+      "outputs": [
+        "tasks",
+        "success_criteria"
+      ],
+      "position": {
+        "x": 200,
+        "y": 320
+      },
+      "timeout_s": 240
+    },
+    {
+      "id": "scan",
+      "type": "tool",
+      "label": "数据画像",
+      "description": "对数据集做列级统计与质量检查",
+      "tool": "dataset_stats",
+      "args": {
+        "path": "scenarios/education-performance/data.csv"
+      },
+      "position": {
+        "x": 420,
+        "y": 160
+      },
+      "timeout_s": 240
+    },
+    {
+      "id": "research",
+      "type": "agent",
+      "label": "方法调研",
+      "description": "调研适用的统计建模范式与假设",
+      "agent": "researcher",
+      "prompt": "SCENARIO:edu-score 场景：教学成效归因。\n场景：教学成效归因（education-performance），目标变量 final_score，候选因子：attendance、homework、study_hours、class_size。\n请选择统计方法（多元线性回归 + 稳健性检查），说明需要控制的混杂与数据检查项（检查样本代表性；区分班级与个体效应；避免把相关当因果），并给出理由。只输出 JSON。",
+      "outputs": [
+        "methods",
+        "rationale"
+      ],
+      "position": {
+        "x": 420,
+        "y": 470
+      },
+      "timeout_s": 240
+    },
+    {
+      "id": "clean",
+      "type": "agent",
+      "label": "数据工程",
+      "description": "质量检查、缺失值处理与特征准备",
+      "agent": "data_engineer",
+      "prompt": "SCENARIO:edu-score 场景：教学成效归因。\n研究目标：{{input}}\n数据画像：{{scan}}\n方法建议：{{research}}\n请完成数据质量检查、缺失值处理与特征准备，输出清洗后的数据路径与处理日志。只输出 JSON。",
+      "inputs": [
+        "scan",
+        "research"
+      ],
+      "outputs": [
+        "data_path",
+        "rows",
+        "cleaning_log"
+      ],
+      "position": {
+        "x": 640,
+        "y": 320
+      },
+      "timeout_s": 300
+    },
+    {
+      "id": "repair",
+      "type": "loop",
+      "label": "PDCA 自循环",
+      "description": "统计建模 + 可信验证；验证失败则把结构化反馈注入下一轮分析",
+      "loop": {
+        "max_iterations": 3,
+        "body": [
+          "analyze",
+          "verify"
+        ],
+        "mode": "pdca",
+        "feedback_var": "feedback",
+        "exit_when": "verify_passed"
+      },
+      "position": {
+        "x": 860,
+        "y": 320
+      },
+      "timeout_s": 300
+    },
+    {
+      "id": "analyze",
+      "type": "agent",
+      "label": "统计建模",
+      "description": "编写并运行回归分析代码，估计各因子效应",
+      "agent": "statistician",
+      "prompt": "场景：教学成效归因（education-performance），研究标识 SCENARIO:edu-score。\n数据集：{{dataset_path}}，目标列 final_score，候选因子：attendance、homework、study_hours、class_size。\n请用多元线性回归估计各因子系数、R²、样本量与显著性，并写出可独立运行的 Python 复算代码。\n若本轮收到外部校验意见，必须逐项核对并修正，再给出新一轮结论。\n{{{{feedback}}}}\n只输出 JSON。",
+      "inputs": [
+        "clean",
+        "research"
+      ],
+      "outputs": [
+        "code",
+        "metrics"
+      ],
+      "position": {
+        "x": 1040,
+        "y": 320
+      },
+      "timeout_s": 300
+    },
+    {
+      "id": "verify",
+      "type": "verify",
+      "label": "可信验证",
+      "description": "五层验证：代码复算、真值比对、统计阈值、跨 Agent 交叉复核",
+      "verify": {
+        "checks": [
+          "code_rerun",
+          "numeric_ground_truth",
+          "statistical",
+          "cross_agent",
+          "data_quality",
+          "holdout_stability",
+          "multicollinearity",
+          "significance",
+          "uncertainty"
+        ],
+        "tolerance": 0.15,
+        "min_confidence": 0.7,
+        "require_human": false,
+        "allow_self_repair": true,
+        "config": {
+          "thresholds": {
+            "n_min": 1000,
+            "r2_min": 0.55
+          },
+          "verifier_agent": "verifier"
+        }
+      },
+      "position": {
+        "x": 1220,
+        "y": 320
+      },
+      "timeout_s": 300
+    },
+    {
+      "id": "critique",
+      "type": "agent",
+      "label": "同行评审",
+      "description": "从方法论、数据与结论角度提出质疑",
+      "agent": "critic",
+      "prompt": "SCENARIO:edu-score 场景：教学成效归因。\n研究目标：{{input}}\n统计结果：{{analyze}}\n验证结论：{{verify}}\n请从方法论、数据与结论三方面评审，给出置信度、风险与改进建议。只输出 JSON。",
+      "inputs": [
+        "analyze",
+        "verify"
+      ],
+      "outputs": [
+        "confidence",
+        "risks",
+        "improvements"
+      ],
+      "position": {
+        "x": 1400,
+        "y": 320
+      },
+      "timeout_s": 240
+    },
+    {
+      "id": "gate",
+      "type": "human_gate",
+      "label": "发布审批",
+      "description": "研究报告发布前的人工确认（演示环境自动通过）",
+      "position": {
+        "x": 1560,
+        "y": 320
+      },
+      "timeout_s": 2400
+    },
+    {
+      "id": "report",
+      "type": "agent",
+      "label": "报告撰写",
+      "description": "把分析过程、验证证据与结论组织为中文研究报告",
+      "agent": "writer",
+      "prompt": "SCENARIO:edu-score 场景：教学成效归因。\n场景：教学成效归因（education-performance），目标 final_score。请综合分析结论、验证证据与评审意见，撰写一份中文研究报告（含摘要、数据与方法、主要发现表、验证证据、局限与建议），只输出 JSON。",
+      "inputs": [
+        "analyze",
+        "verify",
+        "critique"
+      ],
+      "outputs": [
+        "title",
+        "markdown"
+      ],
+      "position": {
+        "x": 1720,
+        "y": 320
+      },
+      "timeout_s": 300
+    },
+    {
+      "id": "end",
+      "type": "end",
+      "label": "结束",
+      "position": {
+        "x": 1900,
+        "y": 320
+      }
+    },
+    {
+      "id": "segment",
+      "type": "agent",
+      "label": "分层画像",
+      "description": "按关键维度分组做分层统计，检查整体结论是否被某一人群/工况主导。",
+      "agent": "data_engineer",
+      "prompt": "SCENARIO:edu-score 场景：教学成效归因。目标 final_score，因子：attendance、homework、study_hours、class_size。\n请按 2-3 个业务分层维度给出各层样本量、目标均值与因子均值，并指出各层差异是否可能影响总体结论。只输出 JSON。",
+      "position": {
+        "x": 750,
+        "y": 400
+      }
+    },
+    {
+      "id": "robustness",
+      "type": "agent",
+      "label": "稳健性检验",
+      "description": "留出法/分半复算，检验系数方向与量级是否稳定。",
+      "agent": "statistician",
+      "prompt": "SCENARIO:edu-score 场景：教学成效归因。请对主模型做留出法稳健性检验：比较前后半样本的系数方向与量级，报告最大相对差异，并给出结论是否稳定的判断。只输出 JSON。",
+      "position": {
+        "x": 1300,
+        "y": 250
+      }
+    },
+    {
+      "id": "sensitivity",
+      "type": "agent",
+      "label": "敏感性分析",
+      "description": "逐一剔除因子复算，观察其余系数变化。",
+      "agent": "statistician",
+      "prompt": "SCENARIO:edu-score 场景：教学成效归因。请做敏感性分析：逐一剔除候选因子后复算其余系数，报告系数最大变化幅度并判断结论对因子选择是否敏感。只输出 JSON。",
+      "position": {
+        "x": 1300,
+        "y": 520
+      }
+    }
+  ],
+  "edges": [
+    {
+      "source": "start",
+      "target": "plan",
+      "label": "启动"
+    },
+    {
+      "source": "plan",
+      "target": "scan",
+      "label": "取数"
+    },
+    {
+      "source": "plan",
+      "target": "research",
+      "label": "调研"
+    },
+    {
+      "source": "scan",
+      "target": "clean",
+      "label": "画像"
+    },
+    {
+      "source": "research",
+      "target": "clean",
+      "label": "方法"
+    },
+    {
+      "source": "repair",
+      "target": "analyze",
+      "label": "进入循环"
+    },
+    {
+      "source": "analyze",
+      "target": "verify",
+      "label": "待验证"
+    },
+    {
+      "source": "verify",
+      "target": "repair",
+      "kind": "loop_back",
+      "label": "不通过则修复"
+    },
+    {
+      "source": "critique",
+      "target": "gate",
+      "label": "评审"
+    },
+    {
+      "source": "gate",
+      "target": "report",
+      "label": "批准"
+    },
+    {
+      "source": "report",
+      "target": "end",
+      "label": "交付"
+    },
+    {
+      "source": "clean",
+      "target": "segment",
+      "label": "分层画像"
+    },
+    {
+      "source": "segment",
+      "target": "repair",
+      "label": "进入自循环"
+    },
+    {
+      "source": "repair",
+      "target": "robustness",
+      "label": "验证通过 · 稳健性"
+    },
+    {
+      "source": "repair",
+      "target": "sensitivity",
+      "label": "验证通过 · 敏感性"
+    },
+    {
+      "source": "robustness",
+      "target": "critique",
+      "label": "稳健"
+    },
+    {
+      "source": "sensitivity",
+      "target": "critique",
+      "label": "敏感"
+    }
+  ]
+}

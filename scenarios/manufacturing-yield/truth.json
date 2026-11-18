@@ -1,0 +1,29 @@
+{
+  "intercept": 98.0,
+  "coefficients": {
+    "temp": -0.5,
+    "pressure": 2.5,
+    "line_speed": -1.2,
+    "humidity": -0.12
+  },
+  "noise_sd": 1.8,
+  "tolerance": 0.15,
+  "statistical_thresholds": {
+    "n_min": 1000,
+    "r2_min": 0.55
+  },
+  "seed": 20261104,
+  "n": 3000,
+  "target": "yield_pct",
+  "ols_recovery": {
+    "intercept": 98.0401,
+    "coefficients": {
+      "temp": -0.5027,
+      "pressure": 2.546,
+      "line_speed": -1.1923,
+      "humidity": -0.1242
+    },
+    "r2": 0.7557
+  },
+  "notes": "隐藏真值：仅供验证器与平台注入，分析 Agent 不应读取。"
+}

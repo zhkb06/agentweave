@@ -1,0 +1,152 @@
+{
+  "kind": "multi-target",
+  "targets": {
+    "churn_pct": {
+      "intercept": 34.0,
+      "coefficients": {
+        "satisfaction": -0.22,
+        "complaints": 0.07,
+        "tenure": -0.14,
+        "price_index": 0.1,
+        "ad_spend": 0.02
+      },
+      "noise_sd": 2.2,
+      "recovery": {
+        "intercept": 33.9616,
+        "coefficients": {
+          "satisfaction": -0.2204,
+          "complaints": 0.0696,
+          "tenure": -0.1361,
+          "price_index": 0.099,
+          "ad_spend": 0.0245
+        },
+        "r2": 0.6832
+      }
+    },
+    "ltv": {
+      "intercept": 120.0,
+      "coefficients": {
+        "satisfaction": 0.8,
+        "complaints": -0.3,
+        "tenure": 2.2,
+        "price_index": -0.1,
+        "ad_spend": 0.15
+      },
+      "noise_sd": 8.0,
+      "recovery": {
+        "intercept": 121.2452,
+        "coefficients": {
+          "satisfaction": 0.8076,
+          "complaints": -0.2938,
+          "tenure": 2.193,
+          "price_index": -0.1128,
+          "ad_spend": 0.1333
+        },
+        "r2": 0.8983
+      }
+    },
+    "cac": {
+      "intercept": 50.0,
+      "coefficients": {
+        "satisfaction": -0.4,
+        "complaints": 0.05,
+        "tenure": -0.5,
+        "price_index": 0.2,
+        "ad_spend": 0.9
+      },
+      "noise_sd": 5.0,
+      "recovery": {
+        "intercept": 50.3962,
+        "coefficients": {
+          "satisfaction": -0.3991,
+          "complaints": 0.051,
+          "tenure": -0.4981,
+          "price_index": 0.205,
+          "ad_spend": 0.8605
+        },
+        "r2": 0.7556
+      }
+    }
+  },
+  "coefficients": {
+    "churn_pct.satisfaction": -0.2204,
+    "churn_pct.complaints": 0.0696,
+    "churn_pct.tenure": -0.1361,
+    "churn_pct.price_index": 0.099,
+    "churn_pct.ad_spend": 0.0245,
+    "ltv.satisfaction": 0.8076,
+    "ltv.complaints": -0.2938,
+    "ltv.tenure": 2.193,
+    "ltv.price_index": -0.1128,
+    "ltv.ad_spend": 0.1333,
+    "cac.satisfaction": -0.3991,
+    "cac.complaints": 0.051,
+    "cac.tenure": -0.4981,
+    "cac.price_index": 0.205,
+    "cac.ad_spend": 0.8605
+  },
+  "tolerance": 0.15,
+  "statistical_thresholds": {
+    "n_min": 1000,
+    "r2_min": 0.55
+  },
+  "n": 3000,
+  "seed": 20261112,
+  "ols_recovery": {
+    "targets": {
+      "churn_pct": {
+        "intercept": 33.9616,
+        "coefficients": {
+          "satisfaction": -0.2204,
+          "complaints": 0.0696,
+          "tenure": -0.1361,
+          "price_index": 0.099,
+          "ad_spend": 0.0245
+        },
+        "r2": 0.6832
+      },
+      "ltv": {
+        "intercept": 121.2452,
+        "coefficients": {
+          "satisfaction": 0.8076,
+          "complaints": -0.2938,
+          "tenure": 2.193,
+          "price_index": -0.1128,
+          "ad_spend": 0.1333
+        },
+        "r2": 0.8983
+      },
+      "cac": {
+        "intercept": 50.3962,
+        "coefficients": {
+          "satisfaction": -0.3991,
+          "complaints": 0.051,
+          "tenure": -0.4981,
+          "price_index": 0.205,
+          "ad_spend": 0.8605
+        },
+        "r2": 0.7556
+      }
+    },
+    "coefficients": {
+      "churn_pct.satisfaction": -0.2204,
+      "churn_pct.complaints": 0.0696,
+      "churn_pct.tenure": -0.1361,
+      "churn_pct.price_index": 0.099,
+      "churn_pct.ad_spend": 0.0245,
+      "ltv.satisfaction": 0.8076,
+      "ltv.complaints": -0.2938,
+      "ltv.tenure": 2.193,
+      "ltv.price_index": -0.1128,
+      "ltv.ad_spend": 0.1333,
+      "cac.satisfaction": -0.3991,
+      "cac.complaints": 0.051,
+      "cac.tenure": -0.4981,
+      "cac.price_index": 0.205,
+      "cac.ad_spend": 0.8605
+    },
+    "r2": 0.6832,
+    "n": 3000
+  },
+  "notes": "隐藏真值：扁平键 <目标>.<因子>，仅供验证器与平台注入，分析 Agent 不应读取。"
+}

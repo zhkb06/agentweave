@@ -1,0 +1,29 @@
+{
+  "intercept": 120.0,
+  "coefficients": {
+    "output": 1.8,
+    "temp": 1.1,
+    "night_shift": 18.0,
+    "equipment_age": 2.2
+  },
+  "noise_sd": 12.0,
+  "tolerance": 0.15,
+  "statistical_thresholds": {
+    "n_min": 1000,
+    "r2_min": 0.55
+  },
+  "seed": 20261105,
+  "n": 3000,
+  "target": "energy_kwh",
+  "ols_recovery": {
+    "intercept": 119.3589,
+    "coefficients": {
+      "output": 1.8224,
+      "temp": 1.1167,
+      "night_shift": 18.5287,
+      "equipment_age": 2.0446
+    },
+    "r2": 0.8673
+  },
+  "notes": "隐藏真值：仅供验证器与平台注入，分析 Agent 不应读取。"
+}

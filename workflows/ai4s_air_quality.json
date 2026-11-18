@@ -1,0 +1,170 @@
+{
+  "id": "wf-ai4s-air-quality",
+  "name": "AI4S 空气质量与气象因子归因分析",
+  "version": "1.0.0",
+  "description": "以空气质量归因分析为载体的多智能体科研工作流：规划→并行取数与方法调研→数据工程→统计建模→可信验证→（失败则 PDCA 自循环修复）→评审→人工闸门→报告。",
+  "owner": "织流 AgentWeave",
+  "tags": ["AI4S", "科研分析", "多智能体", "自循环", "可信验证"],
+  "variables": {
+    "input": {
+      "task": "分析 PM2.5 与温度、湿度、风速、SO2 的定量关系，给出各因子效应系数并验证可靠性",
+      "dataset": "examples/datasets/air_quality.csv"
+    },
+    "dataset_path": "examples/datasets/air_quality.csv",
+    "feedback": ""
+  },
+  "nodes": [
+    {
+      "id": "start",
+      "type": "start",
+      "label": "开始",
+      "position": {"x": 40, "y": 320},
+      "outputs": ["input"]
+    },
+    {
+      "id": "plan",
+      "type": "agent",
+      "label": "任务规划",
+      "description": "把科研分析目标拆解为可执行、可验证的子任务",
+      "agent": "planner",
+      "prompt": "研究目标：{{input}}\n请把目标拆解为 3-6 个可执行子任务，为每个任务指定执行者（data_engineer/statistician/researcher/writer/verifier），并给出可量化的成功判据。只输出 JSON。",
+      "outputs": ["tasks", "success_criteria"],
+      "position": {"x": 200, "y": 320},
+      "timeout_s": 240
+    },
+    {
+      "id": "scan",
+      "type": "tool",
+      "label": "数据画像",
+      "description": "对数据集做列级统计与质量检查",
+      "tool": "dataset_stats",
+      "args": {
+        "path": "examples/datasets/air_quality.csv"
+      },
+      "position": {"x": 420, "y": 160},
+      "timeout_s": 240
+    },
+    {
+      "id": "research",
+      "type": "agent",
+      "label": "方法调研",
+      "description": "调研适用的统计建模范式与假设",
+      "agent": "researcher",
+      "prompt": "研究目标：{{input}}\n数据画像：{{scan}}\n请给出适用的统计建模范式（多元线性回归等）、必要假设与检验方法，并说明理由。只输出 JSON。",
+      "outputs": ["methods", "rationale"],
+      "position": {"x": 420, "y": 470},
+      "timeout_s": 240
+    },
+    {
+      "id": "clean",
+      "type": "agent",
+      "label": "数据工程",
+      "description": "质量检查、缺失值处理与特征准备",
+      "agent": "data_engineer",
+      "prompt": "研究目标：{{input}}\n数据画像：{{scan}}\n方法建议：{{research}}\n请完成数据质量检查、缺失值处理与特征准备，输出清洗后的数据路径与处理日志。只输出 JSON。",
+      "inputs": ["scan", "research"],
+      "outputs": ["data_path", "rows", "cleaning_log"],
+      "position": {"x": 640, "y": 320},
+      "timeout_s": 300
+    },
+    {
+      "id": "repair",
+      "type": "loop",
+      "label": "PDCA 自循环",
+      "description": "统计建模 + 可信验证；验证失败则把结构化反馈注入下一轮分析",
+      "loop": {
+        "max_iterations": 3,
+        "body": ["analyze", "verify"],
+        "mode": "pdca",
+        "feedback_var": "feedback",
+        "exit_when": "verify_passed"
+      },
+      "position": {"x": 860, "y": 320},
+      "timeout_s": 300
+    },
+    {
+      "id": "analyze",
+      "type": "agent",
+      "label": "统计建模",
+      "description": "编写并运行回归分析代码，估计各因子效应",
+      "agent": "statistician",
+      "prompt": "研究目标：{{input}}\n清洗结果：{{clean}}\n方法建议：{{research}}\n请编写可复现的 Python 标准库分析代码，对数据做多元线性回归，报告系数、R²、样本量与 p 值。\n上一轮验证反馈（可能为空）：{{feedback}}\n若反馈非空，必须逐项核对并修正。只输出 JSON。",
+      "inputs": ["clean", "research"],
+      "outputs": ["code", "metrics"],
+      "position": {"x": 1040, "y": 320},
+      "timeout_s": 300
+    },
+    {
+      "id": "verify",
+      "type": "verify",
+      "label": "可信验证",
+      "description": "五层验证：代码复算、真值比对、统计阈值、跨 Agent 交叉复核",
+      "verify": {
+        "checks": ["code_rerun", "numeric_ground_truth", "statistical", "cross_agent", "data_quality", "holdout_stability", "multicollinearity", "significance", "uncertainty"],
+        "tolerance": 0.15,
+        "min_confidence": 0.7,
+        "require_human": false,
+        "allow_self_repair": true,
+        "config": {
+          "thresholds": {"n_min": 1000, "r2_min": 0.55},
+          "verifier_agent": "verifier"
+        }
+      },
+      "position": {"x": 1220, "y": 320},
+      "timeout_s": 300
+    },
+    {
+      "id": "critique",
+      "type": "agent",
+      "label": "同行评审",
+      "description": "从方法论、数据与结论角度提出质疑",
+      "agent": "critic",
+      "prompt": "研究目标：{{input}}\n统计结果：{{analyze}}\n验证结论：{{verify}}\n请从方法论、数据与结论三方面评审，给出置信度、风险与改进建议。只输出 JSON。",
+      "inputs": ["analyze", "verify"],
+      "outputs": ["confidence", "risks", "improvements"],
+      "position": {"x": 1400, "y": 320},
+      "timeout_s": 240
+    },
+    {
+      "id": "gate",
+      "type": "human_gate",
+      "label": "发布审批",
+      "description": "研究报告发布前的人工确认（演示环境自动通过）",
+      "position": {"x": 1560, "y": 320},
+      "timeout_s": 2400
+    },
+    {
+      "id": "report",
+      "type": "agent",
+      "label": "报告撰写",
+      "description": "把分析过程、验证证据与结论组织为中文研究报告",
+      "agent": "writer",
+      "prompt": "研究目标：{{input}}\n统计结果：{{analyze}}\n验证结论：{{verify}}\n评审意见：{{critique}}\n请撰写结构化中文研究报告，包含研究问题、数据与方法、主要发现、验证证据、局限与建议。只输出 JSON。",
+      "inputs": ["analyze", "verify", "critique"],
+      "outputs": ["title", "markdown"],
+      "position": {"x": 1720, "y": 320},
+      "timeout_s": 300
+    },
+    {
+      "id": "end",
+      "type": "end",
+      "label": "结束",
+      "position": {"x": 1900, "y": 320}
+    }
+  ],
+  "edges": [
+    {"source": "start", "target": "plan", "label": "启动"},
+    {"source": "plan", "target": "scan", "label": "取数"},
+    {"source": "plan", "target": "research", "label": "调研"},
+    {"source": "scan", "target": "clean", "label": "画像"},
+    {"source": "research", "target": "clean", "label": "方法"},
+    {"source": "clean", "target": "repair", "label": "清洗数据"},
+    {"source": "repair", "target": "analyze", "label": "进入循环"},
+    {"source": "analyze", "target": "verify", "label": "待验证"},
+    {"source": "verify", "target": "repair", "kind": "loop_back", "label": "不通过则修复"},
+    {"source": "repair", "target": "critique", "label": "验证通过"},
+    {"source": "critique", "target": "gate", "label": "评审"},
+    {"source": "gate", "target": "report", "label": "批准"},
+    {"source": "report", "target": "end", "label": "交付"}
+  ]
+}

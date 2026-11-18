@@ -1,0 +1,46 @@
+{
+  "id": "ecommerce-conversion",
+  "short": "ecom-conv",
+  "name": "电商转化归因",
+  "title": "页面转化率与体验因子归因",
+  "description": "分析页面转化率（conversion）与页面加载速度、个性化推荐强度、购物车步骤数的关系，量化体验改版收益。",
+  "dataset": "scenarios/ecommerce-conversion/data.csv",
+  "target": "conversion",
+  "features": [
+    "page_speed",
+    "personalization",
+    "cart_steps"
+  ],
+  "workflow_id": "wf-ecommerce-conversion",
+  "first_bias": {
+    "page_speed": 0.32,
+    "personalization": 0.3,
+    "cart_steps": 0.28
+  },
+  "second_bias": {
+    "page_speed": 0.034,
+    "personalization": 0.026,
+    "cart_steps": 0.038
+  },
+  "tolerance": 0.15,
+  "statistical_thresholds": {
+    "n_min": 1000,
+    "r2_min": 0.55
+  },
+  "task": "分析页面转化率（conversion，单位 %）与页面速度评分（page_speed）、个性化推荐强度（personalization）、购物车步骤数（cart_steps）的关系，估计改版各因素对转化的边际影响。",
+  "story": "增长团队要决定下一季度把预算投在「提速」「个性化」还是「简化购物车流程」，需要一个可验证的效应排序。",
+  "domain_checks": [
+    "确认指标口径",
+    "排查异常流量",
+    "对比改版前后分组"
+  ],
+  "recovery": {
+    "intercept": 1.8522,
+    "coefficients": {
+      "page_speed": 0.0603,
+      "personalization": 0.9545,
+      "cart_steps": -0.4247
+    },
+    "r2": 0.7008
+  }
+}

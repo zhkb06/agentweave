@@ -1,0 +1,2856 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>织流 AgentWeave · 方案书</title>
+<style>
+@page { size: A4; margin: 17mm 16mm 18mm 16mm; }
+* { box-sizing: border-box; }
+body {
+  font-family: "Microsoft YaHei", "PingFang SC", "Noto Sans CJK SC", sans-serif;
+  font-size: 10.6pt; line-height: 1.72; color: #1f2937; margin: 0;
+}
+.cover { page-break-after: always; text-align: center; padding-top: 34mm; }
+.cover .badge { display: inline-block; padding: 3px 14px; border-radius: 999px;
+  background: #ecfdf5; color: #047857; font-size: 10pt; letter-spacing: 1px; }
+.cover h1 { font-size: 25pt; line-height: 1.45; margin: 20mm 8mm 8mm; color: #0f172a; border: 0; }
+.cover .sub { color: #475569; font-size: 12pt; margin-bottom: 14mm; }
+.cover table { margin: 0 auto; width: 78%; border-collapse: collapse; font-size: 10.5pt; }
+.cover table td { border: 0; border-bottom: 1px solid #e2e8f0; padding: 7px 10px; text-align: left; }
+.cover table td:first-child { color: #64748b; width: 92px; text-align: right; }
+.cover .foot { margin-top: 22mm; color: #94a3b8; font-size: 9.5pt; }
+.toc { page-break-after: always; }
+.toc h2 { border: 0; text-align: center; letter-spacing: 6px; page-break-before: avoid; }
+.toc ol { list-style: none; padding-left: 0; }
+.toc ol ol { padding-left: 18px; }
+.toc li { margin: 3px 0; font-size: 10.5pt; }
+.toc a { color: #1f2937; text-decoration: none; display: block; }
+.toc .lvl2 > a { font-weight: 700; }
+h1, h2, h3, h4 { color: #0f172a; line-height: 1.4; }
+h1 { font-size: 21pt; }
+h2 { font-size: 16pt; border-left: 5px solid #0ea5e9; padding-left: 10px;
+     margin: 22px 0 12px; page-break-before: always; }
+h3 { font-size: 13pt; margin: 18px 0 8px; color: #0c4a6e; }
+h4 { font-size: 11.5pt; margin: 14px 0 6px; }
+p { margin: 7px 0; text-align: justify; }
+strong { color: #075985; }
+a { color: #0369a1; }
+table { border-collapse: collapse; width: 100%; margin: 10px 0 14px; font-size: 9.6pt;
+  page-break-inside: avoid; }
+th, td { border: 1px solid #cbd5e1; padding: 5px 7px; vertical-align: top; }
+th { background: #f1f5f9; color: #0f172a; }
+tr:nth-child(even) td { background: #f8fafc; }
+code { font-family: "Cascadia Mono", Consolas, monospace; font-size: 9pt;
+  background: #f1f5f9; padding: 1px 4px; border-radius: 3px; }
+pre { background: #0f172a; color: #e2e8f0; padding: 10px 12px; border-radius: 6px;
+  white-space: pre-wrap; word-break: break-word; font-size: 8.8pt; line-height: 1.55;
+  page-break-inside: avoid; }
+pre code { background: transparent; color: inherit; padding: 0; }
+blockquote { border-left: 4px solid #38bdf8; background: #f0f9ff; margin: 10px 0;
+  padding: 8px 12px; color: #334155; }
+img { max-width: 100%; border: 1px solid #e2e8f0; border-radius: 6px; margin: 6px 0; }
+hr { border: 0; border-top: 1px solid #e2e8f0; margin: 18px 0; }
+.footnote { color: #94a3b8; font-size: 9pt; }
+</style>
+</head>
+<body>
+<div class="cover"><div class="badge">2026 第五届「未来杯」创新大赛 · 赛题一</div><h1>织流 AgentWeave：面向复杂科研任务的多智能体编排、调度与可信验证平台</h1><div class="sub"><strong>2026 第五届“未来杯”创新大赛 · 赛题一（Agent 编排创新应用）· 方案书</strong></div><table>
+<thead>
+<tr>
+<th>项目</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>作品名称</td>
+<td>织流 AgentWeave 多智能体编排调度与可信验证平台</td>
+</tr>
+<tr>
+<td>参赛赛题</td>
+<td>赛题一：Agent 编排创新应用</td>
+</tr>
+<tr>
+<td>队伍名称</td>
+<td>织流 AgentWeave</td>
+</tr>
+<tr>
+<td>学校 / 单位</td>
+<td>石家庄信息工程职业学院</td>
+</tr>
+<tr>
+<td>队伍成员</td>
+<td>张康博</td>
+</tr>
+<tr>
+<td>指导教师</td>
+<td>徐宇丰</td>
+</tr>
+<tr>
+<td>提交日期</td>
+<td>2026-11-12</td>
+</tr>
+<tr>
+<td>代码仓库</td>
+<td>本方案书随附完整可运行仓库（纯 Python 标准库，零第三方依赖）</td>
+</tr>
+</tbody>
+</table><div class="foot">方案书 · 生成于 2026-11-17 · 纯 Python 标准库实现，零第三方运行时依赖</div></div>
+<hr />
+<div class="toc"><h2>目 录</h2><ol><li class="lvl2"><a href="#_1">摘要</a></li><li class="lvl2"><a href="#_2">一、选题背景与问题定义</a><ol><li class="lvl3"><a href="#11-agent-demo">1.1 结论：Agent 的“Demo 天花板”来自四类工程缺口，而不是模型能力不足</a></li><li class="lvl3"><a href="#12-ai4s">1.2 以 AI4S 科研分析为例：失败的代价不在“跑不通”，而在“跑出了错的结果”</a></li><li class="lvl3"><a href="#13">1.3 问题定义</a></li><li class="lvl3"><a href="#14">1.4 范围边界：我们不做什么</a></li></ol></li><li class="lvl2"><a href="#_3">二、需求分析与设计目标</a><ol><li class="lvl3"><a href="#21">2.1 结论：需求由三个硬约束反推得出——可演示、可复现、可审计</a></li><li class="lvl3"><a href="#22">2.2 功能性需求</a></li><li class="lvl3"><a href="#23">2.3 非功能性需求</a></li><li class="lvl3"><a href="#24">2.4 与赛题评分点的对应关系</a></li></ol></li><li class="lvl2"><a href="#_4">三、总体架构与技术选型</a><ol><li class="lvl3"><a href="#31">3.1 结论：采用“控制面与执行面分离”的六层架构，把编排、调度、验证、循环做成可被替换的独立组件</a></li><li class="lvl3"><a href="#32">3.2 分层架构图</a></li><li class="lvl3"><a href="#33">3.3 分层职责说明</a></li><li class="lvl3"><a href="#34">3.4 一次运行的数据流</a></li><li class="lvl3"><a href="#35">3.5 技术选型对比</a></li><li class="lvl3"><a href="#36-lobehub-dsh">3.6 与 LobeHub / DSH 的差异定位</a></li></ol></li><li class="lvl2"><a href="#agent">四、Agent 角色设计与协作</a><ol><li class="lvl3"><a href="#41-7">4.1 结论：7 个角色不是“人格扮演”，而是按“输入契约—输出契约—工具权限—成功判据”定义的岗位</a></li><li class="lvl3"><a href="#42-agent">4.2 七个 Agent 的岗位定义</a></li><li class="lvl3"><a href="#43">4.3 协作模式：规划—执行—验证—评审—写作的五段式</a></li><li class="lvl3"><a href="#44">4.4 冲突消解与升级机制</a></li></ol></li><li class="lvl2"><a href="#_5">五、工作流编排</a><ol><li class="lvl3"><a href="#51">5.1 结论：把流程从代码里拿出来，变成“可版本化、可审阅、可被执行引擎解释”的数据</a></li><li class="lvl3"><a href="#52-dag">5.2 DAG 的形式化定义</a></li><li class="lvl3"><a href="#53">5.3 节点类型与边类型</a></li><li class="lvl3"><a href="#54-json-dsl">5.4 JSON DSL 示例</a></li><li class="lvl3"><a href="#55-ast">5.5 条件表达式的 AST 白名单安全设计</a></li><li class="lvl3"><a href="#56">5.6 子工作流与人工闸门</a></li></ol></li><li class="lvl2"><a href="#_6">六、任务调度</a><ol><li class="lvl3"><a href="#61">6.1 结论：调度的目标不是“最快”，而是在能力匹配、负载均衡、优先级与代价之间给出可被追问的决策</a></li><li class="lvl3"><a href="#62">6.2 问题定义</a></li><li class="lvl3"><a href="#63">6.3 打分函数</a></li><li class="lvl3"><a href="#64">6.4 五种调度策略对比</a></li><li class="lvl3"><a href="#65">6.5 可解释性设计</a></li><li class="lvl3"><a href="#66">6.6 并发与限流</a></li></ol></li><li class="lvl2"><a href="#_7">七、验证策略与反馈机制</a><ol><li class="lvl3"><a href="#71">7.1 结论：可信不是“模型说它对”，而是“换一种独立方式还能算出同一个结果”</a></li><li class="lvl3"><a href="#72">7.2 威胁模型：我们到底在防什么</a></li><li class="lvl3"><a href="#73">7.3 五层验证</a></li><li class="lvl3"><a href="#74">7.4 置信度公式</a></li><li class="lvl3"><a href="#75-pdca">7.5 自循环（PDCA）状态机</a></li><li class="lvl3"><a href="#76">7.6 收敛条件与预算控制</a></li><li class="lvl3"><a href="#77">7.7 失败案例的处理路径</a></li></ol></li><li class="lvl2"><a href="#_8">八、核心代码说明</a><ol><li class="lvl3"><a href="#81-200400">8.1 结论：代码结构按“契约先行、控制面与执行面分离”组织，单个业务模块多在 200–400 行，每个关键决策都可单测</a></li><li class="lvl3"><a href="#82">8.2 模块清单</a></li><li class="lvl3"><a href="#83-coretypespy">8.3 片段一：节点契约（core/types.py）</a></li><li class="lvl3"><a href="#84-dag-workflowenginepy">8.4 片段二：DAG 执行引擎的调度骨架（workflow/engine.py，节选）</a></li><li class="lvl3"><a href="#85-schedulerenginepy">8.5 片段三：可解释调度打分（scheduler/engine.py，节选）</a></li><li class="lvl3"><a href="#86-verifyverifierpy">8.6 片段四：置信度聚合（verify/verifier.py，节选）</a></li><li class="lvl3"><a href="#87-loopselflooppy">8.7 片段五：自循环的收敛与反馈（loop/selfloop.py，节选）</a></li><li class="lvl3"><a href="#88-sse-apiapppy">8.8 片段六：SSE 事件推送与断线续传（api/app.py，节选）</a></li><li class="lvl3"><a href="#89">8.9 运行截图（真实采集）</a></li></ol></li><li class="lvl2"><a href="#_9">九、测试与性能评估</a><ol><li class="lvl3"><a href="#91">9.1 结论：用“测试金字塔 + 端到端黄金链路 + 基准对照”三层证据证明系统真的能跑、跑得对、跑得动</a></li><li class="lvl3"><a href="#92">9.2 测试金字塔</a></li><li class="lvl3"><a href="#93">9.3 基准对照：三种运行模式的差异</a></li><li class="lvl3"><a href="#94">9.4 性能与稳定性压测方法</a></li><li class="lvl3"><a href="#95">9.5 可复现性说明</a></li></ol></li><li class="lvl2"><a href="#_10">十、创新点与差异化</a><ol><li class="lvl3"><a href="#101">10.1 结论：五个创新点都不是“新概念”，而是把工程上被忽视的环节做成了一等公民</a></li><li class="lvl3"><a href="#_11">创新点一：把“调度决策”做成可解释、可回放的一等对象</a></li><li class="lvl3"><a href="#_12">创新点二：把“验证”做成与执行同级的流水线，而不是事后补的脚本</a></li><li class="lvl3"><a href="#pdca">创新点三：带预算与收敛判据的 PDCA 自循环</a></li><li class="lvl3"><a href="#_13">创新点四：以事件总线为核心的全链路可观测性</a></li><li class="lvl3"><a href="#_14">创新点五：零依赖、离线可复现的“可评审”工程形态</a></li><li class="lvl3"><a href="#102">10.2 与同类方案的差异化定位（一句话版）</a></li></ol></li><li class="lvl2"><a href="#_15">十一、局限与展望</a><ol><li class="lvl3"><a href="#111-mock">11.1 结论：当前版本的边界清晰——单机、合成数据、Mock 为默认，真实模型的非确定性尚未被完全驯服</a></li><li class="lvl3"><a href="#112">11.2 展望路线</a></li></ol></li><li class="lvl2"><a href="#_16">十二、部署与复现</a><ol><li class="lvl3"><a href="#121">12.1 结论：评审拿到仓库后，三条命令内必须能看到完整链路；这条标准我们按“断网也能跑”执行</a></li><li class="lvl3"><a href="#122">12.2 环境要求</a></li><li class="lvl3"><a href="#123">12.3 启动步骤</a></li><li class="lvl3"><a href="#124">12.4 接入真实大模型（可选）</a></li><li class="lvl3"><a href="#125">12.5 目录与产物</a></li><li class="lvl3"><a href="#126">12.6 常见问题</a></li></ol></li><li class="lvl2"><a href="#ai">十三、AI 使用说明</a><ol><li class="lvl3"><a href="#131-ai">13.1 结论：AI 是本项目的高效工具，但不是责任主体；所有架构决策、契约定义与最终验收由团队成员完成</a></li></ol></li><li class="lvl2"><a href="#a">附录 A：术语表</a></li><li class="lvl2"><a href="#b">附录 B：提交清单</a></li><li class="lvl2"><a href="#c">附录 C：占位符清单（由集成负责人回填）</a></li><li class="lvl2"><a href="#d">附录 D：代码仓库与二维码</a></li></ol></div><h2 id="_1">摘要</h2>
+<p><strong>结论：多智能体系统的主要矛盾已经从“模型能不能完成任务”转移到“工程上能不能管住任务”。</strong> 当前大量 Agent 作品停留在演示阶段：流程写死在代码里、任务分派靠串行与人工指定、结果由模型自评“我做对了”、失败后没有结构化反馈。织流 AgentWeave 把 Agent 系统当作生产系统建设，围绕<strong>可编排、可调度、可验证、能自愈</strong>四件事给出一套可运行、可复现、可审计的工程实现。</p>
+<p>平台以工作流 DAG（Directed Acyclic Graph，有向无环图）为编排模型，提供顺序、并行、条件分支、循环、子工作流、人工闸门六类控制语义；以<strong>能力画像 + 实时负载 + 依赖就绪度 + 优先级</strong>的加权打分调度器替代串行分派，并把每次调度的 <code>score / reason / agent_load</code> 通过事件总线暴露给前端，做到“为什么是它执行”可追问；以<strong>五层可信验证</strong>（结构契约、隐藏真值比对、代码独立复算、跨 Agent 交叉验证、统计与 LLM 评审）计算加权置信度，替代模型自评；以 <strong>PDCA（Plan-Do-Check-Act）自循环</strong>把验证失败的证据结构化为中文反馈注入下一轮执行，直到达标或耗尽预算。平台内置 7 个角色的科研 Agent 团队与 AI4S（AI for Science）空气质量归因演示场景，在<strong>无网络、无 API Key</strong> 的离线环境下用确定性 MockProvider 完整跑通“规划 → 并行采集 → 分析 → 验证失败 → 反馈修复 → 通过 → 报告”全链路，同时支持一键切换到任意 OpenAI 兼容真实大模型。</p>
+<p><strong>关键词</strong>：多智能体系统（Multi-Agent System）；工作流编排（Workflow Orchestration）；任务调度（Task Scheduling）；可信验证（Trustworthy Verification）；自循环优化（Self-Repair Loop）；可解释性（Explainability）</p>
+<hr />
+<h2 id="_2">一、选题背景与问题定义</h2>
+<h3 id="11-agent-demo">1.1 结论：Agent 的“Demo 天花板”来自四类工程缺口，而不是模型能力不足</h3>
+<p>过去两年，Agent 从“提示词 + 工具调用”迅速演进为多角色协作，但大量作品在演示之后无法继续推进，原因并不神秘。我们在构建与评审 Agent 系统的过程中反复观察到四类缺口，它们共同构成了一条从演示到生产的“死亡带”：</p>
+<p><strong>缺口一：流程硬编码，编排不可复用。</strong> 许多 Agent 项目的流程是 Python 里的一串 <code>await</code> 调用：先规划、再检索、再分析、最后写报告。流程一旦要加一个“复核”环节，就要改代码、重新联调；不同研究任务之间无法复用同一套编排资产，更无法让非开发者参与调整。工作流因此成为“代码的副产品”，而不是“可版本化、可审阅、可复现的资产”。</p>
+<p><strong>缺口二：调度黑盒，任务分派缺乏依据。</strong> 在多角色系统里，“谁来做这一步”通常由硬编码映射决定（分析任务永远给 Analyst），或者干脆串行排队。当同一角色存在多个实例、当不同节点对能力与工具的要求不同、当某些节点必须等待上游数据就绪时，固定映射会造成明显的资源浪费与排队拥塞；更严重的是，一旦结果异常，没有人能回答“为什么把这一步派给了它”。</p>
+<p><strong>缺口三：结果不可验证，模型自评替代了证据。</strong> 最常见的做法是让 Agent 在输出末尾写一句“以上分析已核对无误”，或者让另一个 Agent“评审”一下。这在工程上等价于让考生自己批改试卷：模型的自评与评审同样受幻觉影响，且无法给出可复算的证据。科研与决策场景对结论的可证伪性要求远高于闲聊场景，一句没有证据支撑的“我确认”没有任何价值。</p>
+<p><strong>缺口四：没有反馈闭环，失败只能整体重跑。</strong> 验证失败后的处理通常是抛异常、重试整个流程，或者由人工介入修改提示词。系统没有记录“哪一项检查失败、期望值是多少、实际值差多少、应该怎么改”，下一轮执行无法定向修复，重跑往往重复同样的错误。更缺乏预算与收敛判据，容易陷入“无限重试、账单失控”。</p>
+<p>把四类缺口放到一起看，问题的本质是：<strong>Agent 系统缺少一套面向生产的管理面（control plane）</strong>——它需要像数据库事务、像 CI/CD 流水线、像分布式任务队列那样，具备显式的流程定义、可解释的资源调度、可验证的正确性判据、以及可收敛的自动修复机制。这正是本作品的切入点。</p>
+<h3 id="12-ai4s">1.2 以 AI4S 科研分析为例：失败的代价不在“跑不通”，而在“跑出了错的结果”</h3>
+<p>我们选择“空气质量与气象因子归因分析”作为演示场景，不是因为它好看，而是因为它把上述缺口暴露得最彻底。设某城市日均 PM2.5 浓度与气象、污染物因子之间存在近似线性关系，数据集的隐藏真值为：</p>
+<pre><code>pm25 = 78 − 0.85 × temp + 0.42 × humidity − 1.6 × wind + 0.28 × so2 + ε
+</code></pre>
+<p>研究任务是：从 2000 行观测数据中估计各因子的效应量，判断“风速上升是否显著降低 PM2.5”，并据此给出治理建议。在真实科研流程中，这条链路会出现多种典型错误：</p>
+<table>
+<thead>
+<tr>
+<th>错误类型</th>
+<th>具体表现</th>
+<th>对结论的影响</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>系数符号错误</td>
+<td>把 wind 的系数估成 <code>+1.2</code></td>
+<td>“加大通风”变成错误建议，方向完全相反</td>
+</tr>
+<tr>
+<td>量纲/单位错误</td>
+<td>湿度按 0–1 还是 0–100 传入不一致</td>
+<td>效应量整体放大 100 倍，结论荒谬但不报错</td>
+</tr>
+<tr>
+<td>样本与拟合问题</td>
+<td>缺失值直接按 0 填充、R² 虚高</td>
+<td>统计显著性丧失，结论不可信</td>
+</tr>
+<tr>
+<td>过度解读</td>
+<td>把相关性写成因果性</td>
+<td>政策建议越界，学术上不成立</td>
+</tr>
+<tr>
+<td>幻觉引用</td>
+<td>编造文献与方法名</td>
+<td>评审无法复核，直接判定不可信</td>
+</tr>
+</tbody>
+</table>
+<p>这些错误的共同特点是：<strong>程序不会崩溃，输出格式还很漂亮</strong>。它们只能靠“与真值比对”“用另一段代码独立复算”“换一个 Agent 交叉验证”“检查样本量与拟合优度”来发现。一次错误的归因结论可能导向错误的减排建议，浪费数月科研时间，并让团队对整套 Agent 工具失去信任——这就是“不可验证”的真实代价。</p>
+<p>正是在这个场景里，五层验证与自循环才不是炫技：首轮分析故意给出带偏差的估计，验证器检出数值超差后生成结构化反馈（哪一项检查失败、期望区间是多少、实际误差多少），反馈注入下一轮分析提示词，修复后的结果再次验证并通过。<strong>整个过程离线、确定性、可重复播放</strong>，评委可以在 8 秒内看到一条完整的“失败—诊断—修复—通过”证据链。</p>
+<h3 id="13">1.3 问题定义</h3>
+<p>我们将作品要解决的问题形式化为一个五元组：</p>
+<pre><code>P = (G, A, W, V, B)
+G：研究目标（自然语言描述，如“估计 PM2.5 与气象因子的关系”）
+A：可用 Agent 集合，每个 Agent 具备能力画像、工具集与并发上限
+W：工作流（任务的偏序结构与控制语义）
+V：验证规约（检查项、容差、置信度阈值）
+B：预算（最大迭代轮数、超时、Token 上限）
+</code></pre>
+<p>求解 P 意味着：在预算 B 内，为 W 的每个节点选择合适的 Agent 执行，使产出满足 V 的全部硬性检查且加权置信度不低于阈值；若不满足，则依据失败证据定向修复并重试，直至收敛或预算耗尽，并在这个过程中留下完整、可回放的事件证据。</p>
+<p>由此拆出四个子问题，分别对应平台的四个核心模块：</p>
+<ol>
+<li><strong>编排问题</strong>：如何用声明式 DSL 表达顺序、并行、条件、循环、子工作流与人工介入，并由一个确定性引擎正确执行？</li>
+<li><strong>调度问题</strong>：在依赖就绪的候选集上，如何综合能力、负载、优先级与代价做出可解释的分派决策？</li>
+<li><strong>验证问题</strong>：如何用独立于模型自评的证据链判断结果可信，并给出可比较的置信度？</li>
+<li><strong>闭环问题</strong>：如何把验证失败转化为可执行反馈、控制重试预算、并在收敛时安全退出？</li>
+</ol>
+<h3 id="14">1.4 范围边界：我们不做什么</h3>
+<p>为保证工程聚焦与交付质量，本作品明确不做三件事：不训练、不微调任何模型；不做通用聊天助手；不做跨机器的分布式调度。平台定位是<strong>单机可运行、离线可复现的编排与验证中枢</strong>，通过 MCP（Model Context Protocol）与 OpenAI 兼容接口与外部能力对接。这条边界让作品在初赛阶段可以被完整评审，而不是停留在架构图。</p>
+<hr />
+<h2 id="_3">二、需求分析与设计目标</h2>
+<h3 id="21">2.1 结论：需求由三个硬约束反推得出——可演示、可复现、可审计</h3>
+<p>参赛作品的评审环境不可控：可能没有网络、没有 API Key、没有 GPU，评委只愿意花几分钟验证“它是不是真的能跑”。因此我们没有按“功能越多越好”的思路堆需求，而是从三个硬约束反推：</p>
+<ul>
+<li><strong>可演示</strong>：一条命令启动，浏览器打开即能看到完整链路，不需要准备数据集、不需要配置模型；</li>
+<li><strong>可复现</strong>：同一输入必须得到同一输出，演示不能“这次跑通、下次跑挂”，否则无法作为证据；</li>
+<li><strong>可审计</strong>：每一次调度、每一次验证、每一轮修复都要留下结构化记录，能回答“为什么”“差多少”“改了什么”。</li>
+</ul>
+<p>在这三个约束下，我们推导出功能性需求与非功能性需求。</p>
+<h3 id="22">2.2 功能性需求</h3>
+<table>
+<thead>
+<tr>
+<th>编号</th>
+<th>需求</th>
+<th>验收口径</th>
+<th>对应实现</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>F1</td>
+<td>声明式工作流编排</td>
+<td>JSON DSL 可定义 9 类节点与 3 类边，保存后可被引擎加载执行</td>
+<td><code>workflow/model.py</code>、<code>workflow/dsl.py</code></td>
+</tr>
+<tr>
+<td>F2</td>
+<td>DAG 执行语义完整</td>
+<td>顺序、并行分支、条件分支、JOIN 汇聚、循环、子工作流、人工闸门均可运行</td>
+<td><code>workflow/engine.py</code></td>
+</tr>
+<tr>
+<td>F3</td>
+<td>可解释任务调度</td>
+<td>5 种策略（fifo/round_robin/capability/load_aware/adaptive），每次调度输出 <code>score/reason/agent_load</code></td>
+<td><code>scheduler/engine.py</code></td>
+</tr>
+<tr>
+<td>F4</td>
+<td>五层可信验证</td>
+<td>L1 结构、L2 真值、L3 复算、L4 交叉、L5 统计/评审，输出加权置信度</td>
+<td><code>verify/verifier.py</code></td>
+</tr>
+<tr>
+<td>F5</td>
+<td>PDCA 自循环</td>
+<td>验证失败→结构化反馈→修复重跑→再验证，受 <code>max_iterations</code> 与预算约束</td>
+<td><code>loop/selfloop.py</code></td>
+</tr>
+<tr>
+<td>F6</td>
+<td>实时可观测</td>
+<td>事件总线 + SSE 推送，节点状态、Agent 思考、工具调用、调度决策全链路可回放</td>
+<td><code>core/events.py</code>、<code>api/server.py</code></td>
+</tr>
+<tr>
+<td>F7</td>
+<td>Agent 团队管理</td>
+<td>7 个内置角色，支持技能/工具声明、版本历史、并发上限与负载统计</td>
+<td><code>agents/registry.py</code>、<code>config/agents.json</code></td>
+</tr>
+<tr>
+<td>F8</td>
+<td>工具与 MCP 扩展</td>
+<td>9 个内置工具（含 <code>python_exec</code> 沙箱子进程）+ MCP JSON-RPC 客户端接入外部工具</td>
+<td><code>tools/registry.py</code>、<code>tools/mcp_client.py</code></td>
+</tr>
+<tr>
+<td>F9</td>
+<td>模型可切换</td>
+<td>离线 MockProvider 与任意 OpenAI 兼容接口一键切换，失败自动回退，Key 不回显</td>
+<td><code>llm/router.py</code>、<code>llm/mock.py</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="23">2.3 非功能性需求</h3>
+<table>
+<thead>
+<tr>
+<th>编号</th>
+<th>类别</th>
+<th>指标</th>
+<th>目标值</th>
+<th>验证方式</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>N1</td>
+<td>依赖</td>
+<td>第三方依赖数量</td>
+<td>0（仅 Python 标准库）</td>
+<td><code>pip list</code> 无新增；干净环境直接运行</td>
+</tr>
+<tr>
+<td>N2</td>
+<td>兼容</td>
+<td>Python 版本</td>
+<td>3.10+，验证机 <code>py -3.14</code></td>
+<td>多版本启动自检</td>
+</tr>
+<tr>
+<td>N3</td>
+<td>离线</td>
+<td>无网络可运行</td>
+<td>完整演示链路可跑通</td>
+<td>断网 + 无 Key 跑 <code>scripts/run_demo.py</code></td>
+</tr>
+<tr>
+<td>N4</td>
+<td>确定性</td>
+<td>同输入同输出</td>
+<td>固定随机种子，结果逐字节一致</td>
+<td>连续运行 3 次比对产物</td>
+</tr>
+<tr>
+<td>N5</td>
+<td>性能</td>
+<td>演示工作流端到端耗时</td>
+<td>≤ 8 s（离线）</td>
+<td><code>scripts/benchmark.py</code> 计时</td>
+</tr>
+<tr>
+<td>N6</td>
+<td>实时</td>
+<td>SSE 首事件延迟</td>
+<td>&lt; 500 ms</td>
+<td>事件时间戳与客户端接收时间差</td>
+</tr>
+<tr>
+<td>N7</td>
+<td>稳定</td>
+<td>长跑内存</td>
+<td>200 次运行不失控（事件环形缓冲上限 4000）</td>
+<td>压测脚本采样 RSS</td>
+</tr>
+<tr>
+<td>N8</td>
+<td>安全</td>
+<td>代码执行</td>
+<td>平台主进程禁止 <code>eval/exec</code>；工作流表达式走 AST 白名单</td>
+<td>静态扫描 + 恶意表达式用例</td>
+</tr>
+<tr>
+<td>N9</td>
+<td>安全</td>
+<td>文件与密钥</td>
+<td>工具路径限定在工作区/产物目录；API Key 不落日志、不回显</td>
+<td>目录穿越用例 + 日志检查</td>
+</tr>
+<tr>
+<td>N10</td>
+<td>可维护</td>
+<td>类型与文档</td>
+<td>全量类型注解、中文 docstring、模块契约文档</td>
+<td>代码评审</td>
+</tr>
+<tr>
+<td>N11</td>
+<td>可用性</td>
+<td>界面</td>
+<td>中文、深色科技风、无 CDN、1440×900 可直接截图</td>
+<td>断网打开 Web 控制台</td>
+</tr>
+</tbody>
+</table>
+<h3 id="24">2.4 与赛题评分点的对应关系</h3>
+<p>为避免“写了但没被看到”，我们把赛事评分关注点逐条映射到本文档章节、代码模块与演示证据：</p>
+<table>
+<thead>
+<tr>
+<th>评分关注点</th>
+<th>本文章节</th>
+<th>代码模块</th>
+<th>演示证据</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>选题价值与问题定义</td>
+<td>第一章</td>
+<td>—</td>
+<td>方案书 1.1–1.3</td>
+</tr>
+<tr>
+<td>编排能力与创新</td>
+<td>第四、五章</td>
+<td><code>workflow/**</code></td>
+<td>编排台 DAG 画布、并行分支</td>
+</tr>
+<tr>
+<td>调度算法与可解释性</td>
+<td>第六章</td>
+<td><code>scheduler/**</code></td>
+<td>运行监控页 <code>score/reason</code></td>
+</tr>
+<tr>
+<td>结果可信与验证</td>
+<td>第七章</td>
+<td><code>verify/**</code>、<code>loop/**</code></td>
+<td>验证中心五层结果、自循环轮次</td>
+</tr>
+<tr>
+<td>工程质量与可运行性</td>
+<td>第八、九、十二章</td>
+<td>全仓库</td>
+<td>一条命令启动、测试全绿</td>
+</tr>
+<tr>
+<td>创新点与差异化</td>
+<td>第十章</td>
+<td>—</td>
+<td>与 LangGraph/LobeHub/DSH 对比</td>
+</tr>
+<tr>
+<td>规范性与诚信</td>
+<td>第十三章、附录</td>
+<td>—</td>
+<td>AI 使用说明、占位符清单</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="_4">三、总体架构与技术选型</h2>
+<h3 id="31">3.1 结论：采用“控制面与执行面分离”的六层架构，把编排、调度、验证、循环做成可被替换的独立组件</h3>
+<p>系统不在“一个大文件里跑完所有事”，而是按<strong>控制面（control plane）/ 执行面（data plane）</strong>分离：控制面负责“决定做什么、谁来做、做得对不对”，执行面负责“真的调用模型和工具”。这样做的直接收益有三点：执行引擎不依赖任何具体 LLM 与工具实现（只依赖运行时上下文 <code>RuntimeContext</code>），因此可以用假实现做单元测试；验证器与调度器可以独立演进；离线 Mock 与真实模型可无缝互换而不改上层逻辑。</p>
+<h3 id="32">3.2 分层架构图</h3>
+<pre><code>┌──────────────────────────────────────────────────────────────────────────────┐
+│  L6 展示层   Web 单页控制台（原生 JS + SVG，零构建、零 CDN，离线可用）              │
+│  概览 │ 编排台(DAG画布) │ 运行监控(SSE) │ 验证中心 │ Agent团队 │ 工具/MCP │ 模型设置 │
+└───────────────────────────────┬──────────────────────────────────────────────┘
+                                │ REST(JSON) + SSE(事件流，Last-Event-ID 回放)
+┌───────────────────────────────▼──────────────────────────────────────────────┐
+│  L5 接口层   api/server.py  ThreadingHTTPServer + 后台 asyncio 事件循环线程       │
+│             统一错误体 {error:{code,message}}；静态资源 MIME；17 个 REST 端点      │
+└───────────────────────────────┬──────────────────────────────────────────────┘
+                                │ 门面调用（platform facade）
+┌───────────────────────────────▼──────────────────────────────────────────────┐
+│  L4 控制面   runtime/orchestrator.py（运行生命周期、事件桥接、报告产出）             │
+│  ┌─────────────┬──────────────┬──────────────┬──────────────┬──────────────┐ │
+│  │ WorkflowEngine│  Scheduler   │ Verification │ SelfLoop     │ RunState/Store│ │
+│  │ DAG执行/并行  │ 5策略打分     │ Pipeline     │ PDCA 控制器   │ 状态/快照/取消 │ │
+│  │ 条件/循环/子流│ score/reason │ 五层+置信度   │ 反馈/收敛/预算 │ 摘要/指标     │ │
+│  └─────────────┴──────────────┴──────────────┴──────────────┴──────────────┘ │
+│  依赖倒置：只通过 RuntimeContext 访问执行面（bus/llm/tools/agents/verifier）        │
+└───────────────────────────────┬──────────────────────────────────────────────┘
+                                │
+┌───────────────────────────────▼──────────────────────────────────────────────┐
+│  L3 执行面   AgentRuntime(ReAct) │ ToolRegistry+内置工具 │ MCP 客户端 │ ModelRouter│
+│             记忆 / 版本 / 并发     │ python_exec 子进程沙箱 │ JSON-RPC    │ 重试/回退 │
+└───────────────────────────────┬──────────────────────────────────────────────┘
+                                │
+┌───────────────────────────────▼──────────────────────────────────────────────┐
+│  L2 基础层   core/types.py（数据契约） core/events.py（事件总线）                  │
+│             core/expr.py（AST 白名单安全表达式） runtime/context.py（运行时上下文）  │
+└───────────────────────────────┬──────────────────────────────────────────────┘
+                                │
+┌───────────────────────────────▼──────────────────────────────────────────────┐
+│  L1 资产层   config/（agents.json、platform.json） workflows/（工作流 JSON）        │
+│             examples/datasets/（含隐藏真值） data/runs/&lt;run_id&gt;/（产物、报告、SVG）      │
+└──────────────────────────────────────────────────────────────────────────────┘
+</code></pre>
+<h3 id="33">3.3 分层职责说明</h3>
+<table>
+<thead>
+<tr>
+<th>层</th>
+<th>职责</th>
+<th>关键设计决策</th>
+<th>为什么这样切</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>L6 展示层</td>
+<td>可视化画布、实时监控、验证与设置</td>
+<td>原生 JS/SVG，无构建、无 CDN</td>
+<td>评审现场可能断网；构建链会引入不可控依赖与失败点</td>
+</tr>
+<tr>
+<td>L5 接口层</td>
+<td>提供 REST/SSE，隔离 HTTP 与业务</td>
+<td>线程 HTTP + 后台事件循环，<code>run_coroutine_threadsafe</code> 桥接</td>
+<td>标准库无 ASGI 服务器；线程模型足够支撑单机演示，且 SSE 不阻塞其他请求</td>
+</tr>
+<tr>
+<td>L4 控制面</td>
+<td>决定执行顺序、分派、验证、修复</td>
+<td>引擎只依赖 <code>RuntimeContext</code>，不 import 执行面</td>
+<td>可测试、可替换；调度与验证可独立演进</td>
+</tr>
+<tr>
+<td>L3 执行面</td>
+<td>真正调用模型与工具</td>
+<td>ReAct 循环、工具 JSON Schema 校验、MCP 适配</td>
+<td>与业务解耦；离线 Mock 与真实模型同接口</td>
+</tr>
+<tr>
+<td>L2 基础层</td>
+<td>统一数据契约、事件、表达式、上下文</td>
+<td>冻结的 <code>types/events/expr</code>，改动需评审</td>
+<td>契约稳定是多人并行开发的前提</td>
+</tr>
+<tr>
+<td>L1 资产层</td>
+<td>配置、工作流、数据集、产物</td>
+<td>工作流即数据（JSON），可版本化</td>
+<td>让“编排”成为可审阅资产，而非代码副作用</td>
+</tr>
+</tbody>
+</table>
+<h3 id="34">3.4 一次运行的数据流</h3>
+<p>以演示场景 <code>ai4s-air-quality</code> 为例，一次运行的数据流如下（编号对应事件流中的阶段）：</p>
+<pre><code>① 用户在编排台选择工作流与调度策略 → POST /api/runs {workflow_id, policy, inputs}
+② API 层解析 RunRequest → 门面创建 RunState（status=pending）→ 异步任务启动
+③ orchestrator 发 run.started；WorkflowEngine 计算就绪集，发 plan.ready（候选集+策略）
+④ Scheduler.pick 返回 ScheduleDecision(agent_id, score, reason) → 发 node.scheduled
+⑤ 节点执行：ctx.call_agent → AgentRuntime(ReAct) → ModelRouter.complete →（可选）ToolRegistry.call
+   全过程发 agent.thought / tool.called / tool.result / node.succeeded 事件
+⑥ 并行分支：scan（数据统计工具）与 research（方法调研 Agent）并发执行，JOIN 汇聚
+⑦ analyze 输出 → verify 节点：VerificationPipeline 依次跑 L1–L5 → 发 verify.result（置信度）
+⑧ 置信度不足 → SelfLoopController.build_feedback 生成中文反馈 → 发 loop.iteration
+   → 反馈注入 analyze 的 prompt 变量 → 重跑 → 再验证（最多 3 轮 / 预算耗尽）
+⑨ 通过 → critic 评审 → writer 生成报告 → human_gate（演示自动通过）→ end
+⑩ 发 run.finished；产物写入 data/runs/&lt;run_id&gt;/；前端经 SSE 实时渲染，刷新后可回放
+</code></pre>
+<p>这条链路上有三个“不寻常”的设计点值得强调：<strong>调度决策在第 ③④ 步就被事件化</strong>（不是隐式的），<strong>验证发生在节点级而非全局</strong>（可定位到具体节点），<strong>修复是带证据的定向重跑</strong>（不是整体重来）。</p>
+<h3 id="35">3.5 技术选型对比</h3>
+<p>选型时我们对比了五类代表性方案：LangGraph（图式编排库）、CrewAI（角色协作框架）、AutoGen（对话式多智能体框架）、LobeHub（Agent 应用与工具市场）、DSH / DeepSeek Harness（Agent 运行框架），以及自研路线。</p>
+<table>
+<thead>
+<tr>
+<th>维度</th>
+<th>LangGraph</th>
+<th>CrewAI</th>
+<th>AutoGen</th>
+<th>LobeHub</th>
+<th>DSH 类 Harness</th>
+<th><strong>AgentWeave（本作品）</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>编排模型</td>
+<td>图（节点/边）+ 状态机</td>
+<td>角色 + 任务顺序</td>
+<td>对话群聊/分层</td>
+<td>插件与助手配置</td>
+<td>会话与工具循环</td>
+<td><strong>DAG DSL + 9 类节点 + 6 类控制语义</strong></td>
+</tr>
+<tr>
+<td>并行与条件</td>
+<td>支持（需写代码）</td>
+<td>有限</td>
+<td>靠对话编排</td>
+<td>非重点</td>
+<td>非重点</td>
+<td><strong>声明式 <code>edge.condition</code> + 并行分支 + JOIN</strong></td>
+</tr>
+<tr>
+<td>调度</td>
+<td>无内建调度器</td>
+<td>顺序/层级委派</td>
+<td>轮询/自动选择</td>
+<td>无</td>
+<td>单 Agent 循环</td>
+<td><strong>5 策略 + 加权打分 + <code>score/reason</code> 可解释</strong></td>
+</tr>
+<tr>
+<td>结果验证</td>
+<td>需自行实现</td>
+<td>需自行实现</td>
+<td>需自行实现</td>
+<td>无</td>
+<td>无内建验证</td>
+<td><strong>五层验证 + 加权置信度 + 真值比对</strong></td>
+</tr>
+<tr>
+<td>失败闭环</td>
+<td>靠图重试/人工</td>
+<td>靠重试</td>
+<td>靠对话纠错</td>
+<td>无</td>
+<td>无</td>
+<td><strong>PDCA 结构化反馈 + 收敛/预算控制</strong></td>
+</tr>
+<tr>
+<td>依赖与部署</td>
+<td>Python 生态依赖较多</td>
+<td>依赖较多</td>
+<td>依赖较多</td>
+<td>前后端分离、依赖重</td>
+<td>依赖运行时</td>
+<td><strong>零第三方依赖，单文件服务启动</strong></td>
+</tr>
+<tr>
+<td>离线复现</td>
+<td>需自备模型</td>
+<td>需自备模型</td>
+<td>需自备模型</td>
+<td>需模型服务</td>
+<td>需模型服务</td>
+<td><strong>确定性 Mock，断网可完整演示</strong></td>
+</tr>
+<tr>
+<td>可观测性</td>
+<td>有 tracing 生态</td>
+<td>有限</td>
+<td>有限</td>
+<td>有日志</td>
+<td>有会话记录</td>
+<td><strong>事件总线 + SSE + 全链路回放</strong></td>
+</tr>
+<tr>
+<td>适用场景</td>
+<td>通用 Agent 应用</td>
+<td>角色化任务</td>
+<td>研究型对话</td>
+<td>个人助手/工具市场</td>
+<td>编码 Agent</td>
+<td><strong>科研分析等强验证、强审计场景</strong></td>
+</tr>
+</tbody>
+</table>
+<p><strong>选型结论与理由</strong>：我们不否认成熟框架的生态优势，但对本赛题而言，它们恰好都缺三样东西——<strong>可解释调度</strong>、<strong>一等公民的验证</strong>、<strong>带预算的自动修复</strong>；而这三样正是“从 Demo 到生产”的关键。若在框架之上二次开发，验证语义会被框架的抽象层遮蔽，评审时难以讲清“到底验了什么、怎么算置信度”；同时框架的依赖会让“断网一键复现”这一硬约束变得脆弱。因此我们选择<strong>自研控制面、复用成熟协议</strong>的路线：编排、调度、验证、循环四件事自己实现以保证语义透明；模型接入复用 OpenAI 兼容协议、工具扩展复用 MCP 协议，避免重复造轮子。</p>
+<h3 id="36-lobehub-dsh">3.6 与 LobeHub / DSH 的差异定位</h3>
+<table>
+<thead>
+<tr>
+<th>对比项</th>
+<th>LobeHub</th>
+<th>DSH / Agent Harness</th>
+<th>AgentWeave</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>核心抽象</td>
+<td>助手（Assistant）+ 插件 + 会话</td>
+<td>单 Agent 的工具循环与会话</td>
+<td><strong>工作流 DAG + Agent 团队 + 验证规约</strong></td>
+</tr>
+<tr>
+<td>多智能体的组织方式</td>
+<td>以助手为单位，人工切换</td>
+<td>以单会话为中心</td>
+<td><strong>以任务图为中心，自动分派与并行</strong></td>
+</tr>
+<tr>
+<td>正确性保障</td>
+<td>依赖模型与用户判断</td>
+<td>依赖人工审阅</td>
+<td><strong>五层验证 + 置信度阈值 + 真值比对</strong></td>
+</tr>
+<tr>
+<td>失败处理</td>
+<td>重新提问</td>
+<td>重新对话</td>
+<td><strong>证据反馈注入 + 定向重跑 + 预算收敛</strong></td>
+</tr>
+<tr>
+<td>典型使用场景</td>
+<td>个人知识工作</td>
+<td>编码与终端任务</td>
+<td><strong>科研分析、数据归因、需要审计的决策支持</strong></td>
+</tr>
+</tbody>
+</table>
+<p>一句话概括差异：<strong>LobeHub 让“人找 Agent”，DSH 让“人陪 Agent 干活”，AgentWeave 让“系统管 Agent 交活”。</strong> 我们关注的是任务级的正确性与可问责性，而不是单轮对话的体验。</p>
+<hr />
+<h2 id="agent">四、Agent 角色设计与协作</h2>
+<h3 id="41-7">4.1 结论：7 个角色不是“人格扮演”，而是按“输入契约—输出契约—工具权限—成功判据”定义的岗位</h3>
+<p>多智能体系统最常见的失败是“角色只是换了提示词”：几个 Agent 说的是同一件事，互相附和，既没有分工也没有制衡。我们的设计原则是：<strong>每个角色必须有独占的输入契约、可被机器检查的输出契约、受最小权限约束的工具集，以及明确的成功判据</strong>。角色定义落在 <code>config/agents.json</code>，由 <code>AgentRegistry</code> 加载并支持版本管理，可在 Web“Agent 团队”页编辑。</p>
+<h3 id="42-agent">4.2 七个 Agent 的岗位定义</h3>
+<table>
+<thead>
+<tr>
+<th>id</th>
+<th>角色</th>
+<th>职责</th>
+<th>输入</th>
+<th>输出（契约字段）</th>
+<th>工具</th>
+<th>温度</th>
+<th>成功判据</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>planner</code></td>
+<td>规划者 Planner</td>
+<td>把研究目标拆成可执行、可验证的子任务 DAG，指定执行者与成功判据</td>
+<td>用户目标 + 可用 Agent 清单</td>
+<td><code>{tasks:[{id,goal,owner}], success_criteria:[...]}</code></td>
+<td>无</td>
+<td>0.2</td>
+<td>子任务 3–6 个；每个子任务有 owner 且 owner 在注册表中；判据可量化</td>
+</tr>
+<tr>
+<td><code>researcher</code></td>
+<td>调研者 Researcher</td>
+<td>给出适用的统计建模范式、必要假设与注意事项</td>
+<td>问题描述 + 规划结果</td>
+<td><code>{methods:[...], rationale}</code></td>
+<td><code>http_get</code></td>
+<td>0.3</td>
+<td>方法名可识别（如多元线性回归）；给出选择理由；不编造文献</td>
+</tr>
+<tr>
+<td><code>data_engineer</code></td>
+<td>数据工程师 DataEngineer</td>
+<td>数据质量检查、缺失值处理、特征准备</td>
+<td>数据路径 + 列说明</td>
+<td><code>{data_path, rows, cleaning_log:[...]}</code></td>
+<td><code>dataset_stats</code>、<code>python_exec</code>、<code>file_read</code>、<code>file_write</code></td>
+<td>0.2</td>
+<td>清洗后行数 &gt; 0；每步清洗有日志；产出文件存在</td>
+</tr>
+<tr>
+<td><code>statistician</code></td>
+<td>统计建模师 Statistician</td>
+<td>编写并真实运行回归代码，估计效应量、R²、显著性</td>
+<td>清洗后数据 + 方法建议 + 反馈（如有）</td>
+<td><code>{code, metrics:{coefficients, r2, n, p_values}, conclusion}</code></td>
+<td><code>python_exec</code>、<code>dataset_stats</code>、<code>file_read</code>、<code>file_write</code></td>
+<td>0.1</td>
+<td>代码可被 <code>python_exec</code> 重跑；指标字段完整；n ≥ 1000</td>
+</tr>
+<tr>
+<td><code>verifier</code></td>
+<td>验证者 Verifier</td>
+<td>独立复算关键指标并与申报值逐项比对</td>
+<td>分析输出（只读）+ 原始数据 + 真值规约</td>
+<td><code>{passed, deltas:[...], recomputed:{...}}</code></td>
+<td><code>python_exec</code>、<code>dataset_stats</code>、<code>file_read</code></td>
+<td>0.0</td>
+<td>不信任申报结论，必须自行重算；给出逐项偏差</td>
+</tr>
+<tr>
+<td><code>critic</code></td>
+<td>评审者 Critic</td>
+<td>从方法论、数据、结论三方面质疑，给出置信度与改进建议</td>
+<td>全部已验证产物</td>
+<td><code>{confidence, risks:[...], improvements:[...]}</code></td>
+<td>无</td>
+<td>0.4</td>
+<td>置信度 ∈ [0,1]；至少指出 1 条风险或明确说明无风险理由</td>
+</tr>
+<tr>
+<td><code>writer</code></td>
+<td>报告撰写者 Writer</td>
+<td>组织成结构化中文研究报告，引用已验证指标与证据</td>
+<td>已验证指标 + 评审意见 + 验证记录</td>
+<td><code>{markdown, title}</code></td>
+<td><code>report_render</code></td>
+<td>0.5</td>
+<td>含研究问题/方法/发现/验证证据/局限；数字与指标一致</td>
+</tr>
+</tbody>
+</table>
+<p><strong>设计取舍说明</strong>：<code>verifier</code> 的温度设为 0.0、工具只给只读与计算类，是刻意的“制度设计”——验证者的职责是复现而非创造，任何创造性都会削弱其证据效力。<code>critic</code> 的温度最高（0.4），因为它需要发散地质疑。<code>statistician</code> 的温度最低（0.1），因为数值任务对随机性最敏感。</p>
+<h3 id="43">4.3 协作模式：规划—执行—验证—评审—写作的五段式</h3>
+<pre><code>        ┌──────────┐   任务DAG+判据    ┌────────────────────────────┐
+        │ planner  │ ───────────────▶ │  执行组（可并行）            │
+        └──────────┘                   │  researcher │ data_engineer│
+                                       │        statistician        │
+                                       └─────────────┬──────────────┘
+                                                     │ 分析产物
+                                       ┌─────────────▼──────────────┐
+                                       │ verifier（独立复算/交叉验证）│
+                                       └──────┬──────────────┬──────┘
+                                    不通过     │              │ 通过
+                                ┌──────────────▼───┐   ┌──────▼──────┐
+                                │ 结构化反馈 → 修复 │   │   critic    │
+                                │（回到执行组，定向）│   │ 评审+置信度 │
+                                └──────────────────┘   └──────┬──────┘
+                                                              │ 评审通过
+                                                       ┌──────▼──────┐
+                                                       │   writer    │
+                                                       └─────────────┘
+</code></pre>
+<p>这条链路的关键在于<strong>验证与执行的组织隔离</strong>：验证者不参与分析，分析者不能修改验证规约，评审者的置信度不能覆盖硬性检查失败。三种角色之间的信息流是单向的，避免“互相说服”。</p>
+<h3 id="44">4.4 冲突消解与升级机制</h3>
+<p>多 Agent 系统必然出现分歧：分析者认为结果正确、验证者认为超差、评审者认为方法有瑕疵。我们设计了四级冲突消解规则，优先级从高到低：</p>
+<table>
+<thead>
+<tr>
+<th>级别</th>
+<th>冲突场景</th>
+<th>消解规则</th>
+<th>依据</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>硬性检查失败（结构缺失/真值超差/复算不一致）</td>
+<td><strong>验证者否决</strong>，无论其他角色置信度多高，一律不通过</td>
+<td>证据优先于观点；硬性检查是可复算的客观事实</td>
+</tr>
+<tr>
+<td>2</td>
+<td>统计阈值边缘（如 R² 略低于阈值）</td>
+<td>进入自循环定向修复；若连续两轮无改善则升级</td>
+<td>避免在噪声上反复试错，设置“无改善即停”</td>
+</tr>
+<tr>
+<td>3</td>
+<td>critic 置信度低于阈值但硬性检查通过</td>
+<td>降级为“有条件通过”：报告中必须写入风险与局限，并转人工闸门</td>
+<td>不掩盖不确定性，把判断权交给人</td>
+</tr>
+<tr>
+<td>4</td>
+<td>planner 的任务拆解与执行者能力不匹配</td>
+<td>调度器按能力分匹配度降低，若匹配度低于下限则触发重新规划</td>
+<td>分派失败往往源于计划本身不可执行</td>
+</tr>
+</tbody>
+</table>
+<p><strong>升级路径</strong>：<code>自动修复（≤max_iterations） → 降级通过并标注风险 → 人工闸门（human_gate） → 运行失败并产出诊断报告</code>。每一级都会写入事件流与运行摘要，最终报告必须显式说明“哪些结论已通过验证、哪些是有条件通过、哪些未通过”，不允许静默降级。</p>
+<hr />
+<h2 id="_5">五、工作流编排</h2>
+<h3 id="51">5.1 结论：把流程从代码里拿出来，变成“可版本化、可审阅、可被执行引擎解释”的数据</h3>
+<p>编排层要解决的核心矛盾是<strong>表达力与确定性之间的平衡</strong>：表达力不足则复杂流程写不出来，表达力过强（允许写任意代码）则工作流变成不可控的黑盒。我们的选择是：用<strong>受约束的声明式 DSL</strong> 覆盖六类控制语义，条件表达式走 <strong>AST 白名单</strong>，任何“计算”都交给受控工具（<code>python_exec</code> 子进程）而不是在工作流里执行代码。这样工作流 JSON 可以像配置文件一样被评审、被 diff、被回滚。</p>
+<h3 id="52-dag">5.2 DAG 的形式化定义</h3>
+<p>一个工作流形式化定义为四元组：</p>
+<pre><code>WF = (V, E, X, Θ)
+V = {v₁, v₂, …, vₙ}                    节点集，每个节点 v = (id, type, agent|tool, prompt/args,
+                                                     inputs, outputs, verify, retry, loop)
+E ⊆ V × V × C × K                     边集，e = (src, dst, cond, kind)
+    C = 条件表达式集合 ∪ {⊥}（⊥ 表示无条件边）
+    K = {data, control, loop_back}
+X = {x₁, …, xₘ}                        工作流变量（输入、节点输出、反馈变量）
+Θ = (policy, max_concurrent, budget)    执行策略：调度策略、并发上限、预算
+</code></pre>
+<p><strong>结构约束</strong>（由 <code>WorkflowStore.validate</code> 在保存与加载时检查）：</p>
+<ol>
+<li><strong>唯一起点</strong>：至少一个 <code>start</code> 节点；无 <code>start</code> 时以入度为 0 的节点为起点。</li>
+<li><strong>出口存在</strong>：至少一个 <code>end</code> 节点；无 <code>end</code> 时以出度为 0 的节点为出口。</li>
+<li><strong>准无环</strong>：忽略 <code>kind=loop_back</code> 的边后必须无环（<code>topological_order()</code> 检测，存在环则报错）；循环只能通过 <code>loop</code> 节点 + <code>loop_back</code> 边表达，禁止隐式环。</li>
+<li><strong>可达性</strong>：每个节点都必须从起点可达，否则视为脏数据并给出告警。</li>
+<li><strong>条件互斥</strong>：同一源节点的多条出边中，条件边必须有默认边兜底（无 <code>condition</code> 的边即默认边），否则运行期会判定为“无可用分支”并失败。</li>
+<li><strong>契约完整</strong>：<code>outputs</code> 声明的字段必须能在节点输出中被验证器找到；<code>agent</code> 节点的 <code>agent</code> 必须存在于注册表，<code>tool</code> 节点的 <code>tool</code> 必须存在于工具注册表。</li>
+</ol>
+<p><strong>执行语义</strong>（由 <code>WorkflowEngine.execute</code> 实现）：</p>
+<ul>
+<li>节点 <code>v</code> 就绪当且仅当所有非 <code>loop_back</code> 入边的源节点均为 <code>succeeded</code>（或 <code>skipped</code>），且其入边条件求值为真；</li>
+<li>同一节点多条出边 =&gt; 后继并发执行；<code>join</code> 节点等待全部入边完成后再执行（屏障语义）；</li>
+<li>条件节点取<strong>第一条</strong>求值为真的出边（按 DSL 中的声明顺序，保证确定性）；</li>
+<li>循环节点把 <code>loop</code> 到 <code>loop_back</code> 目标之间的子图作为循环体，每轮发 <code>loop.iteration</code> 事件；</li>
+<li>任一节点失败且重试耗尽 =&gt; 依赖它的节点标记 <code>skipped</code>，运行以 <code>failed</code> 结束，但已产生的产物与事件保留，供诊断；</li>
+<li>运行期持续检查取消信号，取消后尽快退出并返回 <code>cancelled</code>。</li>
+</ul>
+<h3 id="53">5.3 节点类型与边类型</h3>
+<table>
+<thead>
+<tr>
+<th>节点类型</th>
+<th>语义</th>
+<th>关键字段</th>
+<th>典型用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>start</code></td>
+<td>入口，初始化变量</td>
+<td><code>args</code> 可设默认输入</td>
+<td>接收用户输入</td>
+</tr>
+<tr>
+<td><code>end</code></td>
+<td>出口，汇总结果</td>
+<td><code>inputs</code> 引用产物</td>
+<td>输出报告</td>
+</tr>
+<tr>
+<td><code>agent</code></td>
+<td>由指定 Agent 执行（ReAct）</td>
+<td><code>agent</code>、<code>prompt</code>（支持 <code>{{var}}</code> 模板）</td>
+<td>分析、评审、写作</td>
+</tr>
+<tr>
+<td><code>tool</code></td>
+<td>直接调用工具，确定性执行</td>
+<td><code>tool</code>、<code>args</code></td>
+<td>数据统计、文件读写</td>
+</tr>
+<tr>
+<td><code>condition</code></td>
+<td>条件分支，出边带表达式</td>
+<td><code>condition</code>（自身表达式可选）</td>
+<td>数据质量不达标时走清洗分支</td>
+</tr>
+<tr>
+<td><code>loop</code></td>
+<td>循环/自循环，循环体为子图</td>
+<td><code>loop.max_iterations</code>、<code>exit_when</code>、<code>feedback_var</code></td>
+<td>PDCA 修复循环</td>
+</tr>
+<tr>
+<td><code>subworkflow</code></td>
+<td>递归调用另一个工作流</td>
+<td><code>workflow</code>（子工作流 id）</td>
+<td>复用「数据质量检查」子流程</td>
+</tr>
+<tr>
+<td><code>verify</code></td>
+<td>调用验证流水线</td>
+<td><code>verify.checks</code>、<code>tolerance</code>、<code>min_confidence</code></td>
+<td>分析结果验证</td>
+</tr>
+<tr>
+<td><code>human_gate</code></td>
+<td>人工审批/介入</td>
+<td><code>config.prompt</code>、超时</td>
+<td>发布报告前人工确认</td>
+</tr>
+<tr>
+<td><code>join</code></td>
+<td>汇聚屏障</td>
+<td>无</td>
+<td>并行分支汇合</td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th>边类型</th>
+<th>语义</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>data</code></td>
+<td>数据依赖，源节点输出写入变量供下游引用</td>
+<td>默认类型，参与就绪判定</td>
+</tr>
+<tr>
+<td><code>control</code></td>
+<td>仅控制依赖，不传递数据</td>
+<td>用于“必须先完成”的排序约束</td>
+</tr>
+<tr>
+<td><code>loop_back</code></td>
+<td>循环回边，不参与拓扑排序与就绪判定</td>
+<td>由 <code>loop</code> 节点解释为“下一轮入口”</td>
+</tr>
+</tbody>
+</table>
+<h3 id="54-json-dsl">5.4 JSON DSL 示例</h3>
+<p>下面是演示工作流的节选（完整文件在 <code>workflows/</code>，字段与 <code>core/types.py</code> 一一对应）：</p>
+<pre><code class="language-json">{
+  &quot;id&quot;: &quot;wf-ai4s-air-quality&quot;,
+  &quot;name&quot;: &quot;AI4S 空气质量与气象因子归因分析&quot;,
+  &quot;version&quot;: &quot;1.0.0&quot;,
+  &quot;description&quot;: &quot;估计 PM2.5 与气象/污染物因子的效应量，验证后生成研究报告&quot;,
+  &quot;variables&quot;: { &quot;dataset&quot;: &quot;examples/datasets/air_quality.csv&quot;, &quot;tolerance&quot;: 0.15 },
+  &quot;nodes&quot;: [
+    { &quot;id&quot;: &quot;start&quot;, &quot;type&quot;: &quot;start&quot;, &quot;label&quot;: &quot;开始&quot; },
+    { &quot;id&quot;: &quot;plan&quot;, &quot;type&quot;: &quot;agent&quot;, &quot;agent&quot;: &quot;planner&quot;, &quot;label&quot;: &quot;任务规划&quot;,
+      &quot;prompt&quot;: &quot;研究目标：{{goal}}。可用 Agent：{{agents}}。请拆解任务并给出成功判据。&quot;,
+      &quot;outputs&quot;: [&quot;tasks&quot;, &quot;success_criteria&quot;],
+      &quot;verify&quot;: { &quot;checks&quot;: [&quot;schema&quot;, &quot;non_empty&quot;], &quot;min_confidence&quot;: 0.6 } },
+    { &quot;id&quot;: &quot;scan&quot;, &quot;type&quot;: &quot;tool&quot;, &quot;tool&quot;: &quot;dataset_stats&quot;, &quot;label&quot;: &quot;数据概览&quot;,
+      &quot;args&quot;: { &quot;path&quot;: &quot;{{dataset}}&quot;, &quot;columns&quot;: [&quot;pm25&quot;, &quot;temp&quot;, &quot;humidity&quot;, &quot;wind&quot;, &quot;so2&quot;] },
+      &quot;outputs&quot;: [&quot;shape&quot;, &quot;columns&quot;, &quot;missing&quot;] },
+    { &quot;id&quot;: &quot;research&quot;, &quot;type&quot;: &quot;agent&quot;, &quot;agent&quot;: &quot;researcher&quot;, &quot;label&quot;: &quot;方法调研&quot;,
+      &quot;prompt&quot;: &quot;针对问题：{{goal}}，给出适用的统计建模方法与假设。&quot;,
+      &quot;outputs&quot;: [&quot;methods&quot;, &quot;rationale&quot;] },
+    { &quot;id&quot;: &quot;clean&quot;, &quot;type&quot;: &quot;agent&quot;, &quot;agent&quot;: &quot;data_engineer&quot;, &quot;label&quot;: &quot;数据清洗&quot;,
+      &quot;inputs&quot;: [&quot;scan&quot;], &quot;outputs&quot;: [&quot;data_path&quot;, &quot;rows&quot;, &quot;cleaning_log&quot;] },
+    { &quot;id&quot;: &quot;repair&quot;, &quot;type&quot;: &quot;loop&quot;, &quot;label&quot;: &quot;分析-验证自循环&quot;,
+      &quot;loop&quot;: { &quot;max_iterations&quot;: 3, &quot;feedback_var&quot;: &quot;feedback&quot;, &quot;mode&quot;: &quot;pdca&quot; },
+      &quot;verify&quot;: {
+        &quot;checks&quot;: [&quot;code_rerun&quot;, &quot;numeric_ground_truth&quot;, &quot;statistical&quot;, &quot;cross_agent&quot;],
+        &quot;tolerance&quot;: 0.15,
+        &quot;ground_truth&quot;: { &quot;intercept&quot;: 78, &quot;temp&quot;: -0.85, &quot;humidity&quot;: 0.42,
+                          &quot;wind&quot;: -1.6, &quot;so2&quot;: 0.28 },
+        &quot;min_confidence&quot;: 0.7,
+        &quot;allow_self_repair&quot;: true
+      } },
+    { &quot;id&quot;: &quot;critique&quot;, &quot;type&quot;: &quot;agent&quot;, &quot;agent&quot;: &quot;critic&quot;, &quot;label&quot;: &quot;科学评审&quot;,
+      &quot;outputs&quot;: [&quot;confidence&quot;, &quot;risks&quot;, &quot;improvements&quot;] },
+    { &quot;id&quot;: &quot;report&quot;, &quot;type&quot;: &quot;agent&quot;, &quot;agent&quot;: &quot;writer&quot;, &quot;label&quot;: &quot;撰写报告&quot;,
+      &quot;outputs&quot;: [&quot;markdown&quot;, &quot;title&quot;] },
+    { &quot;id&quot;: &quot;gate&quot;, &quot;type&quot;: &quot;human_gate&quot;, &quot;label&quot;: &quot;发布审批&quot;, &quot;config&quot;: { &quot;prompt&quot;: &quot;确认发布报告？&quot; } },
+    { &quot;id&quot;: &quot;end&quot;, &quot;type&quot;: &quot;end&quot;, &quot;label&quot;: &quot;结束&quot; }
+  ],
+  &quot;edges&quot;: [
+    { &quot;source&quot;: &quot;start&quot;, &quot;target&quot;: &quot;plan&quot;, &quot;kind&quot;: &quot;control&quot; },
+    { &quot;source&quot;: &quot;plan&quot;, &quot;target&quot;: &quot;scan&quot; },
+    { &quot;source&quot;: &quot;plan&quot;, &quot;target&quot;: &quot;research&quot; },
+    { &quot;source&quot;: &quot;scan&quot;, &quot;target&quot;: &quot;clean&quot; },
+    { &quot;source&quot;: &quot;research&quot;, &quot;target&quot;: &quot;clean&quot; },
+    { &quot;source&quot;: &quot;clean&quot;, &quot;target&quot;: &quot;repair&quot; },
+    { &quot;source&quot;: &quot;repair&quot;, &quot;target&quot;: &quot;critique&quot; },
+    { &quot;source&quot;: &quot;critique&quot;, &quot;target&quot;: &quot;report&quot; },
+    { &quot;source&quot;: &quot;report&quot;, &quot;target&quot;: &quot;gate&quot; },
+    { &quot;source&quot;: &quot;gate&quot;, &quot;target&quot;: &quot;end&quot; }
+  ]
+}
+</code></pre>
+<p>这段 DSL 体现了三个设计意图：<strong>并行是天然的</strong>（<code>scan</code> 与 <code>research</code> 同源出边，引擎自动并发）；<strong>验证是节点属性而不是外部脚本</strong>（<code>repair</code> 节点携带完整验证规约）；<strong>循环是声明式的</strong>（<code>loop.max_iterations</code> + <code>feedback_var</code>，无需写控制代码）。</p>
+<h3 id="55-ast">5.5 条件表达式的 AST 白名单安全设计</h3>
+<p>工作流 JSON 可能来自 Web 编辑器、外部仓库或第三方分享，因此条件表达式（如 <code>quality &gt;= 0.85 and iterations &lt; 3</code>）<strong>绝不能交给 <code>eval</code></strong>。<code>core/expr.py</code> 的做法是：先用 <code>ast.parse(expr, mode="eval")</code> 解析成语法树，再递归求值，只放行白名单节点类型。</p>
+<pre><code class="language-python">_ALLOWED_FUNCS = {&quot;len&quot;, &quot;abs&quot;, &quot;min&quot;, &quot;max&quot;, &quot;round&quot;, &quot;int&quot;, &quot;float&quot;,
+                 &quot;str&quot;, &quot;bool&quot;, &quot;sum&quot;, &quot;sorted&quot;, &quot;any&quot;, &quot;all&quot;}
+_ALLOWED_NODES = (ast.Constant, ast.Name, ast.BinOp, ast.BoolOp, ast.UnaryOp,
+                  ast.Compare, ast.Call, ast.Subscript, ast.List, ast.Tuple,
+                  ast.Dict, ast.IfExp, ast.JoinedStr, ast.Slice)
+
+def _eval(node: ast.AST, ctx: dict[str, Any]) -&gt; Any:
+    if isinstance(node, ast.Constant):
+        return node.value
+    if isinstance(node, ast.Name):
+        if node.id in ctx:
+            return ctx[node.id]
+        if node.id in _ALLOWED_FUNCS:
+            return _ALLOWED_FUNCS[node.id]
+        raise ExprError(f&quot;未知变量: {node.id}&quot;)
+    if isinstance(node, ast.Call):
+        if not isinstance(node.func, ast.Name):
+            raise ExprError(&quot;只允许调用白名单函数&quot;)
+        fn = _ALLOWED_FUNCS.get(node.func.id)
+        if fn is None:
+            raise ExprError(f&quot;未知函数: {node.func.id}&quot;)
+        if node.keywords:
+            raise ExprError(&quot;函数调用不支持关键字参数&quot;)
+        return fn(*[_eval(a, ctx) for a in node.args])
+    ...
+    raise ExprError(f&quot;不支持的表达式语法: {type(node).__name__}&quot;)
+</code></pre>
+<p>安全性质与防线：</p>
+<ol>
+<li><strong>无属性访问</strong>：不处理 <code>ast.Attribute</code>，因此 <code>().__class__.__bases__</code> 一类经典逃逸链在解析阶段即被拒绝；</li>
+<li><strong>无导入、无 lambda、无推导式</strong>：白名单外的节点类型直接抛 <code>ExprError</code>；</li>
+<li><strong>资源上限</strong>：表达式长度上限 2000 字符，幂运算指数上限 128，避免 <code>9**9**9</code> 型 DoS；</li>
+<li><strong>未知变量即报错</strong>：拼写错误不会被静默当成 <code>None</code>，而是在保存/运行时暴露；</li>
+<li><strong>失败可诊断</strong>：错误信息包含非法节点类型或未知变量名，前端可直接展示给工作流作者。</li>
+</ol>
+<p>这与“禁止 <code>eval/exec</code>”的平台级约束（见 N8）形成双层防护：即使条件表达式被恶意构造，影响的也只是“这一条边走不走”，而不是“服务器上执行什么代码”。</p>
+<h3 id="56">5.6 子工作流与人工闸门</h3>
+<p><strong>子工作流</strong>用于复用稳定流程（如“数据质量检查”），语义是<strong>同步递归调用</strong>：父引擎把当前变量快照作为子工作流入参，子工作流返回后把声明的输出写回父变量。为避免递归失控，实现上设置两层限制：最大递归深度（默认 5）与子工作流必须无环引用（保存时静态检查）。子工作流的事件通过 <code>run_id</code> 关联到同一次运行，前端在时间线上以缩进层级展示，避免“调进去之后就看不见了”。</p>
+<p><strong>人工闸门</strong>用于高风险动作前的确认（如发布报告）。节点的默认行为是：发出 <code>human.required</code> 事件、把运行置为 <code>paused</code>、等待前端 <code>POST /api/runs/{id}/approve</code> 或超时。演示模式下 <code>auto_approve=true</code>，闸门在 0.3 秒后自动放行并在事件中标注 <code>auto=true</code>——这不是“假装有人审批”，而是让演示可无人值守地跑完，同时保留真实部署时的人工介入路径。生产配置只需把 <code>auto_approve</code> 置为 <code>false</code>，行为立即切换为真实阻塞等待。</p>
+<hr />
+<h2 id="_6">六、任务调度</h2>
+<h3 id="61">6.1 结论：调度的目标不是“最快”，而是在能力匹配、负载均衡、优先级与代价之间给出<strong>可被追问的</strong>决策</h3>
+<p>如果只看吞吐，调度器可以简单到“谁空闲给谁”。但多智能体科研场景有三个额外约束：<strong>能力不可替换</strong>（统计建模必须给 <code>statistician</code>，否则结果不可信）、<strong>环节有优先级</strong>（验证环节的延迟会阻塞整条链路）、<strong>代价不对称</strong>（不同模型、不同工具调用的成本差一个数量级）。因此我们把调度定义为带约束的打分选择问题，并把打分明细暴露出来。</p>
+<h3 id="62">6.2 问题定义</h3>
+<p>在时刻 <code>t</code>，设：</p>
+<ul>
+<li><code>R(t)</code>：就绪节点集合（依赖满足、条件满足、未开始）；</li>
+<li><code>A</code>：已注册且启用的 Agent 集合，每个 <code>a ∈ A</code> 有并发上限 <code>cap(a)</code> 与当前在飞任务数 <code>inflight(a)</code>；</li>
+<li><code>match(n, a) ∈ [0,1]</code>：节点 <code>n</code> 对 Agent <code>a</code> 的能力匹配度（由技能/工具/角色计算）；</li>
+<li><code>prio(n) ∈ [0,1]</code>：节点优先级（数值越大越优先，来自工作流声明或运行期提权）；</li>
+<li><code>ready(n) ∈ {0,1}</code>：数据就绪标记；</li>
+<li><code>cost(n, a) ≥ 0</code>：预估代价（Token/耗时，按历史均值估计）。</li>
+</ul>
+<p>候选集定义为：</p>
+<pre><code>C(t) = { (n, a) | n ∈ R(t), a ∈ A, inflight(a) &lt; cap(a), match(n, a) ≥ match_min }
+</code></pre>
+<p>决策为 <code>pick(C) = argmax_{(n,a) ∈ C} score(n, a)</code>。实现上使用<strong>稳定排序</strong>：不重排候选、逐项比较只在严格大于时替换，同分时保留候选传入顺序，从机制上保证<strong>同输入同决策</strong>、结果可复现。</p>
+<h3 id="63">6.3 打分函数</h3>
+<p><code>capability</code> / <code>load_aware</code> / <code>adaptive</code> 三种策略共用同一个加权打分骨架，只是权重不同。以 <code>adaptive</code> 为例（与仓库 <code>agentweave/scheduler/engine.py</code> 当前实现一致）：</p>
+<pre><code>score(n, a) = w_cap · cap(a) + w_load · (1 − load(a))
+            + w_prio · prio_norm(n) + w_succ · success(a)
+
+其中 cap(a) ∈ [0,1]        能力匹配度（技能 / 工具 / 角色）
+     load(a) = inflight(a) / cap(a) ∈ [0,1]
+     prio_norm(n) = prio(n) / max(prio)，同批候选内归一化
+     success(a) ∈ [0,1]   该 Agent 历史成功率，冷启动默认 0.5
+     默认权重 w = (0.40, 0.30, 0.20, 0.10)，Σw = 1
+
+退化策略：
+  capability   score = cap(a)
+  load_aware   score = 0.6 · (1 − load(a)) + 0.4 · cap(a)
+  priority     score = prio_norm(n)
+  fifo         score = 1.0（按到达顺序）
+  round_robin  score = 1 / (1 + est_cost)（按轮转指针取候选）
+</code></pre>
+<p><code>adaptive</code> 的权重不是写死的：每记录一次真实执行结果，<code>record_outcome()</code> 会更新成功率；当全局成功率低于 0.6 时提高 <code>w_cap</code>（能力优先）、降低 <code>w_load</code>，当成功率高于 0.9 时略增 <code>w_succ</code>，随后做上下界裁剪与归一化。这样既保留了「可解释」，又让系统在运行中自我校准。</p>
+<p>选择这个结构的理由：</p>
+<ol>
+<li><strong>每一项都可解释</strong>：<code>cap</code> 回答"会不会"，<code>load</code> 回答"忙不忙"，<code>prio</code> 回答"急不急"，<code>success</code> 回答"过去靠不靠谱"；</li>
+<li><strong>线性可加便于审计</strong>：前端可以逐项展示贡献值，评委能直接看到"这次分派因为能力匹配 0.9 而胜出，而不是因为排队顺序"；</li>
+<li><strong>权重可调即策略可插拔</strong>：不同策略只是权重向量不同，不需要维护五套独立算法，降低实现与测试成本；</li>
+<li><strong>代价作为候选属性保留</strong>：<code>est_cost</code> 进入候选对象与 <code>round_robin</code> 打分，并在 <code>describe()</code> 中对外可见，为后续把成本纳入统一打分留出接口，而不在当前版本虚设权重。</li>
+</ol>
+<h3 id="64">6.4 五种调度策略对比</h3>
+<table>
+<thead>
+<tr>
+<th>策略</th>
+<th>决策规则</th>
+<th>权重/实现</th>
+<th>优点</th>
+<th>局限</th>
+<th>适用场景</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>fifo</code></td>
+<td>按节点进入就绪队列的顺序</td>
+<td>纯队列，<code>score=1.0</code>，取首个候选</td>
+<td>最简单、完全可预测、易调试</td>
+<td>不考虑能力与负载，容易排队拥塞</td>
+<td>基线对照、单 Agent 串行</td>
+</tr>
+<tr>
+<td><code>round_robin</code></td>
+<td>在候选 Agent 间轮转</td>
+<td>轮转指针 + <code>score=1/(1+est_cost)</code></td>
+<td>天然均摊，避免单点过载</td>
+<td>忽视能力匹配，可能把任务给错角色</td>
+<td>同质 Agent 池</td>
+</tr>
+<tr>
+<td><code>priority</code></td>
+<td>优先级最高者先执行</td>
+<td><code>score = prio / max(prio)</code></td>
+<td>保障关键路径</td>
+<td>低优先级任务可能饥饿</td>
+<td>有明确关键路径的流程</td>
+</tr>
+<tr>
+<td><code>capability</code></td>
+<td>能力匹配度最高者</td>
+<td><code>score = cap</code></td>
+<td>结果质量最好，角色不串</td>
+<td>可能把任务堆给强 Agent</td>
+<td>角色能力差异大的场景</td>
+</tr>
+<tr>
+<td><code>load_aware</code></td>
+<td>能力 + 负载均衡</td>
+<td><code>score = 0.6·(1−load) + 0.4·cap</code></td>
+<td>兼顾质量与吞吐</td>
+<td>负载抖动时决策频繁切换</td>
+<td>高并发运行</td>
+</tr>
+<tr>
+<td><code>adaptive</code></td>
+<td>四因子加权 + 运行期调权</td>
+<td>默认 <code>(0.40, 0.30, 0.20, 0.10)</code>，按成功率自适应</td>
+<td>自动适应、无需人工调参</td>
+<td>需要一定样本量才稳定，行为较难预测</td>
+<td>长时间、多批次运行（演示默认）</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>注：<code>fifo</code> / <code>round_robin</code> / <code>priority</code> 属于“对照策略”，保留它们的目的是在基准测试中量化“可解释加权调度”相对朴素策略的收益，而不是为了凑数量。</p>
+</blockquote>
+<h3 id="65">6.5 可解释性设计</h3>
+<p>调度决策不是一个 <code>agent_id</code>，而是一个结构化对象：</p>
+<pre><code class="language-python">@dataclass
+class ScheduleDecision:
+    node_id: str
+    agent_id: str
+    score: float
+    reason: str                                  # 人类可读的决策理由
+    agent_load: float = 0.0                      # 决策时刻的负载
+    candidate_list: list[dict] = field(default_factory=list)  # 完整候选与得分
+</code></pre>
+<p><code>reason</code> 采用“分项贡献”格式，以下为 <code>adaptive</code> 策略的真实输出样式：</p>
+<pre><code>&quot;自适应策略：能力 0.92×0.40 + 空闲 0.75×0.30 + 优先级 0.60×0.20
+ + 历史成功率 0.83×0.10 = 0.804，分配给 statistician&quot;
+</code></pre>
+<p>而 <code>candidate_list</code> 保存同批全部候选的 <code>score / reason / agent_load</code>，按得分降序排列，前端据此渲染“为什么是它、差多少”的对比视图。</p>
+<p>同时，运行期在计划生成阶段发出 <code>plan.ready</code>（含完整候选集与打分），在节点分派阶段发出 <code>node.scheduled</code>（含 <code>score / reason / agent_load</code>）。前端“运行监控”页把这两个事件渲染成调度决策卡片，评审可以清楚地看到<strong>同一时刻有哪些候选、各自得分多少、为什么选了它</strong>。这种“决策可回放”能力，是我们与“隐式调度的框架”最直观的差异之一。</p>
+<h3 id="66">6.6 并发与限流</h3>
+<p>调度器的并发控制分三层，任何一层都不会让系统过载：</p>
+<table>
+<thead>
+<tr>
+<th>层级</th>
+<th>控制手段</th>
+<th>默认值</th>
+<th>目的</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>运行级</td>
+<td><code>runtime.max_concurrent_nodes</code></td>
+<td>4</td>
+<td>限制同时执行的节点数，避免事件风暴与上下文切换开销</td>
+</tr>
+<tr>
+<td>Agent 级</td>
+<td><code>agent_max_concurrency</code>（注册表 <code>acquire/release</code>）</td>
+<td>2</td>
+<td>防止单个 Agent 被打爆，同时保证同一角色的实例可并行</td>
+</tr>
+<tr>
+<td>模型级</td>
+<td>ModelRouter 超时（60 s）+ 指数退避重试（最多 2 次）+ 失败回退 Mock</td>
+<td>—</td>
+<td>外部 API 抖动时不拖垮整条链路</td>
+</tr>
+</tbody>
+</table>
+<p>此外，调度器本身是<strong>无副作用</strong>的选择器：它读取候选集快照、返回决策，不修改运行状态；状态变更由执行引擎完成。这让调度器可以被单元测试穷举，也避免了“调度器与引擎互相修改状态”的并发 bug。候选集由 <code>data_ready</code> 过滤，避免把节点派给数据尚未就绪的 Agent；<code>priority</code> 策略的饥饿风险我们在局限章节明确承认，并在基准中作为对照项度量，而不是假装不存在。</p>
+<hr />
+<h2 id="_7">七、验证策略与反馈机制</h2>
+<h3 id="71">7.1 结论：可信不是“模型说它对”，而是“换一种独立方式还能算出同一个结果”</h3>
+<p>验证层要回答的问题只有一个：<strong>这条结论凭什么可信？</strong> 我们的回答是“证据链”，具体表现为五个相互独立的证据来源：输出是否满足契约、数值是否落在真值容差内、代码能否被独立重跑复现、另一个 Agent 能否独立算出同样结果、统计假设与语义评审是否成立。任何单一来源都可能失效（真值可能标错、复算代码可能同源、评审模型可能被说服），但五个来源同时失效的概率远低于任一单点。更重要的是：<strong>每个检查都留下结构化证据（期望值、实际值、误差、证据摘要），而不是一个“通过/不通过”的布尔值</strong>。</p>
+<h3 id="72">7.2 威胁模型：我们到底在防什么</h3>
+<table>
+<thead>
+<tr>
+<th>威胁</th>
+<th>具体表现</th>
+<th>单靠“模型自评”为何无效</th>
+<th>对应检查层</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>数值幻觉</td>
+<td>编造一个“看起来合理”的系数</td>
+<td>自评与生成同源，错的地方会一起错</td>
+<td>L2 真值比对、L3 复算</td>
+</tr>
+<tr>
+<td>格式漂移</td>
+<td>输出缺字段、类型变化导致下游崩溃</td>
+<td>模型往往认为“意思到了”</td>
+<td>L1 结构契约</td>
+</tr>
+<tr>
+<td>单位/量纲错误</td>
+<td>湿度 0–1 与 0–100 混用</td>
+<td>数值仍在“合理区间”，肉眼难辨</td>
+<td>L2 真值、L5 统计</td>
+</tr>
+<tr>
+<td>分析代码 bug</td>
+<td>回归写错、数据泄漏、样本筛选错误</td>
+<td>模型不会主动怀疑自己的代码</td>
+<td>L3 代码复算、L4 交叉验证</td>
+</tr>
+<tr>
+<td>单 Agent 偏见</td>
+<td>同一模型同一提示，错误高度相关</td>
+<td>自评无法引入独立视角</td>
+<td>L4 跨 Agent 交叉</td>
+</tr>
+<tr>
+<td>统计无效</td>
+<td>样本过少、R² 过低、过拟合</td>
+<td>模型可能“讲得头头是道”</td>
+<td>L5 统计阈值</td>
+</tr>
+<tr>
+<td>结论过度解读</td>
+<td>相关性写成因果性</td>
+<td>自评倾向于肯定自己</td>
+<td>L5 LLM 结构化评审 + critic</td>
+</tr>
+</tbody>
+</table>
+<h3 id="73">7.3 五层验证</h3>
+<table>
+<thead>
+<tr>
+<th>层</th>
+<th>检查器</th>
+<th>判定内容</th>
+<th>实现要点</th>
+<th>独立成本</th>
+<th>失败类型</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>L1 结构</td>
+<td><code>schema</code> / <code>non_empty</code></td>
+<td>输出是 JSON 对象且含节点声明的 <code>outputs</code> 字段；关键文本非空（长度 ≥ 20）</td>
+<td>只做契约检查，不判断对错，速度最快</td>
+<td>极低（本地）</td>
+<td>硬性失败</td>
+</tr>
+<tr>
+<td>L1 产物</td>
+<td><code>artifact_exists</code></td>
+<td>节点声明的产物文件（图、报告、清洗后数据）确实存在且非空</td>
+<td>只查文件系统，防止“报告里说有图、实际没生成”</td>
+<td>极低（本地）</td>
+<td>硬性失败</td>
+</tr>
+<tr>
+<td>L2 真值</td>
+<td><code>numeric_ground_truth</code></td>
+<td>输出 <code>metrics</code> 与 <code>spec.ground_truth</code> 逐项相对误差 ≤ <code>tolerance</code>（默认 15%）</td>
+<td>真值来自数据集生成脚本，独立于 Agent；逐项报告误差</td>
+<td>极低（本地）</td>
+<td>硬性失败</td>
+</tr>
+<tr>
+<td>L3 复算</td>
+<td><code>code_rerun</code></td>
+<td>独立重跑输出中的 <code>code</code> 字段，比对重算指标与申报指标</td>
+<td>在子进程沙箱内跑标准库代码，超时与输出截断</td>
+<td>低（本地子进程）</td>
+<td>硬性失败</td>
+</tr>
+<tr>
+<td>L4 交叉</td>
+<td><code>cross_agent</code></td>
+<td>由另一个 Agent（<code>role=verifier</code>）不看申报结论、独立复算后比对</td>
+<td>复用同一数据集，提示词要求“先算再比”；加权 1.2，硬性</td>
+<td>中（一次 LLM 调用）</td>
+<td>硬性失败</td>
+</tr>
+<tr>
+<td>L1 数据</td>
+<td><code>data_quality</code></td>
+<td>样本量、缺失率、重复行、离群率</td>
+<td>读取数据集质量统计（<code>metrics.data_quality</code>），阈值：行数 ≥ 1000、缺失 ≤ 1%、重复 ≤ 5、离群 ≤ 2%</td>
+<td>极低（本地）</td>
+<td>硬性失败</td>
+</tr>
+<tr>
+<td>L5 稳健</td>
+<td><code>holdout_stability</code></td>
+<td>训练 R² 与留出 R² 的差距 ≤ 0.15，且留出 R² ≥ 0.5</td>
+<td>每 3 行取 1 行做确定性留出，防过拟合</td>
+<td>低（本地复算）</td>
+<td>硬性失败</td>
+</tr>
+<tr>
+<td>L5 诊断</td>
+<td><code>multicollinearity</code></td>
+<td>所有因子 VIF ≤ 5</td>
+<td>辅助回归求 VIF，识别共线导致的系数不稳</td>
+<td>低（本地复算）</td>
+<td>软性（权重 0.8）</td>
+</tr>
+<tr>
+<td>L5 统计</td>
+<td><code>significance</code></td>
+<td>所有系数 p 值 ≤ 0.05</td>
+<td>由标准误与 t 统计量计算，防“方向对但不显著”</td>
+<td>低（本地复算）</td>
+<td>软性（权重 1.1）</td>
+</tr>
+<tr>
+<td>L5 区间</td>
+<td><code>uncertainty</code></td>
+<td>95% 置信区间不跨 0</td>
+<td>系数 ± 1.96×标准误，检查估计的稳定性</td>
+<td>低（本地复算）</td>
+<td>软性（权重 0.8）</td>
+</tr>
+<tr>
+<td>L5 统计/语义</td>
+<td><code>statistical</code> / <code>llm_judge</code></td>
+<td>样本量 ≥ 1000、R² ≥ 0.55 等阈值；LLM 结构化评审（方法论/证据/过度解读）</td>
+<td>阈值可配置；<code>statistical</code> 硬性（权重 1.0），<code>llm_judge</code> 软性（权重 0.6）、离线时降级为跳过并显式标注</td>
+<td>中（一次 LLM 调用）</td>
+<td>统计=硬性；评审=软性</td>
+</tr>
+</tbody>
+</table>
+<p><strong>为什么是五层而不是三层或七层</strong>：三层（结构+真值+统计）覆盖不了“代码 bug 与单 Agent 偏见”，七层以上则会让单节点验证成本超过执行成本，违背“验证要跑得比执行快”的工程直觉。五层恰好把“便宜且硬的检查”放在前面（快速失败），把“贵且软的检查”放在后面（只在必要时付出成本），这是一种成本递增的漏斗式设计。</p>
+<h3 id="74">7.4 置信度公式</h3>
+<p>单一检查通过与否不足以表达“可信程度”，因此我们采用<strong>加权通过率</strong>：</p>
+<pre><code>conf = Σᵢ wᵢ · [sᵢ = 通过] / Σᵢ wᵢ        （只对实际执行、未跳过的检查项求和）
+
+wᵢ &gt; 0    ：第 i 项检查的注册权重（真值/复算 1.5 &gt; 留出 1.2 &gt; 交叉 1.2 &gt; 显著性 1.1
+             &gt; 统计/数据质量 1.0 &gt; 结构 0.8 / 产物 0.8 / 共线性 0.8 / 区间 0.8
+             &gt; 非空 0.5 &gt; LLM 评审 0.6）
+sᵢ = 1 表示通过；未通过记 0；被跳过的项不计入分母
+passed = (conf ≥ spec.min_confidence) ∧ (不存在硬性失败)
+</code></pre>
+<p>三条设计原则：</p>
+<ol>
+<li><strong>硬性失败一票否决</strong>：硬性检查（<code>schema</code>/<code>artifact_exists</code>/<code>data_quality</code>/<code>numeric_ground_truth</code>/<code>code_rerun</code>/<code>cross_agent</code>/<code>holdout_stability</code>/<code>statistical</code>）实际执行并失败时，<code>passed</code> 直接为 <code>False</code>，不参与加权——结构缺失或数值超差是客观事实，不能被其他层的高分“平均掉”；同时<strong>置信度仍如实计算并展示</strong>，配合 <code>evidence</code> 指明是哪一层拉低，而不是把证据一起抹掉；</li>
+<li><strong>跳过不计入分母</strong>：离线环境下 <code>llm_judge</code> 无法执行时标记为“跳过并标注”，而不是记为“通过”，避免虚高置信度；</li>
+<li><strong>误差幅度作为证据而非分数</strong>：L2 不做“误差越小得分越高”的软映射，而是二值判定，但把 <code>max_rel_error</code> 与逐项 <code>rel_error</code> 写入 <code>evidence</code>，既用于前端展示，也用于自循环反馈中的“期望值 / 实际值 / 偏差”三件套——<strong>分数不掺水，信息不丢失</strong>。</li>
+</ol>
+<p>这套公式的实际意义是：<strong>置信度是一个可比较、可审计的标量</strong>，既能用于放行判断（阈值），也能用于跨版本对比（同一工作流改提示词后置信度是否提升）。</p>
+<h3 id="75-pdca">7.5 自循环（PDCA）状态机</h3>
+<p>验证失败不是终点，而是下一轮迭代的输入。自循环控制器 <code>SelfLoopController</code> 把“验证—反馈—修复—再验证”实现为一个受预算约束的状态机：</p>
+<pre><code>                    ┌──────────────────────────────────────────────┐
+                    │              S0 待验证（首轮执行完成）          │
+                    └───────────────────────┬──────────────────────┘
+                                            │ verify()
+                    ┌───────────────────────▼──────────────────────┐
+              ┌─────┤              S1 验证中（五层检查）              │
+              │     └───────────┬──────────────────┬───────────────┘
+     通过     │                 │ 不通过            │ 预算耗尽/取消
+              │     ┌───────────▼──────────────┐   │
+              │     │   S2 构建结构化反馈         │   │
+              │     │  （失败项+期望值+实际值+证据）│   │
+              │     └───────────┬──────────────┘   │
+              │                 │ iteration &lt; max   │
+              │     ┌───────────▼──────────────┐   │
+              │     │   S3 反馈注入 → 修复重跑    │   │
+              │     │  prompt 注入 {{feedback}}  │   │
+              │     └───────────┬──────────────┘   │
+              │                 │ 发 loop.iteration │
+              │                 └──────────▶ S1     │
+              │                                      │
+        ┌─────▼─────────┐                  ┌─────────▼──────────┐
+        │ S4 通过（继续）│                  │ S5 终止（失败归档）  │
+        └───────────────┘                  └────────────────────┘
+</code></pre>
+<p>状态机的四个关键行为：</p>
+<ol>
+<li><strong>反馈必须是结构化的、可执行的</strong>。不是“再试一次”，而是“<code>wind</code> 系数期望 −1.6，实际 −1.02，相对误差 36.3%，超过容差 15%；建议检查自变量是否标准化，以及 <code>wind</code> 列是否存在单位换算”。</li>
+<li><strong>每轮记录完整历史</strong>。<code>LoopState.history</code> 保存每轮的 <code>verification</code>、<code>output</code> 摘要与误差指标，前端可展示“第 1 轮置信度 42.3% → 第 2 轮 100% 通过”的收敛曲线。</li>
+<li><strong>反馈注入是变量级的</strong>。反馈文本写入 <code>feedback_var</code>（默认 <code>feedback</code>），执行引擎在构造下一轮 prompt 时渲染 <code>{{feedback}}</code>，不改变工作流结构，也不需要重写 DSL。</li>
+<li><strong>状态机可中断</strong>。取消信号、节点超时与轮数耗尽都会让状态机安全落到 S5，并把已完成轮次的证据写入运行摘要。</li>
+</ol>
+<h3 id="76">7.6 收敛条件与预算控制</h3>
+<table>
+<thead>
+<tr>
+<th>终止条件</th>
+<th>判据</th>
+<th>目的</th>
+<th>实现位置</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>验证通过</td>
+<td><code>verify.passed = true</code> → <code>stop_reason="converged"</code></td>
+<td>正常收敛，进入下游节点</td>
+<td><code>SelfLoopController.should_continue</code></td>
+</tr>
+<tr>
+<td>轮数上限</td>
+<td><code>iteration ≥ max_iterations</code>（默认 3）→ <code>"max_iterations"</code></td>
+<td>防止无界重试，保证演示时长可控</td>
+<td>同上</td>
+</tr>
+<tr>
+<td>无改善（停滞）</td>
+<td>连续 <code>STAGNATION_ROUNDS=2</code> 轮置信度提升 &lt; <code>STAGNATION_DELTA=0.02</code> → <code>"stagnation"</code></td>
+<td>识别“修不动”，避免空转烧 Token</td>
+<td>同上</td>
+</tr>
+<tr>
+<td>外部取消 / 超时</td>
+<td><code>cancel_event</code> 置位或节点/运行超时</td>
+<td>用户主动停止、失联保护</td>
+<td>执行引擎与 <code>RunState</code>（后台线程边界）</td>
+</tr>
+</tbody>
+</table>
+<p>我们刻意把“无改善”做成<strong>置信度停滞判据</strong>而不是仅限轮数：多数自循环实现只限制轮数，遇到“模型听不懂反馈”时会白白烧掉 2–3 倍预算；<strong>识别出“没有在变好”并及时停手</strong>，才是可上线的自循环。至于“重复失败签名”归并（连续两轮失败项与误差区间完全一致即终止并升级人工），属于下一阶段增强项，当前用停滞判据近似覆盖。</p>
+<h3 id="77">7.7 失败案例的处理路径</h3>
+<p>验证失败不意味着“系统坏了”，而是产生了一条有价值的诊断记录。我们的处理路径是：</p>
+<pre><code>失败 → ① 记录证据（哪层、期望、实际、误差、证据摘要）
+     → ② 若可自修复且预算充足：进入 PDCA（最多 N 轮）
+     → ③ 若修复后仍失败：降级为“有条件通过/未通过”，运行状态置 failed 或 succeeded_with_risk
+     → ④ 生成诊断报告：失败项清单、每轮误差变化、已尝试的修复、建议的人工动作
+     → ⑤ 高风险场景转人工闸门，由人做最终判断
+</code></pre>
+<p>这里有一个刻意的取舍：<strong>我们不把“未通过”包装成“通过”</strong>。运行摘要与最终报告都会显式标注验证状态；如果演示中断网导致 <code>llm_judge</code> 无法执行，也会在报告里写“该项已跳过”。这种“宁可承认没验，也不虚报通过”的态度，是科研类作品可信度的底线。</p>
+<hr />
+<h2 id="_8">八、核心代码说明</h2>
+<h3 id="81-200400">8.1 结论：代码结构按“契约先行、控制面与执行面分离”组织，单个业务模块多在 200–400 行，每个关键决策都可单测</h3>
+<blockquote>
+<p>说明：本节给出模块职责与关键逻辑节选，帮助评委快速定位实现；具体行号与最终文件名以仓库当前代码为准，由集成负责人统一校对（见占位符清单）。截图占位处将替换为真实运行截图。</p>
+<p>规模上的例外是 <code>api/app.py</code>（1560 行）与 <code>runtime/platform.py</code>（949 行）：前者是 HTTP 路由与 SSE 的集中实现，后者是组件装配与线程编排，二者都属于<strong>装配层</strong>，只做“转发与生命周期管理”，不含业务判断；核心决策逻辑（调度、验证、循环、表达式求值）仍保持在 200–400 行的独立模块内，便于单测与替换。</p>
+</blockquote>
+<h3 id="82">8.2 模块清单</h3>
+<table>
+<thead>
+<tr>
+<th>模块文件</th>
+<th>职责</th>
+<th>关键函数/类</th>
+<th>规模</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>agentweave/core/types.py</code></td>
+<td>全平台数据契约（Agent/工具/工作流/节点/验证/事件常量）</td>
+<td><code>AgentSpec</code>、<code>WorkflowNode</code>、<code>Workflow</code>、<code>VerifySpec</code>、<code>LoopSpec</code></td>
+<td>739 行</td>
+</tr>
+<tr>
+<td><code>agentweave/core/envfile.py</code></td>
+<td><code>.env</code> 解析与加载（优先级：真实环境变量 &gt; <code>.env</code> &gt; <code>config/platform.json</code>）</td>
+<td><code>parse_env_text</code>、<code>load_env_file</code></td>
+<td>95 行</td>
+</tr>
+<tr>
+<td><code>agentweave/core/events.py</code></td>
+<td>事件总线、环形缓冲、订阅与回放</td>
+<td><code>EventBus.emit/subscribe/replay</code></td>
+<td>168 行</td>
+</tr>
+<tr>
+<td><code>agentweave/core/expr.py</code></td>
+<td>AST 白名单表达式求值与 <code>{{var}}</code> 模板渲染</td>
+<td><code>evaluate</code>、<code>truthy</code>、<code>render_template</code></td>
+<td>224 行</td>
+</tr>
+<tr>
+<td><code>agentweave/runtime/context.py</code></td>
+<td>运行时上下文（唯一允许被控制面依赖的执行面接口）</td>
+<td><code>RuntimeContext.call_agent/call_tool/human_gate</code></td>
+<td>188 行</td>
+</tr>
+<tr>
+<td><code>agentweave/runtime/state.py</code></td>
+<td>运行状态、节点状态、快照/回滚、指标</td>
+<td><code>RunState</code>、<code>RunStore</code></td>
+<td>344 行</td>
+</tr>
+<tr>
+<td><code>agentweave/workflow/model.py</code></td>
+<td>工作流加载/保存/校验</td>
+<td><code>WorkflowStore.load/save/validate</code></td>
+<td>239 行</td>
+</tr>
+<tr>
+<td><code>agentweave/workflow/dsl.py</code></td>
+<td>流式构建器（链式 API）</td>
+<td><code>WorkflowBuilder.node/edge/build</code></td>
+<td>176 行</td>
+</tr>
+<tr>
+<td><code>agentweave/workflow/engine.py</code></td>
+<td>DAG 执行引擎：就绪判定、并行、条件、循环、子流、闸门</td>
+<td><code>WorkflowEngine.execute</code></td>
+<td>1683 行</td>
+</tr>
+<tr>
+<td><code>agentweave/scheduler/engine.py</code></td>
+<td>5 策略调度与可解释打分</td>
+<td><code>Scheduler.pick/describe</code></td>
+<td>373 行</td>
+</tr>
+<tr>
+<td><code>agentweave/verify/verifier.py</code></td>
+<td>验证流水线、检查器注册、置信度聚合</td>
+<td><code>VerificationPipeline.verify</code></td>
+<td>337 行</td>
+</tr>
+<tr>
+<td><code>agentweave/verify/checkers.py</code></td>
+<td>13 个内置检查器（对应五层验证）</td>
+<td><code>check_schema</code>、<code>check_numeric_ground_truth</code>、<code>check_code_rerun</code>、<code>check_cross_agent</code></td>
+<td>1106 行</td>
+</tr>
+<tr>
+<td><code>agentweave/loop/selfloop.py</code></td>
+<td>PDCA 控制器、反馈构建、收敛判定</td>
+<td><code>SelfLoopController.should_continue/build_feedback</code></td>
+<td>196 行</td>
+</tr>
+<tr>
+<td><code>agentweave/agents/registry.py</code></td>
+<td>Agent 注册、版本、能力匹配、并发</td>
+<td><code>AgentRegistry.match/acquire/release</code></td>
+<td>370 行</td>
+</tr>
+<tr>
+<td><code>agentweave/agents/agent.py</code></td>
+<td>ReAct 运行时（思考→工具→观测→结论）</td>
+<td><code>AgentRuntime.run</code></td>
+<td>544 行</td>
+</tr>
+<tr>
+<td><code>agentweave/tools/registry.py</code></td>
+<td>工具注册、Schema 校验、超时与事件</td>
+<td><code>ToolRegistry.call/openai_tools</code></td>
+<td>400 行</td>
+</tr>
+<tr>
+<td><code>agentweave/tools/builtin.py</code></td>
+<td>9 个内置工具（含 <code>python_exec</code> 子进程沙箱）</td>
+<td><code>python_exec</code>、<code>dataset_stats</code>、<code>chart_svg</code></td>
+<td>963 行</td>
+</tr>
+<tr>
+<td><code>agentweave/llm/router.py</code></td>
+<td>模型路由、fast/smart 分级、失败回退</td>
+<td><code>ModelRouter.complete/usage</code></td>
+<td>400 行</td>
+</tr>
+<tr>
+<td><code>agentweave/llm/mock.py</code></td>
+<td>确定性离线 Mock（角色模板 + 首轮偏差）</td>
+<td><code>MockProvider.complete</code></td>
+<td>762 行</td>
+</tr>
+<tr>
+<td><code>agentweave/llm/provider.py</code></td>
+<td>Provider 工厂与配置解析</td>
+<td><code>build_provider</code></td>
+<td>39 行</td>
+</tr>
+<tr>
+<td><code>agentweave/api/app.py</code></td>
+<td>REST 端点实现、SSE 事件流、静态资源服务</td>
+<td>请求分发、SSE 生成器</td>
+<td>1729 行</td>
+</tr>
+<tr>
+<td><code>agentweave/api/server.py</code></td>
+<td>HTTP 服务器启动入口（端口/命令参数）</td>
+<td><code>main</code>、<code>create_server_app</code></td>
+<td>309 行</td>
+</tr>
+<tr>
+<td><code>agentweave/runtime/orchestrator.py</code></td>
+<td>运行生命周期编排：上下文构造、引擎调用、产物落盘、终态提交</td>
+<td><code>Orchestrator.execute</code></td>
+<td>548 行</td>
+</tr>
+<tr>
+<td><code>agentweave/llm/base.py</code></td>
+<td>Provider 抽象基类与 LLMResult 规范</td>
+<td><code>LLMProvider</code>、<code>LLMResult</code></td>
+<td>159 行</td>
+</tr>
+<tr>
+<td><code>agentweave/llm/openai_compat.py</code></td>
+<td>OpenAI 兼容 HTTP Provider（重试、错误分类、工具调用）</td>
+<td><code>OpenAICompatProvider.complete</code></td>
+<td>303 行</td>
+</tr>
+<tr>
+<td><code>agentweave/agents/memory.py</code></td>
+<td>运行内记忆（工作记忆、证据汇总、上下文裁剪）</td>
+<td><code>AgentMemory</code></td>
+<td>217 行</td>
+</tr>
+<tr>
+<td><code>agentweave/tools/mcp_client.py</code></td>
+<td>MCP 客户端（JSON-RPC 2.0 over stdio）</td>
+<td><code>MCPClient</code>、<code>MCPManager</code></td>
+<td>445 行</td>
+</tr>
+<tr>
+<td><code>agentweave/runtime/platform.py</code></td>
+<td>平台门面：组装所有组件、事件循环线程</td>
+<td><code>start/start_run/subscribe</code></td>
+<td>1289 行</td>
+</tr>
+</tbody>
+</table>
+<h3 id="83-coretypespy">8.3 片段一：节点契约（<code>core/types.py</code>）</h3>
+<pre><code class="language-python">@dataclass
+class WorkflowNode:
+    id: str
+    type: str                                   # NodeType 值
+    label: str = &quot;&quot;
+    description: str = &quot;&quot;
+    agent: str = &quot;&quot;                             # type==agent 时指定 Agent id
+    tool: str = &quot;&quot;                              # type==tool 时指定工具名
+    args: dict[str, Any] = field(default_factory=dict)
+    prompt: str = &quot;&quot;                            # 支持 {{var}} 模板
+    inputs: list[str] = field(default_factory=list)
+    outputs: list[str] = field(default_factory=list)
+    condition: str = &quot;&quot;                         # condition 节点自身表达式（可选）
+    loop: LoopSpec | None = None
+    workflow: str = &quot;&quot;                          # type==subworkflow 时指定子工作流 id
+    verify: VerifySpec | None = None
+    retry: RetryPolicy = field(default_factory=RetryPolicy)
+    timeout_s: float = 120.0
+    position: dict[str, float] = field(default_factory=lambda: {&quot;x&quot;: 0.0, &quot;y&quot;: 0.0})
+    config: dict[str, Any] = field(default_factory=dict)
+</code></pre>
+<p><strong>说明</strong>：节点是“声明”而不是“函数”。它只描述“要什么”（agent/tool/prompt/契约），不包含“怎么做”（调用逻辑在执行面）。<code>verify</code> 与 <code>loop</code> 作为节点属性存在，使“验证与修复”可以绑定到任意节点，而不是只能在流程末尾做一次。</p>
+<blockquote>
+<p>类型契约的完整定义见 <code>agentweave/core/types.py</code>（WorkflowNode 含 id/type/label/agent/tool/prompt/inputs/outputs/condition/loop/verify/retry/position 等字段），此处不重复贴图。</p>
+</blockquote>
+<h3 id="84-dag-workflowenginepy">8.4 片段二：DAG 执行引擎的调度骨架（<code>workflow/engine.py</code>，节选）</h3>
+<pre><code class="language-python">async def execute(self, workflow: Workflow, run: RunState,
+                  inputs: dict[str, Any]) -&gt; EngineResult:
+    run.variables.update(inputs)
+    pending = {n.id for n in workflow.nodes} - {s.id for s in workflow.start_nodes()}
+    running: dict[str, asyncio.Task] = {}
+    while pending or running:
+        if self.ctx.cancel_event.is_set():
+            return EngineResult(status=&quot;cancelled&quot;, variables=run.variables)
+        ready = [n for n in workflow.nodes
+                 if n.id in pending and self._deps_satisfied(n, workflow, run)]
+        for node in ready:
+            cands = self._build_candidates(node, workflow, run)
+            decision = self.ctx.scheduler.pick(cands)      # 决策可解释
+            if decision is None:
+                continue                                    # 等待资源释放
+            self.ctx.emit(EventType.NODE_SCHEDULED, run.run_id,
+                          node_id=node.id, agent_id=decision.agent_id,
+                          payload={&quot;score&quot;: decision.score,
+                                   &quot;reason&quot;: decision.reason})
+            pending.discard(node.id)
+            running[node.id] = asyncio.create_task(self._run_node(node, workflow, run))
+        if not running:
+            break                                              # 死锁/条件不满足
+        done, _ = await asyncio.wait(running.values(),
+                                     return_when=asyncio.FIRST_COMPLETED)
+        for task in done:
+            node_id = self._task_index.pop(id(task))
+            running.pop(node_id)
+            await self._collect(task, node_id, run)
+    return EngineResult(status=&quot;succeeded&quot;, variables=run.variables)
+</code></pre>
+<p><strong>说明</strong>：这段骨架体现了三个设计决定——<strong>就绪集由依赖与条件共同决定</strong>（<code>_deps_satisfied</code>）、<strong>分派必须经过调度器</strong>（不存在“直接执行”的旁路）、<strong>并发通过 <code>asyncio.wait(FIRST_COMPLETED)</code> 驱动</strong>（而非固定批处理，避免慢节点拖住整批）。最后一处 <code>if not running: break</code> 处理的是“条件分支全部不满足”的边界情况，防止引擎空转死锁。</p>
+<blockquote>
+<p>截图见 8.9：<code>screenshots/03-monitor.png</code>（scan 与 research 并行推进，节点状态矩阵同屏可见）。</p>
+</blockquote>
+<h3 id="85-schedulerenginepy">8.5 片段三：可解释调度打分（<code>scheduler/engine.py</code>，节选）</h3>
+<pre><code class="language-python">#: 默认权重（可被 config 覆盖）；adaptive 权重在运行期按成功率自适应微调
+_WEIGHTS: dict[str, list[float]] = {
+    # 策略:           [cap,  load(idle), prio,  success]
+    &quot;adaptive&quot;:       [0.40, 0.30,      0.20,  0.10],
+}
+
+def _score(self, c: ScheduleCandidate, pool: list[ScheduleCandidate]) -&gt; float:
+    cap = _clamp(c.capability)
+    idle = 1.0 - _clamp(c.agent_load)
+    max_priority = max((x.priority for x in pool), default=0.0)
+    pri = _clamp(c.priority / max_priority) if max_priority &gt; 0 else 0.0
+    succ = self._success_rate(c.agent_id)          # 无历史时默认 0.5
+    if self._policy == &quot;priority&quot;:                 # 各策略是同一骨架的退化
+        return pri
+    if self._policy == &quot;capability&quot;:
+        return cap
+    if self._policy == &quot;load_aware&quot;:
+        return 0.6 * idle + 0.4 * cap
+    w = self._weights                            # adaptive：四因子加权
+    return w[0] * cap + w[1] * idle + w[2] * pri + w[3] * succ
+
+def _reason(self, c: ScheduleCandidate, pool: list[ScheduleCandidate]) -&gt; str:
+    # 分项贡献与打分数值来自同一次计算，避免「日志与决策不一致」
+    w = self._weights
+    return (f&quot;自适应策略：能力 {cap:.2f}×{w[0]:.2f} + 空闲 {idle:.2f}×{w[1]:.2f}&quot;
+            f&quot; + 优先级 {pri:.2f}×{w[2]:.2f} + 历史成功率 {succ:.2f}×{w[3]:.2f}&quot;
+            f&quot; = {score:.3f}，分配给 {c.agent_id}&quot;)
+</code></pre>
+<p><strong>说明</strong>：<code>reason</code> 不是事后拼的日志，而是<strong>由打分过程自然产生的</strong>——每个分项的计算与文案共用同一组中间量，杜绝“日志与真实决策不一致”。五种策略被写成同一骨架的退化形式（<code>priority</code> 取 <code>pri</code>、<code>capability</code> 取 <code>cap</code>、<code>load_aware</code> 取 0.6 空闲 + 0.4 能力），因此新增策略只需增加一个分支或一组权重，不必复制整套选择逻辑。</p>
+<blockquote>
+<p>截图见 8.9：<code>screenshots/03-monitor.png</code> 左下「调度决策」面板（score、agent_load 与选择理由）。</p>
+</blockquote>
+<h3 id="86-verifyverifierpy">8.6 片段四：置信度聚合（<code>verify/verifier.py</code>，节选）</h3>
+<pre><code class="language-python">async def verify(self, spec: VerifySpec, node: WorkflowNode,
+                 output: Any, run: Any) -&gt; VerifyResult:
+    checks: list[VerifyCheckResult] = []
+    total_weight = 0.0     # 只累计「真实执行」的检查项
+    passed_weight = 0.0
+    hard_fail = False
+
+    for name in list(spec.checks or []):
+        checker = self._checkers.get(name)
+        base_weight = max(0.0, float(self._weights.get(name, 1.0)))
+        if checker is None:                      # 未注册检查器：判失败并标记配置错误
+            result = VerifyCheckResult(name=name, passed=False, weight=base_weight,
+                     detail=f&quot;未知检查器: {name}&quot;,
+                     evidence={&quot;suggestion&quot;: &quot;检查 VerifySpec.checks 拼写&quot;})
+            hard_fail = True
+        else:
+            try:
+                result = await checker(vc)       # 单项异常不阻断整条流水线
+            except Exception as exc:
+                result = VerifyCheckResult(name=name, passed=False, weight=base_weight,
+                         detail=f&quot;检查器执行异常：{type(exc).__name__}: {exc}&quot;)
+        effective = base_weight * (result.weight or 1.0)   # 注册权重 × 条款级权重
+        result.weight = round(effective, 4)
+        checks.append(result)
+        if result.evidence.get(&quot;skipped&quot;):       # 跳过项：不计入分母
+            continue
+        total_weight += effective
+        if result.passed:
+            passed_weight += effective
+        elif self._is_hard(name):
+            hard_fail = True
+
+    confidence = round(passed_weight / total_weight, 4) if total_weight else 0.0
+    passed = (bool(checks) and total_weight &gt; 0
+              and confidence &gt;= float(spec.min_confidence) and not hard_fail)
+    return VerifyResult(passed=passed, confidence=confidence, checks=checks,
+                        feedback=&quot;&quot; if passed else self._build_feedback(...))
+</code></pre>
+<p><strong>说明</strong>：四个易错点在这里被显式处理——<strong>未注册检查器不能算通过</strong>（判失败并触发硬性失败）、<strong>单项异常不中断流水线</strong>（余下检查照跑，保留完整证据）、<strong>硬性失败一票否决</strong>（即使其余项全过也 <code>passed=False</code>）、<strong>跳过项不计入分母</strong>（避免“跳过越多、置信度越高”的荒谬结果）。置信度取“通过项权重 / 有效权重”，等价于 <code>Σwᵢsᵢ/Σwᵢ</code>（<code>sᵢ∈{0,1}</code>），实现更简单且不丢精度。</p>
+<blockquote>
+<p>截图见 8.9：<code>screenshots/04-verify.png</code>（100.0% 最终通过、两轮自循环历史与五层检查表）。</p>
+</blockquote>
+<h3 id="87-loopselflooppy">8.7 片段五：自循环的收敛与反馈（<code>loop/selfloop.py</code>，节选）</h3>
+<pre><code class="language-python">class SelfLoopController:
+    #: 单轮置信度提升低于该值视为「没有实质进展」
+    STAGNATION_DELTA: float = 0.02
+    #: 连续多少轮无实质进展后停止
+    STAGNATION_ROUNDS: int = 2
+
+    def should_continue(self, verify: VerifyResult, state: LoopState) -&gt; bool:
+        if verify.passed:                        # 已达标 → 收敛
+            state.converged = True
+            state.stop_reason = &quot;converged&quot;
+            return False
+        if state.iteration &gt;= max(1, int(self.spec.max_iterations)):
+            state.exhausted = True
+            state.stop_reason = &quot;max_iterations&quot;      # 轮数耗尽
+            return False
+        if self._stagnated(state):                # 连续两轮提升 &lt; 0.02 → 停滞
+            state.exhausted = True
+            state.stop_reason = &quot;stagnation&quot;
+            return False
+        return True
+
+    def build_feedback(self, verify: VerifyResult, state: LoopState) -&gt; str:
+    parts = [f&quot;【第 {state.iteration + 1} 轮修复请求】上一轮验证未通过&quot;
+             f&quot;（加权置信度 {verify.confidence:.2f}，阈值 &quot;
+             f&quot;{verify.metrics.get('min_confidence', 'N/A')}）。&quot;]
+    parts.append((verify.feedback or &quot;&quot;).strip())   # 优先复用验证流水线中文反馈
+    for check in verify.checks:                     # 无现成反馈时从证据重建
+        if check.passed or check.evidence.get(&quot;skipped&quot;):
+            continue
+        parts.append(f&quot;{check.name}：{check.detail}&quot;)
+        if check.evidence.get(&quot;expected&quot;) is not None:
+            parts.append(f&quot;   期望：{check.evidence['expected']}&quot;)
+        if check.evidence.get(&quot;actual&quot;) is not None:
+            parts.append(f&quot;   实际：{check.evidence['actual']}&quot;)
+    parts.append(&quot;请仅针对上述失败项修正，保留已通过的结论，直接输出完整 JSON。&quot;)
+    return &quot;\n&quot;.join(parts)
+
+</code></pre>
+<p><strong>说明</strong>：<code>should_continue</code> 把「为什么停」写进 <code>stop_reason</code>（<code>converged</code> / <code>max_iterations</code> / <code>stagnation</code>），前端与日志都能直接解释停止原因；停滞判据是<strong>连续两轮置信度提升小于 0.02</strong>，专门对付「反复重跑但毫无进展」的烧 Token 场景。<code>build_feedback</code> 优先复用验证流水线已生成的中文反馈，缺省时从 <code>checks</code> 的 <code>evidence</code> 重建"期望/实际/建议"三件套——反馈与证据同源，避免"日志说一套、prompt 里写另一套"。</p>
+<blockquote>
+<p>截图见 8.9：<code>screenshots/03-monitor.png</code> 顶部「第 1/3 轮 42.3% · 修复 → 第 2/3 轮 100% · 通过」与 <code>loop.iteration</code> 事件。</p>
+</blockquote>
+<h3 id="88-sse-apiapppy">8.8 片段六：SSE 事件推送与断线续传（<code>api/app.py</code>，节选）</h3>
+<pre><code class="language-python">def api_run_events(self, h, m, body, query) -&gt; None:
+    run_id = unquote(m.group(&quot;run_id&quot;))
+    if self._get_run(run_id) is None:
+        raise ApiError(404, &quot;RUN_NOT_FOUND&quot;, f&quot;运行不存在：{run_id}&quot;)
+    last_id = self._last_event_id(h, query)      # 请求头 Last-Event-ID 或查询参数
+    heartbeat = max(0.2, float(self.config.get(&quot;sse_heartbeat_s&quot;) or 15.0))
+
+    h.send_response(200)
+    h.send_header(&quot;Content-Type&quot;, &quot;text/event-stream; charset=utf-8&quot;)
+    h.send_header(&quot;Cache-Control&quot;, &quot;no-cache, no-transform&quot;)
+    h.send_header(&quot;Connection&quot;, &quot;close&quot;)
+    h.send_header(&quot;X-Accel-Buffering&quot;, &quot;no&quot;)      # 关闭 Nginx 类代理缓冲
+    h.end_headers()
+    h.wfile.write(b&quot;retry: 3000\n\n&quot;)
+
+    subscription = self.bridge.invoke(self.platform.subscribe, run_id, last_id)
+    try:
+        # 先回放历史（订阅已建立，回放与实时之间不丢事件），再消费实时队列
+        for event in self.call(&quot;get_events&quot;, run_id, last_id, replay_limit) or []:
+            last_seq = self._send_sse_event(h, event, last_seq)
+        while not finished:
+            event = self._subscription_get(subscription, heartbeat)
+            if event is None:
+                h.wfile.write(b&quot;: ping\n\n&quot;)      # 心跳，防代理掐断长连接
+                h.wfile.flush()
+                continue
+            finished = self._send_sse_event(h, event, last_seq)
+    except (BrokenPipeError, ConnectionResetError, ConnectionAbortedError, OSError):
+        log.debug(&quot;SSE 客户端断开：%s&quot;, run_id)
+    finally:
+        if subscription is not None:
+            close = getattr(subscription, &quot;close&quot;, None)
+            if callable(close):                     # 必须清理，否则 200 次运行后订阅泄漏
+                close()
+</code></pre>
+<p><strong>说明</strong>：SSE 的难点不在“推”，而在<strong>断线续传与连接清理</strong>：<code>Last-Event-ID</code> 让刷新页面后能补齐历史事件；先订阅再回放，保证“回放”与“实时”之间不丢事件；15 秒心跳防止中间代理掐断长连接；<code>finally</code> 保证订阅者被移除，避免 200 次运行后内存泄漏（对应 N7）。此外，平台门面未提供 <code>subscribe</code> 时还有一条“轮询 <code>get_events</code>”的降级路径，保证接口在最小实现下也能工作。</p>
+<blockquote>
+<p>SSE 帧样例见 <code>data/runs/&lt;run_id&gt;/events.jsonl</code>：每条 <code>data:</code> 为 JSON 事件（含 seq/type/payload），<code>tests/test_api.py</code> 覆盖 Last-Event-ID 回放。</p>
+</blockquote>
+<hr />
+<h3 id="89">8.9 运行截图（真实采集）</h3>
+<blockquote>
+<p>以下截图均来自本仓库实际运行的 Web 控制台（Edge headless，1600×1000），
+运行 ID <code>run-b9be65d310</code>：第 1 轮验证 42.3% 未通过 → 自循环修复 → 第 2 轮 100% 通过。</p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>截图</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><img alt="概览" src="../screenshots/01-overview.png" /></td>
+<td>概览：7 Agent、1 工作流、平均置信度 93.0%、最近运行与系统状态</td>
+</tr>
+<tr>
+<td><img alt="编排台" src="../screenshots/02-orchestrator.png" /></td>
+<td>编排台：12 节点 DAG，含并行分支、PDCA 自循环、人工闸门</td>
+</tr>
+<tr>
+<td><img alt="运行监控" src="../screenshots/03-monitor.png" /></td>
+<td>运行监控：SSE 事件流、节点状态、调度决策、两轮自循环时间线</td>
+</tr>
+<tr>
+<td><img alt="验证中心" src="../screenshots/04-verify.png" /></td>
+<td>验证中心：五层检查明细（复算/真值/统计/交叉）与每项证据</td>
+</tr>
+<tr>
+<td><img alt="Agent 团队" src="../screenshots/05-agents.png" /></td>
+<td>Agent 团队：7 个角色的职责、技能、工具与调用统计</td>
+</tr>
+<tr>
+<td><img alt="工具与 MCP" src="../screenshots/06-tools.png" /></td>
+<td>工具与 MCP：9 个内置工具、风险级别与 MCP 服务器管理</td>
+</tr>
+<tr>
+<td><img alt="模型设置" src="../screenshots/07-settings.png" /></td>
+<td>模型设置：Mock / OpenAI 兼容切换、fast/smart 路由与降级状态</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="_9">九、测试与性能评估</h2>
+<h3 id="91">9.1 结论：用“测试金字塔 + 端到端黄金链路 + 基准对照”三层证据证明系统真的能跑、跑得对、跑得动</h3>
+<p>对参赛作品而言，最没有说服力的是一句“已充分测试”。我们的做法是把测试拆成可被评委复现的三层：<strong>单元测试</strong>保证每个组件的契约不被破坏，<strong>集成测试</strong>保证组件拼接后的语义正确，<strong>端到端测试</strong>保证“一条命令跑通黄金链路”。在此之上再做<strong>基准对照</strong>，用同一场景比较单 Agent 串行、多 Agent 并行、带验证自循环三种模式，量化“编排与验证到底带来了什么”。</p>
+<h3 id="92">9.2 测试金字塔</h3>
+<pre><code>                    ┌──────────────────────────┐
+                    │  E2E（黄金链路）           │  1–2 条
+                    │  离线跑通演示场景，断言     │
+                    │  验证失败→自循环→通过→报告  │
+                    ├──────────────────────────┤
+                    │  集成测试                  │  覆盖模块边界
+                    │  引擎+调度+验证+循环 组合   │
+                    ├──────────────────────────┤
+                    │  单元测试                  │  各模块内部逻辑
+                    │  类型/表达式/打分/检查器/工具│
+                    └──────────────────────────┘
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>层级</th>
+<th>覆盖对象</th>
+<th>代表性用例</th>
+<th>断言重点</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>单元</td>
+<td><code>core/expr.py</code></td>
+<td>非法表达式 <code>__import__('os')</code>、<code>9**9**9</code>、未知变量</td>
+<td>必须抛 <code>ExprError</code>，不执行任何代码</td>
+</tr>
+<tr>
+<td>单元</td>
+<td><code>core/types.py</code></td>
+<td>工作流 <code>to_dict/from_dict</code> 往返、拓扑排序、环检测</td>
+<td>序列化无损、环被拒绝</td>
+</tr>
+<tr>
+<td>单元</td>
+<td><code>scheduler</code></td>
+<td>五策略在构造候选集上的选择结果；同分决胜</td>
+<td>决策确定性、<code>reason</code> 含分项</td>
+</tr>
+<tr>
+<td>单元</td>
+<td><code>verify</code></td>
+<td>各检查器通过/失败/跳过；硬性失败短路</td>
+<td>置信度计算与跳过不虚高</td>
+</tr>
+<tr>
+<td>单元</td>
+<td><code>loop</code></td>
+<td>达标即停、轮数耗尽、无改善即停</td>
+<td>终止条件严格、反馈含期望/实际</td>
+</tr>
+<tr>
+<td>单元</td>
+<td><code>tools</code></td>
+<td>路径穿越 <code>../../etc/passwd</code>、超时、Schema 缺参</td>
+<td>拒绝并给出清晰错误</td>
+</tr>
+<tr>
+<td>单元</td>
+<td><code>agents</code></td>
+<td>工具调用失败回注、JSON 代码块解析、版本覆盖</td>
+<td>不崩溃、保留版本历史</td>
+</tr>
+<tr>
+<td>集成</td>
+<td>引擎 + 调度 + 验证</td>
+<td>并行分支、条件分支、JOIN、子工作流、人工闸门</td>
+<td>事件序列与节点状态一致</td>
+</tr>
+<tr>
+<td>集成</td>
+<td>API + 门面</td>
+<td>17 个 REST 端点、SSE 首帧、取消、错误体格式</td>
+<td>状态码与 JSON 结构符合契约</td>
+</tr>
+<tr>
+<td>E2E</td>
+<td>演示场景</td>
+<td>无网络跑 <code>ai4s-air-quality</code>，断言 <code>loop.iteration</code> 出现且最终 <code>passed</code></td>
+<td>全链路可复现</td>
+</tr>
+</tbody>
+</table>
+<p>测试用例统计（2026-11-17 实测）：</p>
+<table>
+<thead>
+<tr>
+<th>测试文件</th>
+<th>用例数</th>
+<th>通过数</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>tests/test_workflow.py</code></td>
+<td>16</td>
+<td>16</td>
+<td>工作流模型、DSL、引擎</td>
+</tr>
+<tr>
+<td><code>tests/test_scheduler.py</code></td>
+<td>16</td>
+<td>16</td>
+<td>五策略、可解释性、策略归一化与 fork 隔离</td>
+</tr>
+<tr>
+<td><code>tests/test_verify.py</code></td>
+<td>16</td>
+<td>16</td>
+<td>五层检查器与置信度</td>
+</tr>
+<tr>
+<td><code>tests/test_loop.py</code></td>
+<td>11</td>
+<td>11</td>
+<td>PDCA 收敛判据与停滞保护</td>
+</tr>
+<tr>
+<td><code>tests/test_llm.py</code></td>
+<td>21</td>
+<td>21</td>
+<td>路由、Mock、回退</td>
+</tr>
+<tr>
+<td><code>tests/test_agents.py</code></td>
+<td>14</td>
+<td>14</td>
+<td>注册表、ReAct、记忆</td>
+</tr>
+<tr>
+<td><code>tests/test_tools.py</code></td>
+<td>22</td>
+<td>22</td>
+<td>工具、沙箱、MCP</td>
+</tr>
+<tr>
+<td><code>tests/test_api.py</code></td>
+<td>48</td>
+<td>48</td>
+<td>REST + SSE + 策略校验与错误码映射</td>
+</tr>
+<tr>
+<td><code>tests/test_e2e.py</code></td>
+<td>12</td>
+<td>12</td>
+<td>离线黄金链路</td>
+</tr>
+<tr>
+<td><code>tests/test_production.py</code></td>
+<td>10</td>
+<td>10</td>
+<td>鉴权、限流、指标、持久化、清理</td>
+</tr>
+<tr>
+<td><code>tests/test_regressions.py</code></td>
+<td>9</td>
+<td>9</td>
+<td>接口回归：产物路径、取消事件、并发上限（含突发竞态）、策略归一化、工作流严格解析</td>
+</tr>
+<tr>
+<td><code>tests/test_envfile.py</code></td>
+<td>11</td>
+<td>11</td>
+<td><code>.env</code> 解析、加载优先级与 LLM 配置覆盖</td>
+</tr>
+<tr>
+<td><strong>合计</strong></td>
+<td><strong>206</strong></td>
+<td><strong>206</strong></td>
+<td>命令：<code>py -3.14 -m unittest discover -s tests -t .</code></td>
+</tr>
+</tbody>
+</table>
+<p>2026-11-16 针对接口层修复补齐 18 个回归用例（SSE 运行结束即关闭、产物下载、取消事件、并发上限在 pending 态生效、策略别名归一化与 per-run 隔离），与既有 174 个用例合计 192 个；2026-11-17 再补 14 个（<code>.env</code> 解析与加载优先级 11 个、显式未知工作流不再回退场景 2 个、并发准入原子性 1 个），合计 206 个，全部通过。</p>
+<h3 id="93">9.3 基准对照：三种运行模式的差异</h3>
+<p>基准脚本 <code>scripts/benchmark.py</code> 在<strong>同一数据集、同一任务、同一模型（离线 Mock）</strong>下跑三种模式，避免“换个环境就不可比”：</p>
+<table>
+<thead>
+<tr>
+<th>模式</th>
+<th>描述</th>
+<th>耗时</th>
+<th>成功率</th>
+<th>平均置信度</th>
+<th>系数相对误差</th>
+<th>Token 消耗</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A 单 Agent 串行</td>
+<td>一个统计 Agent 顺序完成全部步骤，无验证</td>
+<td>0.157 s</td>
+<td>0%（无验证，误差超容差）</td>
+<td>87.3%</td>
+<td>34.38%</td>
+<td>5,845</td>
+</tr>
+<tr>
+<td>B 多 Agent 并行</td>
+<td>7 角色分工、并行分支，无验证、无自循环</td>
+<td>0.386 s</td>
+<td>0%（无验证，误差超容差）</td>
+<td>89.0%</td>
+<td>34.38%</td>
+<td>21,309</td>
+</tr>
+<tr>
+<td>C 多 Agent + 验证自循环</td>
+<td>在 B 基础上加五层验证与 PDCA</td>
+<td>1.031 s</td>
+<td>100%</td>
+<td>93.0%</td>
+<td>7.14%</td>
+<td>27,190</td>
+</tr>
+</tbody>
+</table>
+<p><strong>实测结论与解释</strong>（5 次运行，数据来自 <code>data/benchmark.json</code>）：A 的耗时最短（0.157 s），但系数相对误差 34.38%，且没有任何验证证据；B 用 7 角色并行把墙钟时间压到 0.386 s，但“跑得快”不等于“算得对”，误差仍是 34.38%；C 增加五层验证与一轮 PDCA 修复，耗时 1.031 s、Token 27,190（较 B 增加约 27.6%），换来误差从 34.38% 降到 7.14%、验证通过率 100%、平均置信度 93.0%。我们不会宣称“C 在所有维度都更好”——<strong>C 用可接受的成本换取了可验证的正确性</strong>，这正是生产系统愿意付的代价。</p>
+<h3 id="94">9.4 性能与稳定性压测方法</h3>
+<table>
+<thead>
+<tr>
+<th>项目</th>
+<th>方法</th>
+<th>通过标准</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>演示端到端耗时</td>
+<td><code>scripts/run_demo.py</code> 重复 5 次取中位数</td>
+<td>≤ 8 s（N5）</td>
+</tr>
+<tr>
+<td>SSE 首事件延迟</td>
+<td>客户端记录 <code>run.started</code> 到达时间 − 请求发出时间</td>
+<td>&lt; 500 ms（N6）</td>
+</tr>
+<tr>
+<td>长跑内存</td>
+<td>连续触发 200 次运行，每 20 次采样进程 RSS</td>
+<td>无单调上涨趋势，事件缓冲不超过上限（N7）</td>
+</tr>
+<tr>
+<td>并发正确性</td>
+<td>同时启动 4 个运行，检查事件 <code>run_id</code> 不串流</td>
+<td>事件归属 100% 正确</td>
+</tr>
+<tr>
+<td>取消响应</td>
+<td>运行中调用 <code>POST /cancel</code>，记录到 <code>cancelled</code> 的时延</td>
+<td>&lt; 1 s 内停止派发新节点</td>
+</tr>
+<tr>
+<td>离线自检</td>
+<td>断网 + 清空环境变量（无 Key）跑全链路</td>
+<td>成功，且 <code>llm_judge</code> 标注为跳过</td>
+</tr>
+</tbody>
+</table>
+<h3 id="95">9.5 可复现性说明</h3>
+<p>复现实验只需要三条命令，且不依赖网络：</p>
+<pre><code class="language-bash"># 1) 单元 + 集成 + 端到端测试
+py -3.14 -m unittest discover -s tests -v
+# 2) 离线演示（命令行，无需浏览器）
+py -3.14 scripts/run_demo.py
+# 3) 基准对照（输出 data/benchmark.json）
+py -3.14 scripts/benchmark.py
+</code></pre>
+<p>数据集由固定随机种子生成，MockProvider 输出确定，因此<strong>同一台机器上重复运行的结果逐字节一致</strong>；换机器时只要 Python 版本一致，结果同样可复现。这是我们把“可复现”当作硬约束的直接收益：评审不必相信我们的截图，可以自己跑。</p>
+<hr />
+<h2 id="_10">十、创新点与差异化</h2>
+<h3 id="101">10.1 结论：五个创新点都不是“新概念”，而是把工程上被忽视的环节做成了<strong>一等公民</strong></h3>
+<p>我们不主张发明了新算法，而是主张在“多智能体落地”这件事上做了五个正确的工程取舍，每一个都能回答“别人怎么做 / 我们怎么做 / 为什么更好”。</p>
+<h3 id="_11">创新点一：把“调度决策”做成可解释、可回放的一等对象</h3>
+<table>
+<thead>
+<tr>
+<th>维度</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>别人怎么做</td>
+<td>框架多为固定映射（角色→任务）或简单轮询；调度发生在黑盒里，出问题只能看日志猜</td>
+</tr>
+<tr>
+<td>我们怎么做</td>
+<td>五策略统一到加权打分骨架，每次决策输出 <code>score / reason / agent_load</code>，并通过 <code>plan.ready</code>、<code>node.scheduled</code> 事件在前端回放候选集与分项贡献</td>
+</tr>
+<tr>
+<td>为什么更好</td>
+<td>调度从“不可见的实现细节”变成“可审计的产品能力”：能解释、能调参、能在基准中被度量；评委可以当场追问“为什么选它”，系统能当场回答</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_12">创新点二：把“验证”做成与执行同级的流水线，而不是事后补的脚本</h3>
+<table>
+<thead>
+<tr>
+<th>维度</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>别人怎么做</td>
+<td>依赖模型自评、或让另一个 Agent “看一眼”；验证逻辑散落在测试脚本与人工检查中</td>
+</tr>
+<tr>
+<td>我们怎么做</td>
+<td>五层检查器 + 加权置信度 + 节点级验证规约（<code>VerifySpec</code> 是工作流节点属性），硬性失败一票否决、跳过项不计分</td>
+</tr>
+<tr>
+<td>为什么更好</td>
+<td>验证从“主观判断”变成“可复算证据”：能定位到具体节点、能给出误差数字、能跨版本比较；模型幻觉无法通过“自评”绕过</td>
+</tr>
+</tbody>
+</table>
+<h3 id="pdca">创新点三：带预算与收敛判据的 PDCA 自循环</h3>
+<table>
+<thead>
+<tr>
+<th>维度</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>别人怎么做</td>
+<td>失败后整体重试或人工改提示词；重试次数拍脑袋定，缺少“是否在变好”的判断</td>
+</tr>
+<tr>
+<td>我们怎么做</td>
+<td>结构化反馈（失败项 + 期望值 + 实际值 + 误差 + 建议）定向注入修复节点；三类可解释终止原因（收敛/轮数上限/置信度停滞）+ 引擎级取消与超时</td>
+</tr>
+<tr>
+<td>为什么更好</td>
+<td>修复是“带证据的定向重跑”而非“碰运气重来”；无改善即停避免预算空转；每轮历史可回放，形成可审计的修复轨迹</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_13">创新点四：以事件总线为核心的全链路可观测性</h3>
+<table>
+<thead>
+<tr>
+<th>维度</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>别人怎么做</td>
+<td>主要是日志文件 + 最终结果；过程不可回放，刷新页面即丢失</td>
+</tr>
+<tr>
+<td>我们怎么做</td>
+<td>统一事件模型（<code>run/node/agent/tool/verify/loop/artifact</code> 七类）+ SSE 推送 + <code>Last-Event-ID</code> 断线续传 + 环形缓冲</td>
+</tr>
+<tr>
+<td>为什么更好</td>
+<td>演示可“暂停讲解”、刷新后可“续播”；故障可定位到具体事件；同一套事件既服务 UI 又服务测试断言，避免“界面说一套、日志说一套”</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_14">创新点五：零依赖、离线可复现的“可评审”工程形态</h3>
+<table>
+<thead>
+<tr>
+<th>维度</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>别人怎么做</td>
+<td>依赖大量第三方包与外部模型服务；评审需要装环境、配 Key，常常“跑不起来”</td>
+</tr>
+<tr>
+<td>我们怎么做</td>
+<td>纯标准库、原生 JS/SVG 无构建、确定性 MockProvider、固定随机种子；一条命令启动</td>
+</tr>
+<tr>
+<td>为什么更好</td>
+<td>把“可复现”从口号变成可执行动作：评委断网也能完整看到“验证失败→修复→通过”；同时保留接入真实模型的能力，两条路径同接口</td>
+</tr>
+</tbody>
+</table>
+<h3 id="102">10.2 与同类方案的差异化定位（一句话版）</h3>
+<ul>
+<li>相对于<strong>编排库</strong>（LangGraph 等）：我们不止能编排，还内建调度、验证与自循环；</li>
+<li>相对于<strong>角色框架</strong>（CrewAI/AutoGen 等）：我们不靠“对话协商”，而靠“契约 + 证据”保证结果；</li>
+<li>相对于 <strong>Agent 应用/市场</strong>（LobeHub 等）：我们面向任务级正确性与可问责性，而非个人助手体验；</li>
+<li>相对于<strong>单 Agent Harness</strong>（DSH 类）：我们管的是“一组 Agent 如何协作交付一个可验证结果”。</li>
+</ul>
+<hr />
+<h2 id="_15">十一、局限与展望</h2>
+<h3 id="111-mock">11.1 结论：当前版本的边界清晰——单机、合成数据、Mock 为默认，真实模型的非确定性尚未被完全驯服</h3>
+<p><strong>已知局限</strong>（我们主动列出，而不是等评委发现）：</p>
+<table>
+<thead>
+<tr>
+<th>局限</th>
+<th>具体表现</th>
+<th>影响</th>
+<th>缓解措施</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>真实 LLM 非确定性</td>
+<td>同一提示两次调用结果可能不同，自循环可能“这次修好、下次修坏”</td>
+<td>真实模式下的可复现性弱于 Mock</td>
+<td>温度分层（验证者 0.0）、结构化输出约束、失败回退</td>
+</tr>
+<tr>
+<td>L5 评审主观性</td>
+<td><code>llm_judge</code> 受评审模型能力影响，可能给出不一致评价</td>
+<td>置信度在边界处抖动</td>
+<td>硬性检查优先、评审权重较低、离线时显式跳过</td>
+</tr>
+<tr>
+<td>交叉验证成本</td>
+<td>L4 需要额外一次完整复算，Token 与耗时翻倍</td>
+<td>高价值节点才开启</td>
+<td>检查项按节点配置，默认只在高风险节点启用</td>
+</tr>
+<tr>
+<td>调度权重需调参</td>
+<td><code>adaptive</code> 需要样本量才能稳定，冷启动阶段接近 <code>capability</code></td>
+<td>首批运行收益不明显</td>
+<td>权重可配置、<code>describe()</code> 暴露当前权重</td>
+</tr>
+<tr>
+<td>单机并发上限</td>
+<td>线程 HTTP + 单进程事件循环，水平扩展受限</td>
+<td>无法支撑大规模并发</td>
+<td>明确边界；架构上已把执行面与状态分离，便于后续外置</td>
+</tr>
+<tr>
+<td>演示数据为合成数据</td>
+<td>结论的“科研价值”有限，重在演示方法论</td>
+<td>不能直接用于真实科研</td>
+<td>数据生成脚本与真值公开，可替换真实数据集</td>
+</tr>
+<tr>
+<td>记忆为运行内内存</td>
+<td>不做跨运行长期记忆</td>
+<td>无法积累历史经验</td>
+<td>预留 <code>AgentMemory</code> 接口，后续接向量库</td>
+</tr>
+</tbody>
+</table>
+<h3 id="112">11.2 展望路线</h3>
+<pre><code>近期（1–2 个月）
+  ├─ 接入更多验证器（时序一致性、因果图检查、数据泄漏检测）
+  ├─ 支持真实数据集与外部数据源（CSV/API），验证真值可由领域专家标注
+  └─ 报告模板化导出（Markdown → PDF）与实验对比表自动生成
+中期（3–6 个月）
+  ├─ 分布式执行：把执行面拆为 worker，调度器支持跨机资源池
+  ├─ 长期记忆与经验复用：把历史修复策略沉淀为可检索的“修复案例库”
+  └─ 评测基准：发布多任务、多模型的 Agent 编排基准，量化“验证带来的收益”
+长期
+  ├─ 面向科研团队的协作版：多人审阅、审批流、实验版本管理
+  └─ 与 MCP 生态深度集成，把外部科学工具（数据库、仿真器）纳入编排
+</code></pre>
+<hr />
+<h2 id="_16">十二、部署与复现</h2>
+<h3 id="121">12.1 结论：评审拿到仓库后，三条命令内必须能看到完整链路；这条标准我们按“断网也能跑”执行</h3>
+<h3 id="122">12.2 环境要求</h3>
+<table>
+<thead>
+<tr>
+<th>项</th>
+<th>要求</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>操作系统</td>
+<td>Windows 10/11、Linux、macOS</td>
+<td>开发与验证在 Windows 10 + MSYS bash</td>
+</tr>
+<tr>
+<td>Python</td>
+<td>3.10 及以上（验证机 <code>py -3.14</code>）</td>
+<td>仅标准库，无需 <code>pip install</code></td>
+</tr>
+<tr>
+<td>浏览器</td>
+<td>Chrome / Edge 现代版本</td>
+<td>原生 JS + SVG，无构建</td>
+</tr>
+<tr>
+<td>网络</td>
+<td><strong>不需要</strong>（离线演示）</td>
+<td>接入真实模型时才需要</td>
+</tr>
+</tbody>
+</table>
+<h3 id="123">12.3 启动步骤</h3>
+<pre><code class="language-bash"># ① 启动 Web 控制台（默认 http://127.0.0.1:8765）
+python server.py --port 8765 --open
+
+# ② 打开「编排台」→ 选择 wf-ai4s-air-quality → 调度策略 adaptive → 点击「运行演示场景」
+# ③ 切到「运行监控」观察事件流；「验证中心」查看五层结果与自循环轮次
+
+# 命令行等价方式（无需浏览器，适合评审快速验证）
+python scripts/run_demo.py
+
+# 全量测试
+python -m unittest discover -s tests -v
+</code></pre>
+<h3 id="124">12.4 接入真实大模型（可选）</h3>
+<p>平台默认 <code>provider=mock</code>，离线可用。接入任意 OpenAI 兼容接口（DeepSeek、通义千问、智谱等）有三种方式：</p>
+<pre><code class="language-bash"># 方式一：环境变量（推荐，Key 不落盘）
+set AGENTWEAVE_API_KEY=sk-xxx
+set AGENTWEAVE_BASE_URL=https://api.deepseek.com/v1
+set AGENTWEAVE_MODEL=deepseek-chat
+python server.py --port 8765
+</code></pre>
+<pre><code class="language-bash"># 方式二：仓库根目录 .env 文件（已在 .gitignore 中；优先级：真实环境变量 &gt; .env &gt; config/platform.json）
+# 复制 .env.example 为 .env 后按需填写，重启服务生效
+AGENTWEAVE_API_KEY=sk-xxx
+AGENTWEAVE_BASE_URL=https://api.deepseek.com/v1
+AGENTWEAVE_MODEL=deepseek-chat
+</code></pre>
+<pre><code class="language-text"># 方式三：Web「模型设置」页
+provider : openai-compatible
+base_url : https://api.deepseek.com/v1
+model    : deepseek-chat
+api_key  : （password 输入框，保存后不回显、不写入前端存储）
+→ 点击「测试连接」确认连通性，再回到编排台运行
+</code></pre>
+<p>配置保存在本机 <code>config/</code> 下，接口返回的 Key 一律打码；调用失败自动重试并回退到 Mock，保证演示不中断。</p>
+<h3 id="125">12.5 目录与产物</h3>
+<table>
+<thead>
+<tr>
+<th>路径</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>agentweave/</code></td>
+<td>平台核心（纯标准库）</td>
+</tr>
+<tr>
+<td><code>config/agents.json</code></td>
+<td>7 个 Agent 的定义（可编辑、可版本化）</td>
+</tr>
+<tr>
+<td><code>workflows/</code></td>
+<td>工作流 JSON（演示场景 <code>ai4s_air_quality.json</code>）</td>
+</tr>
+<tr>
+<td><code>examples/datasets/</code></td>
+<td>2000 行合成数据 + 隐藏真值 <code>air_quality_truth.json</code></td>
+</tr>
+<tr>
+<td><code>data/runs/&lt;run_id&gt;/</code></td>
+<td>每次运行的产物：分析代码、SVG 图表、报告 Markdown</td>
+</tr>
+<tr>
+<td><code>data/benchmark.json</code></td>
+<td>基准对照原始数据（含三模式明细）</td>
+</tr>
+<tr>
+<td><code>docs/</code></td>
+<td>方案书、PPT 大纲、视频脚本、答辩预演、契约文档</td>
+</tr>
+</tbody>
+</table>
+<h3 id="126">12.6 常见问题</h3>
+<table>
+<thead>
+<tr>
+<th>现象</th>
+<th>原因</th>
+<th>处理</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>端口被占用</td>
+<td>8765 已被其他进程使用</td>
+<td><code>python server.py --port 8766</code></td>
+</tr>
+<tr>
+<td>页面空白</td>
+<td>浏览器阻止了本地请求</td>
+<td>换 Chrome/Edge，确认 <code>127.0.0.1</code> 而非 <code>localhost</code> 代理</td>
+</tr>
+<tr>
+<td>真实模型 401</td>
+<td>Key 无效或未设置</td>
+<td>检查环境变量 / 模型设置页；失败会自动回退 Mock</td>
+</tr>
+<tr>
+<td>演示耗时变长</td>
+<td>开启了 <code>cross_agent</code> 且使用真实模型</td>
+<td>减少检查项或在设置中切回 Mock</td>
+</tr>
+<tr>
+<td>中文乱码（命令行）</td>
+<td>Windows 控制台编码</td>
+<td><code>set PYTHONIOENCODING=utf-8</code></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="ai">十三、AI 使用说明</h2>
+<h3 id="131-ai">13.1 结论：AI 是本项目的高效工具，但不是责任主体；所有架构决策、契约定义与最终验收由团队成员完成</h3>
+<p>按赛事诚信要求，我们如实披露 AI 在本作品中的使用范围与边界：</p>
+<table>
+<thead>
+<tr>
+<th>环节</th>
+<th>AI 参与程度</th>
+<th>人工把关方式</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>架构设计</td>
+<td><strong>不参与决策</strong>。模块划分、控制面/执行面分离、四层验证漏斗等由团队讨论确定</td>
+<td>团队评审会议纪要；契约文档 <code>docs/CONTRACTS.md</code> 由人撰写并冻结</td>
+</tr>
+<tr>
+<td>接口契约</td>
+<td>不参与。类型、函数签名、事件 payload 由人定义</td>
+<td>契约先行，跨模块改动需评审</td>
+</tr>
+<tr>
+<td>代码实现</td>
+<td><strong>辅助生成</strong>。样板代码、数据类、参数校验、部分测试用例由 AI 编程助手生成初稿</td>
+<td>人工逐段评审、统一风格、补充中文注释；所有代码必须通过单元测试与端到端测试才算完成</td>
+</tr>
+<tr>
+<td>代码评审</td>
+<td><strong>辅助</strong>。用 AI 做静态检查与边界用例提示（如路径穿越、超时、空值）</td>
+<td>人工确认每条建议是否成立，不盲从</td>
+</tr>
+<tr>
+<td>文档起草</td>
+<td><strong>辅助起草</strong>。章节结构、表格骨架、部分表述由 AI 生成初稿</td>
+<td>人工核对每个数字与事实：未实测的数字一律用 <code>[[待测]]</code> 占位，禁止编造；最终文稿由人定稿</td>
+</tr>
+<tr>
+<td>测试数据</td>
+<td>不涉及。演示数据由脚本按公开公式与固定种子生成</td>
+<td>数据生成脚本与真值文件开源可查</td>
+</tr>
+<tr>
+<td>演示与答辩</td>
+<td>不涉及。演示脚本、讲解、答辩由团队成员完成</td>
+<td>—</td>
+</tr>
+</tbody>
+</table>
+<p><strong>我们的三条原则</strong>：</p>
+<ol>
+<li><strong>可验证优先</strong>：AI 生成的任何代码与结论，必须能被测试或复算验证；不能验证的内容不写进材料；</li>
+<li><strong>不编造数据</strong>：方案书中所有性能与统计数字，要么来自实测（附脚本），要么显式标注 <code>[[待测]]</code> 并由集成负责人回填，绝不用“看起来合理”的数字充数；</li>
+<li><strong>责任在人</strong>：作品的架构选择、创新点主张、局限判断由团队负责；AI 输出只作为素材，不作为论据。</li>
+</ol>
+<p>我们理解赛事鼓励“合理使用 AI 工具、如实披露”。本作品把 AI 用在“提效”而非“代替思考”的位置：<strong>想法、取舍与验证由人负责，重复劳动交给 AI</strong>。</p>
+<hr />
+<h2 id="a">附录 A：术语表</h2>
+<table>
+<thead>
+<tr>
+<th>术语</th>
+<th>英文</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>智能体</td>
+<td>Agent</td>
+<td>具备角色、工具与记忆，能自主完成子任务的执行单元</td>
+</tr>
+<tr>
+<td>多智能体系统</td>
+<td>Multi-Agent System, MAS</td>
+<td>多个 Agent 按分工协作完成复杂任务的系统</td>
+</tr>
+<tr>
+<td>有向无环图</td>
+<td>DAG</td>
+<td>用节点与有向边表达任务依赖、且不含环的结构</td>
+</tr>
+<tr>
+<td>领域特定语言</td>
+<td>DSL</td>
+<td>为特定问题设计的声明式描述语言，本作品为工作流 JSON</td>
+</tr>
+<tr>
+<td>抽象语法树</td>
+<td>AST</td>
+<td>表达式解析后的树形结构，用于白名单安全求值</td>
+</tr>
+<tr>
+<td>规划-执行-检查-处理</td>
+<td>PDCA</td>
+<td>计划、执行、检查、处理的循环改进模型，用于自循环</td>
+</tr>
+<tr>
+<td>推理-行动循环</td>
+<td>ReAct</td>
+<td>LLM 交替进行推理与工具调用的执行范式</td>
+</tr>
+<tr>
+<td>服务器发送事件</td>
+<td>SSE</td>
+<td>基于 HTTP 的单向实时推送技术</td>
+</tr>
+<tr>
+<td>模型上下文协议</td>
+<td>MCP</td>
+<td>标准化外部工具接入的 JSON-RPC 协议</td>
+</tr>
+<tr>
+<td>置信度</td>
+<td>Confidence</td>
+<td>多检查项加权得到的可信程度标量</td>
+</tr>
+<tr>
+<td>真值</td>
+<td>Ground Truth</td>
+<td>数据生成时已知的真实参数，用于误差比对</td>
+</tr>
+<tr>
+<td>交叉验证</td>
+<td>Cross Validation</td>
+<td>由独立 Agent 重新计算并比对结果</td>
+</tr>
+<tr>
+<td>人工闸门</td>
+<td>Human Gate</td>
+<td>需要人工确认才能继续的流程节点</td>
+</tr>
+<tr>
+<td>可解释调度</td>
+<td>Explainable Scheduling</td>
+<td>输出决策依据（分数、理由、负载）的调度方式</td>
+</tr>
+<tr>
+<td>环形缓冲</td>
+<td>Ring Buffer</td>
+<td>固定容量、覆盖写入的事件存储结构</td>
+</tr>
+</tbody>
+</table>
+<h2 id="b">附录 B：提交清单</h2>
+<table>
+<thead>
+<tr>
+<th>序号</th>
+<th>提交物</th>
+<th>要求</th>
+<th>状态</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>方案书 PDF</td>
+<td>≥ 5000 字（本文实测 18901 个汉字，远超要求；统计脚本 <code>scripts/count_hanzi.py</code>）</td>
+<td>本文档导出</td>
+</tr>
+<tr>
+<td>2</td>
+<td>演示 PPT</td>
+<td>正文 10–15 页</td>
+<td><code>docs/PPT大纲.md</code> 支撑</td>
+</tr>
+<tr>
+<td>3</td>
+<td>演示视频</td>
+<td>3–5 分钟</td>
+<td><code>docs/视频脚本.md</code> 支撑</td>
+</tr>
+<tr>
+<td>4</td>
+<td>可运行代码</td>
+<td>仓库含 README、LICENSE、启动说明、演示脚本</td>
+<td>已完成：https://github.com/zhkb06/agentweave</td>
+</tr>
+<tr>
+<td>5</td>
+<td>演示数据</td>
+<td>合成数据集 + 真值文件</td>
+<td><code>examples/datasets/</code></td>
+</tr>
+<tr>
+<td>6</td>
+<td>答辩材料</td>
+<td>10 问预演</td>
+<td><code>docs/答辩预演.md</code></td>
+</tr>
+<tr>
+<td>7</td>
+<td>版本信息</td>
+<td>仓库版本号、提交记录</td>
+<td>v1.0.0（<code>agentweave/__init__.py: __version__</code>）</td>
+</tr>
+<tr>
+<td>8</td>
+<td>项目白皮书</td>
+<td>项目概述、解决方案、应用成效、商业模式、团队介绍</td>
+<td><code>docs/白皮书.md</code> / <code>docs/白皮书.pdf</code></td>
+</tr>
+<tr>
+<td>9</td>
+<td>代码仓库</td>
+<td>公开仓库（含全部源码、测试、文档与演示脚本）</td>
+<td>https://github.com/zhkb06/agentweave</td>
+</tr>
+</tbody>
+</table>
+<h2 id="c">附录 C：占位符清单（由集成负责人回填）</h2>
+<table>
+<thead>
+<tr>
+<th>编号</th>
+<th>回填值</th>
+<th>所在位置</th>
+<th>回填人</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>P01</td>
+<td>织流 AgentWeave</td>
+<td>封面、页眉</td>
+<td>队伍</td>
+<td>已填写</td>
+</tr>
+<tr>
+<td>P02</td>
+<td>石家庄信息工程职业学院</td>
+<td>封面</td>
+<td>队伍</td>
+<td>已填写</td>
+</tr>
+<tr>
+<td>P03</td>
+<td>张康博</td>
+<td>封面</td>
+<td>队伍</td>
+<td>已填写</td>
+</tr>
+<tr>
+<td>P04</td>
+<td>徐宇丰</td>
+<td>封面</td>
+<td>队伍</td>
+<td>已填写</td>
+</tr>
+<tr>
+<td>P05</td>
+<td>2026-11-12</td>
+<td>封面</td>
+<td>队伍</td>
+<td>已填写</td>
+</tr>
+<tr>
+<td>P06</td>
+<td>12 个测试文件、206 用例、206 通过（逐文件数字见 9.2 表）</td>
+<td>9.2 测试统计表</td>
+<td>集成</td>
+<td>已实测</td>
+</tr>
+<tr>
+<td>P07</td>
+<td>206 / 206</td>
+<td>9.2 合计行</td>
+<td>集成</td>
+<td>已实测</td>
+</tr>
+<tr>
+<td>P08</td>
+<td>A/B/C 三模式 ×5 项指标全部回填（见 9.3），原始 JSON 在 <code>data/benchmark.json</code></td>
+<td>9.3 基准表</td>
+<td>Lead</td>
+<td>已实测</td>
+</tr>
+<tr>
+<td>P09</td>
+<td>1683 / 544 / 963 行</td>
+<td>8.2 模块清单</td>
+<td>Lead</td>
+<td>已回填</td>
+</tr>
+<tr>
+<td>P10</td>
+<td>已核对：默认权重 0.40/0.30/0.20/0.10</td>
+<td>6.3、8.5</td>
+<td>Lead</td>
+<td>与 <code>scheduler/engine.py</code> 一致</td>
+</tr>
+<tr>
+<td>P11</td>
+<td>已校对：第八章模块清单与 8.3–8.8 代码片段按最终仓库更新，行号以文件当前版本为准</td>
+<td>第八章、附录</td>
+<td>Lead</td>
+<td>2026-11-10 实测校对</td>
+</tr>
+<tr>
+<td>P12</td>
+<td>汉字数</td>
+<td>附录 B</td>
+<td>docs 已填</td>
+<td>当前实测 18901 个汉字（<code>scripts/count_hanzi.py</code> 全文 CJK 统计；提交前如有改动需复算）</td>
+</tr>
+<tr>
+<td>P13</td>
+<td>v1.0.0（<code>agentweave/__init__.py: __version__</code>）</td>
+<td>附录 B</td>
+<td>Lead</td>
+<td>仓库版本</td>
+</tr>
+<tr>
+<td>P15</td>
+<td>https://github.com/zhkb06/agentweave（二维码见 <code>docs/qrcode_repo.png</code>）</td>
+<td>附录 B 第 4 项、PPT 第 14 页、README 首屏</td>
+<td>队伍</td>
+<td>已回填（2026-11-17 仓库已公开推送）</td>
+</tr>
+<tr>
+<td>P14</td>
+<td>已回填 7 张真实截图（<code>screenshots/01-overview.png</code> … <code>07-settings.png</code>）</td>
+<td>8.9、第十章</td>
+<td>Lead</td>
+<td>均已嵌入 8.9 节，随 PDF 一并提交</td>
+</tr>
+</tbody>
+</table>
+<h2 id="d">附录 D：代码仓库与二维码</h2>
+<p>公开仓库：<a href="https://github.com/zhkb06/agentweave">https://github.com/zhkb06/agentweave</a></p>
+<p>评审可直接访问仓库查看全部源码、测试（206 个用例）、文档与演示脚本；如需本地复现，按 README 的「快速开始」执行即可，无需网络与 API Key。</p>
+<p><img alt="代码仓库二维码" src="qrcode_repo.png" /></p>
+</body>
+</html>

@@ -1,0 +1,50 @@
+{
+  "id": "logistics-delivery",
+  "short": "logi-deliv",
+  "name": "物流时效归因",
+  "title": "订单履约时长与距离、负载因子归因",
+  "description": "分析订单履约时长（delivery_min）与配送距离、订单量、恶劣天气、仓内负载的关系，支撑时效承诺与资源调度。",
+  "dataset": "scenarios/logistics-delivery/data.csv",
+  "target": "delivery_min",
+  "features": [
+    "distance_km",
+    "order_volume",
+    "bad_weather",
+    "warehouse_load"
+  ],
+  "workflow_id": "wf-logistics-delivery",
+  "first_bias": {
+    "distance_km": 0.32,
+    "order_volume": 0.29,
+    "bad_weather": 0.31,
+    "warehouse_load": 0.28
+  },
+  "second_bias": {
+    "distance_km": 0.032,
+    "order_volume": 0.027,
+    "bad_weather": 0.038,
+    "warehouse_load": 0.03
+  },
+  "tolerance": 0.15,
+  "statistical_thresholds": {
+    "n_min": 1000,
+    "r2_min": 0.55
+  },
+  "task": "分析订单履约时长（delivery_min）与配送距离（distance_km）、订单量（order_volume）、恶劣天气（bad_weather）、仓内负载（warehouse_load）的关系，量化各因子对时效的影响并给出调度建议。",
+  "story": "平台承诺「次日达」，但履约时长波动大；运营需要知道哪些因子可控（仓内负载 vs 天气），以及距离的边际成本。",
+  "domain_checks": [
+    "排除异常大单",
+    "区分天气与节假日",
+    "核对仓内负载口径"
+  ],
+  "recovery": {
+    "intercept": 15.4272,
+    "coefficients": {
+      "distance_km": 1.5127,
+      "order_volume": 0.0788,
+      "bad_weather": 9.1105,
+      "warehouse_load": 0.0834
+    },
+    "r2": 0.709
+  }
+}
